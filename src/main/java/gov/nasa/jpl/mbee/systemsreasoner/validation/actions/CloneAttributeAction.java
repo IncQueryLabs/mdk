@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 
 import com.nomagic.magicdraw.actions.MDAction;
 import com.nomagic.magicdraw.core.Application;
-import com.nomagic.magicdraw.emf.ValueHolder;
+import com.nomagic.esi.core.msg.info.impl.ValueHolder;
 import com.nomagic.magicdraw.openapi.uml.SessionManager;
 import com.nomagic.uml2.ext.jmi.helpers.StereotypesHelper;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;

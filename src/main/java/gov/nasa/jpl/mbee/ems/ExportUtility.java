@@ -30,11 +30,13 @@ package gov.nasa.jpl.mbee.ems;
 
 import com.nomagic.ci.persistence.IAttachedProject;
 import com.nomagic.ci.persistence.IProject;
+import com.nomagic.ci.persistence.versioning.IVersionDescriptor;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.core.ProjectUtilities;
 import com.nomagic.magicdraw.core.project.ProjectDescriptorsFactory;
 import com.nomagic.magicdraw.foundation.MDObject;
+import com.nomagic.magicdraw.teamwork2.ProjectVersion;
 import com.nomagic.magicdraw.teamwork2.TeamworkService;
 import com.nomagic.uml2.ext.jmi.helpers.ModelHelper;
 import com.nomagic.uml2.ext.jmi.helpers.StereotypesHelper;
@@ -2247,9 +2249,17 @@ public class ExportUtility {
     }
 
     public static Integer getProjectVersion(Project proj) {
-        Integer ver = null;
-        if (ProjectUtilities.isFromTeamworkServer(proj.getPrimaryProject())) {
-            ver = TeamworkService.getInstance(proj).getVersion(proj).getNumber();
+        Integer ver = 0;
+        IVersionDescriptor twversion = null;
+        try {
+            twversion = TeamworkService.getInstance(proj).getVersion(proj); 
+        } catch (NullPointerException npe) {}
+        if (twversion == null) {}
+        else {
+            if (twversion instanceof com.nomagic.magicdraw.teamwork2.ProjectVersion ) {
+                ver = ((ProjectVersion) twversion).getNumber();
+                
+            }
         }
         return ver;
     }

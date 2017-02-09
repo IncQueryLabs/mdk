@@ -62,7 +62,7 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.python.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 /**
  * This class exposes MDK operations for use in external programs.

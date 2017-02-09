@@ -326,7 +326,7 @@ public class AutomatedViewGeneration extends CommandLine {
      * @param args Argument string array from the console
      */
 
-    private void parseArgs(String[] args) {
+    protected void parseArgs(String[] args) {
         // iteration of argIndex is handled by following code to account for
         // variable length arguments with whitespace
         for (argIndex = 0; argIndex < args.length; ) {

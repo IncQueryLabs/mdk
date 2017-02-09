@@ -29,6 +29,7 @@
 package gov.nasa.jpl.mbee.lib;
 
 import gov.nasa.jpl.mbee.DocGenUtils;
+import gov.nasa.jpl.mbee.ems.ExportUtility;
 import gov.nasa.jpl.mbee.api.ElementFinder;
 import gov.nasa.jpl.mbee.ems.sync.local.LocalSyncProjectEventListenerAdapter;
 import gov.nasa.jpl.mbee.ems.sync.local.LocalSyncTransactionCommitListener;
@@ -2422,9 +2423,9 @@ public class Utils {
 
     public static void displayValidationWindow(Collection<ValidationSuite> vss, String title) {
         List<RuleViolationResult> results = getRuleViolations(vss);
-        Set<BaseElement> elements = new LinkedHashSet<BaseElement>();
+        Set<Element> elements = new LinkedHashSet<Element>();
         for (RuleViolationResult violation: results) {
-            elements.add(violation.getElement());
+            elements.add((Element) violation.getElement());
         }
 
         Project project = getProject();
@@ -3685,7 +3686,7 @@ public class Utils {
                 Utils.guilog("[ERROR] You must be logged into Teamwork first.");
                 return false;
             }
-            if (lastVersion == TeamworkService.getInstance(project).getVersion(project).getNumber())
+            if (TeamworkUtils.getLastVersion(currentProj) == ExportUtility.getProjectVersion(project))
                 return true;
         } catch (IOException uhe) {
             Utils.guilog("[ERROR] You must be logged into Teamwork first.");
