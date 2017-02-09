@@ -9,7 +9,7 @@
 	product="JPL Model Development Kit" 
 	type="Plugin">
   <version human="@release.version.human@" resource="@release.version.internal@" internal="@release.version.internal@"/>
-  <provider name="NASA / Jet Propulsion Laboratory / Caltech"/>
+  <provider name="No Magic Inc / NASA / JPL / Caltech / Lockheed Martin"/>
   <edition>Standard</edition>
   <edition>Enterprise</edition>
   <edition>Architect</edition>

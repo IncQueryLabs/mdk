@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resourceDescriptor critical="false" 
-	date="02082017" 
+	date="@release.date@" 
 	description="DocGen and common profiles" 
 	id="91110" 
 	mdVersionMax="higher" 
@@ -8,8 +8,8 @@
 	name="Model Development Kit" 
 	product="JPL Model Development Kit" 
 	type="Plugin">
-  <version human="2.5.1-18.4" resource="40" internal="40"/>
-  <provider name="NASA / Jet Propulsion Laboratory / Caltech"/>
+  <version human="2.5.2-MD18.4" resource="43" internal="43"/>
+  <provider name="No Magic Inc / NASA / JPL / Caltech / Lockheed Martin"/>
   <edition>Standard</edition>
   <edition>Enterprise</edition>
   <edition>Architect</edition>
@@ -25,6 +25,7 @@
 	<file from="data/defaults/data/diagrams/DocGen 3 Diagram/descriptor.xml" to="data/defaults/data/diagrams/DocGen 3 Diagram/descriptor.xml"/>
 	<file from="data/defaults/data/diagrams/DocGen 3 View Diagram/descriptor.xml" to="data/defaults/data/diagrams/DocGen 3 View Diagram/descriptor.xml"/>
 	<file from="data/defaults/data/diagrams/Module Management/descriptor.xml" to="data/defaults/data/diagrams/Module Management/descriptor.xml"/>
+	<file from="data/defaults/data/diagrams/OntoSysML Combined Structure Diagram/descriptor.xml" to="data/defaults/data/diagrams/OntoSysML Combined Structure Diagram/descriptor.xml"/>
 	<file from="data/defaults/data/diagrams/View Class Diagram/descriptor.xml" to="data/defaults/data/diagrams/View Class Diagram/descriptor.xml"/>
 	<file from="data/defaults/data/diagrams/View Diagram/descriptor.xml" to="data/defaults/data/diagrams/View Diagram/descriptor.xml"/>
 	<file from="data/defaults/data/diagrams/Viewpoint Method Diagram/descriptor.xml" to="data/defaults/data/diagrams/Viewpoint Method Diagram/descriptor.xml"/>
@@ -91,7 +92,14 @@
 	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/jgrapht-0.8.3-jdk1.6.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/jgrapht-0.8.3-jdk1.6.jar"/>
 	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/json_simple-1.1.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/json_simple-1.1.jar"/>
 	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/jsoup-1.6.1.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/jsoup-1.6.1.jar"/>
+	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/lpg-java-runtime-bin-2.0.23.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/lpg-java-runtime-bin-2.0.23.jar"/>
 	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/opencsv-2.3.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/opencsv-2.3.jar"/>
+	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/org.eclipse.emf.ecore.change_2.7.1.201210251512.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/org.eclipse.emf.ecore.change_2.7.1.201210251512.jar"/>
+	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/org.eclipse.emf.ecore.xmi_2.7.0.201210251512.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/org.eclipse.emf.ecore.xmi_2.7.0.201210251512.jar"/>
+	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/org.eclipse.emf.ecore_2.7.0.201210251512.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/org.eclipse.emf.ecore_2.7.0.201210251512.jar"/>
+	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/org.eclipse.ocl.ecore.edit_3.1.0.v20110526-1523.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/org.eclipse.ocl.ecore.edit_3.1.0.v20110526-1523.jar"/>
+	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/org.eclipse.ocl.ecore_3.2.2.201210251512.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/org.eclipse.ocl.ecore_3.2.2.201210251512.jar"/>
+	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/org.eclipse.ocl_3.2.0.201210251512.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/org.eclipse.ocl_3.2.0.201210251512.jar"/>
 	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/slf4j-api-1.7.2.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/slf4j-api-1.7.2.jar"/>
 	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/slf4j-log4j12-1.7.2.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/slf4j-log4j12-1.7.2.jar"/>
 	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/swingx-all-1.6.4-sources.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/swingx-all-1.6.4-sources.jar"/>
@@ -100,6 +108,7 @@
 	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/swingx-beaninfo-1.6.4.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/swingx-beaninfo-1.6.4.jar"/>
 	<file from="plugins/gov.nasa.jpl.mbee.docgen/lib/wlthint3client.jar" to="plugins/gov.nasa.jpl.mbee.docgen/lib/wlthint3client.jar"/>
 	<file from="profiles/MDK/SysML Extensions.mdxml" to="profiles/MDK/SysML Extensions.mdxml"/>
+	<file from="profiles/OntoSysML/OntoSysML_ScenarioLibrary.mdxml" to="profiles/OntoSysML/OntoSysML_ScenarioLibrary.mdxml"/>
 
   </installation>
 </resourceDescriptor>
