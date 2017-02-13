@@ -96,12 +96,12 @@ public class Crushinator23To24Migrator extends Migrator {
                 Application.getInstance().getGUILog().log("[ERROR] Model has locks from " + NumberFormat.getInstance().format(lockedElementUsers.size()) + " other users. Aborting.");
                 return;
             }
-        }
-        if (!TeamworkUtils.lockElement(project, project.getModel(), true)) {
+        
+            if (!TeamworkUtils.lockElement(project, project.getModel(), true)) {
             Application.getInstance().getGUILog().log("[ERROR] Failed to lock model recursively. Aborting.");
             return;
+            }
         }
-
         String postUrl = ExportUtility.getPostElementsUrl();
         String deleteUrl = ExportUtility.getUrlWithWorkspace() + "/elements";
         if (postUrl == null) {
