@@ -2,6 +2,7 @@ build
 javadoc
 out
 target
+bin
 .classpath
 .gradle
 .idea
@@ -13,3 +14,4 @@ target
 *.diff
 rebel.xml
 .DS_Store
+*._trace

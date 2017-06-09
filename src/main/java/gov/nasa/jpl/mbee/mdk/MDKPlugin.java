@@ -1,9 +1,31 @@
 package gov.nasa.jpl.mbee.mdk;
 
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Level;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
+import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexFeatureFilter;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
+
+import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsCategory;
 import com.nomagic.actions.ActionsManager;
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.actions.ActionsConfiguratorsManager;
+import com.nomagic.magicdraw.actions.MDAction;
+import com.nomagic.magicdraw.actions.MDActionsCategory;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.options.EnvironmentOptions;
 import com.nomagic.magicdraw.evaluation.EvaluationConfigurator;
@@ -12,20 +34,15 @@ import com.nomagic.magicdraw.plugins.PluginDescriptor;
 import com.nomagic.magicdraw.plugins.PluginUtils;
 import com.nomagic.magicdraw.properties.Property;
 import com.nomagic.magicdraw.uml.DiagramTypeConstants;
+
 import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputQueueStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputSyncRunner;
 import gov.nasa.jpl.mbee.mdk.mms.sync.status.SyncStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.ocl.OclQueryConfigurator;
 import gov.nasa.jpl.mbee.mdk.options.MDKOptionsGroup;
+import gov.nasa.jpl.mbee.mdk.queries.TestQueries;
 import gov.nasa.jpl.mbee.mdk.systems_reasoner.SRConfigurator;
 import gov.nasa.jpl.mbee.mdk.util.MDUtils;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MDKPlugin extends Plugin {
     public static final String MAIN_TOOLBAR_CATEGORY_NAME = "MDK";
@@ -76,6 +93,10 @@ public class MDKPlugin extends Plugin {
             System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
             System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.wire", "INFO");
         }
+        
+       
+        
+        
         // This somehow allows things to be loaded to evaluate opaque expressions or something.
         EvaluationConfigurator.getInstance().registerBinaryImplementers(this.getClass().getClassLoader());
 
@@ -101,6 +122,71 @@ public class MDKPlugin extends Plugin {
         acm.addMainToolbarConfigurator(new OutputQueueStatusConfigurator());
         acm.addMainToolbarConfigurator(new SyncStatusConfigurator());
 
+        //TEST VIATRA
+        acm.addMainToolbarConfigurator(new AMConfigurator() {
+			
+			@Override
+			public int getPriority() {
+				return AMConfigurator.MEDIUM_PRIORITY;
+			}
+			
+			@Override
+			public void configure(ActionsManager manager) {
+				MDActionsCategory category = new MDActionsCategory("TEST", "TEST");
+				category.addAction(new MDAction("Query_Benchmark", "Query_Benchmark", null, null){
+					@Override
+					public void actionPerformed(ActionEvent e){
+						try {
+							
+							BaseIndexOptions baseIndexOptions = new BaseIndexOptions().withFeatureFilterConfiguration(new IBaseIndexFeatureFilter() {
+
+								@Override
+								public boolean isFiltered(EStructuralFeature arg0) {
+
+									if (arg0 instanceof EReference && ((EReference)arg0).isContainment()) {
+										// XXX Omitting references can cause semantic errors (so far we are in the clear though)
+										// these references are only present in UML profiles, typically their contents are equal to the original references inherited from the UML type hierarchy, however there are some cases when this might not be the case.
+										return arg0.getName().contains("_from_");
+									}
+									return false;
+								}
+							}).withStrictNotificationMode(false);
+							AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(Application.getInstance().getProject().getModel(),
+									baseIndexOptions));
+							ViatraQueryLoggingUtil.getDefaultLogger().setLevel(Level.FATAL);
+							
+							long nanoTime = System.nanoTime();
+							
+							
+							EMFScope.extractUnderlyingEMFIndex(engine).coalesceTraversals( () -> {
+								TestQueries.instance().getCircularDependencyError().getMatcher(engine);
+								return null;
+								
+							});
+							
+							
+							System.out.println(((System.nanoTime() - nanoTime)/1000000) + "ms" );
+							
+							nanoTime = System.nanoTime();
+							
+							TestQueries.instance().getCircularDependencyError().getMatcher(engine).forEachMatch(match -> System.out.println(match.prettyPrint()));
+
+							System.out.println(((System.nanoTime() - nanoTime)/1000000) + "ms" );
+							
+							
+						} catch (ViatraQueryException | InvocationTargetException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+						
+						
+				    }
+				});
+				manager.addCategory(category);
+			}
+		});
+        
         MMSSyncPlugin.getInstance().init();
         (new Thread(new OutputSyncRunner())).start();
 

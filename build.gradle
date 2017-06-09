@@ -38,7 +38,7 @@ apply plugin: 'rebel'
 // In this section you declare where to find the dependencies of your project
 repositories {
     jcenter()
-    // mavenCentral()
+    mavenCentral()
     if (buildAccess == 'internal') {
         maven {
             url 'https://cae-artifactory.jpl.nasa.gov/artifactory/maven-libs-snapshot-virtual'
@@ -66,6 +66,9 @@ repositories {
                 artifact '/[module][revision]/[classifier].[ext]'
             }
         }
+    }
+    maven {
+        url 'https://repo.eclipse.org/content/repositories/viatra-releases/'
     }
 }
 
@@ -122,6 +125,18 @@ dependencies {
 
     // JSON Patch
     compile group: "com.box", name: "json-patch", version: "1.13"
+    
+    // VIATRA Query Runtime
+    compile group: "org.eclipse.viatra", name: "viatra-query-runtime", version: "1.6.0.RC3"
+    
+    // VIATRA Query Runtime
+    compile group: "org.eclipse.viatra", name: "viatra-transformation-runtime", version: "1.6.0.RC3"
+	
+	// GUAVA 18.0
+    compile group: "com.google.guava", name: "guava", version: "18.0"
+	
+	// Xtend Lib
+    compile group: "org.eclipse.xtend", name: "org.eclipse.xtend.lib", version: "2.11.0"
 
     // Apache Commons-IO
     compile group: 'org.apache.commons', name: 'commons-io', version: '1.3.2'
@@ -373,6 +388,8 @@ installDist {
 
 installDist.dependsOn distZip
 
+
+
 task runJava(type: JavaExec) {
     doFirst {
         classpath files(classpathLibraries.collect { 'build/install/' + it })
@@ -388,6 +405,26 @@ task runJava(type: JavaExec) {
     // arguments to pass to the application
     args 'DEVELOPER'
 }
+
+
+task debugJava(type: JavaExec) {
+    doFirst {
+        classpath files(classpathLibraries.collect { 'build/install/' + it })
+    }
+    workingDir 'build/install'
+    ignoreExitValue true
+
+    standardOutput = System.out
+    errorOutput = System.err
+
+    main = 'com.nomagic.osgi.launcher.ProductionFrameworkLauncher'
+    jvmArgs = ['-Xmx8192M', '-Xss512M', '-DLOCALCONFIG=true', '-DWINCONFIG=true', '-Djsse.enableSNIExtension=false', '-Djava.net.preferIPv4Stack=true', '-Dcom.sun.media.imageio.disableCodecLib=true', '-noverify', '-Dlocal.config.dir.ext=-dev', '-splash:data/splash.png', '-Dmd.class.path=$java.class.path', '-Dcom.nomagic.osgi.config.dir=configuration', '-Desi.system.config=data/application.conf', '-Dlogback.configurationFile=data/logback.xml', '-Dsun.locale.formatasdefault=true', '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9099']
+    // arguments to pass to the application
+    args 'DEVELOPER'
+}
+
+debugJava.dependsOn installDist
+debugJava.dependsOn generateRebel
 
 runJava.dependsOn installDist
 runJava.dependsOn generateRebel
@@ -425,6 +462,8 @@ task runScript(type: Exec) {
 }
 
 runScript.dependsOn installDist
+
+
 
 test {
     ignoreFailures = true

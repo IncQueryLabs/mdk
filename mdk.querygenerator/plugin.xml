@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="gov.nasa.jpl.mbee.mdk.queries.TestQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:gov.nasa.jpl.mbee.mdk.queries.TestQueries" id="gov.nasa.jpl.mbee.mdk.queries.TestQueries">
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.CircularDependencyError"/>
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.DependencyChain"/>
+    </group>
+  </extension>
+</plugin>
