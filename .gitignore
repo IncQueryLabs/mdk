@@ -3,7 +3,7 @@ javadoc
 out
 target
 bin
-.classpath
+/.classpath
 .gradle
 .idea
 /.project
