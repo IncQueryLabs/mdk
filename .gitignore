@@ -6,7 +6,7 @@ bin
 .classpath
 .gradle
 .idea
-.project
+/.project
 .settings
 *.iml
 *.mdxml.bak
