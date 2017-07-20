@@ -18,3 +18,27 @@ pattern DependencyChain(source : Dependency, target : Dependency) {
     Dependency.client(target, elem);
 }
 
+pattern dependencies(dependency : Dependency, source : NamedElement, target : NamedElement) {
+	Dependency.supplier(dependency, target);
+	Dependency.client(dependency, source);
+}
+
+pattern blocks(class : Class) {
+	Classifier.name(block, "Block");
+	InstanceSpecification.classifier(instance, block);
+	Class.appliedStereotypeInstance(class, instance);
+}
+
+pattern blockProperties(block : Class, stereotype : Stereotype, property : Property, literal : LiteralSpecification) {
+	find blocks(block);
+	Class.appliedStereotypeInstance.slot(block, slot);
+	Slot.definingFeature(slot, property); // Property of Stereotype
+	find stereotypes(stereotype, property);
+	// Slot value
+	Slot.value(slot, literal);
+}
+
+pattern stereotypes(stereotype : Stereotype, attribute : Property) {
+	Stereotype.ownedAttribute(stereotype, attribute);
+}
+

@@ -2,7 +2,6 @@ package gov.nasa.jpl.mbee.mdk;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -18,12 +17,14 @@ import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexFeatureFilter
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
+import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.InconsistentEventSemanticsException;
 
 import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsCategory;
 import com.nomagic.actions.ActionsManager;
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.actions.ActionsConfiguratorsManager;
+import com.nomagic.magicdraw.actions.BrowserContextAMConfigurator;
 import com.nomagic.magicdraw.actions.MDAction;
 import com.nomagic.magicdraw.actions.MDActionsCategory;
 import com.nomagic.magicdraw.core.Application;
@@ -33,13 +34,20 @@ import com.nomagic.magicdraw.plugins.Plugin;
 import com.nomagic.magicdraw.plugins.PluginDescriptor;
 import com.nomagic.magicdraw.plugins.PluginUtils;
 import com.nomagic.magicdraw.properties.Property;
+import com.nomagic.magicdraw.ui.browser.Node;
+import com.nomagic.magicdraw.ui.browser.Tree;
 import com.nomagic.magicdraw.uml.DiagramTypeConstants;
+import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
 import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputQueueStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputSyncRunner;
 import gov.nasa.jpl.mbee.mdk.mms.sync.status.SyncStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.ocl.OclQueryConfigurator;
 import gov.nasa.jpl.mbee.mdk.options.MDKOptionsGroup;
+import gov.nasa.jpl.mbee.mdk.queries.BlockPropertiesMatch;
+import gov.nasa.jpl.mbee.mdk.queries.BlockPropertiesMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.ClassOperationsMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.SlotsMatcher;
 import gov.nasa.jpl.mbee.mdk.queries.TestQueries;
 import gov.nasa.jpl.mbee.mdk.systems_reasoner.SRConfigurator;
 import gov.nasa.jpl.mbee.mdk.util.MDUtils;
@@ -92,10 +100,7 @@ public class MDKPlugin extends Plugin {
             System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
             System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
             System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.wire", "INFO");
-        }
-        
-       
-        
+        }       
         
         // This somehow allows things to be loaded to evaluate opaque expressions or something.
         EvaluationConfigurator.getInstance().registerBinaryImplementers(this.getClass().getClassLoader());
@@ -122,6 +127,49 @@ public class MDKPlugin extends Plugin {
         acm.addMainToolbarConfigurator(new OutputQueueStatusConfigurator());
         acm.addMainToolbarConfigurator(new SyncStatusConfigurator());
 
+        acm.addContainmentBrowserContextConfigurator(new BrowserContextAMConfigurator() {			
+			@Override
+			public int getPriority() {
+				return AMConfigurator.MEDIUM_PRIORITY;
+			}			
+			@Override
+			public void configure(ActionsManager manager, Tree tree) {
+				List<Stereotype> stereotypes = new ArrayList<Stereotype>();
+				for (final Node node : tree.getSelectedNodes()) {
+		            if (node.getUserObject() instanceof Stereotype) {
+		                stereotypes.add((Stereotype) node.getUserObject());
+		            }
+		        }
+				MDActionsCategory category = new MDActionsCategory("Transform", "Transform");
+				category.addAction(new NMAction("Transform", "Transform", null, null) {
+					private static final long serialVersionUID = 1L;
+					@Override
+					public void actionPerformed(ActionEvent event) {
+						for (Stereotype stereotype : stereotypes) {
+							try {
+								BaseIndexOptions baseIndexOptions = new BaseIndexOptions().withFeatureFilterConfiguration(new IBaseIndexFeatureFilter() {
+									@Override
+									public boolean isFiltered(EStructuralFeature arg0) {
+										if (arg0 instanceof EReference && ((EReference)arg0).isContainment()) {
+											return arg0.getName().contains("_from_");
+										}
+										return false;
+									}
+								}).withStrictNotificationMode(false);
+								AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(Application.getInstance().getProject().getModel(), baseIndexOptions));
+								ViatraQueryLoggingUtil.getDefaultLogger().setLevel(Level.FATAL);
+								for (BlockPropertiesMatch blockPropertiesMatch : BlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null, null)) {
+									System.out.println(blockPropertiesMatch.prettyPrint());
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}						
+					}
+				});
+				manager.addCategory(category);
+			}
+		});
         //TEST VIATRA
         acm.addMainToolbarConfigurator(new AMConfigurator() {
 			
@@ -137,7 +185,6 @@ public class MDKPlugin extends Plugin {
 					@Override
 					public void actionPerformed(ActionEvent e){
 						try {
-							
 							BaseIndexOptions baseIndexOptions = new BaseIndexOptions().withFeatureFilterConfiguration(new IBaseIndexFeatureFilter() {
 
 								@Override
@@ -155,26 +202,26 @@ public class MDKPlugin extends Plugin {
 									baseIndexOptions));
 							ViatraQueryLoggingUtil.getDefaultLogger().setLevel(Level.FATAL);
 							
-							long nanoTime = System.nanoTime();
 							
 							
-							EMFScope.extractUnderlyingEMFIndex(engine).coalesceTraversals( () -> {
-								TestQueries.instance().getCircularDependencyError().getMatcher(engine);
-								return null;
-								
-							});
+//							EMFScope.extractUnderlyingEMFIndex(engine).coalesceTraversals( () -> {
+//								TestQueries.instance().getCircularDependencyError().getMatcher(engine);
+//								return null;
+//								
+//							});
 							
 							
-							System.out.println(((System.nanoTime() - nanoTime)/1000000) + "ms" );
 							
-							nanoTime = System.nanoTime();
+//							System.out.println("Hello2");
 							
-							TestQueries.instance().getCircularDependencyError().getMatcher(engine).forEachMatch(match -> System.out.println(match.prettyPrint()));
-
-							System.out.println(((System.nanoTime() - nanoTime)/1000000) + "ms" );
+							TestQueries.instance().getCircularDependencyError().getMatcher(engine).forEachMatch(match -> System.out.println("ASD" + match.prettyPrint()));
+							System.out.println("Hello");
+							ClassOperationsMatcher.on(engine).forEachMatch(it -> System.out.println(it.prettyPrint()));
+							
+							new Transformer(engine);
 							
 							
-						} catch (ViatraQueryException | InvocationTargetException e1) {
+						} catch (ViatraQueryException | InconsistentEventSemanticsException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
