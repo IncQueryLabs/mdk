@@ -30,6 +30,7 @@ import com.nomagic.magicdraw.actions.MDActionsCategory;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.options.EnvironmentOptions;
 import com.nomagic.magicdraw.evaluation.EvaluationConfigurator;
+import com.nomagic.magicdraw.openapi.uml.SessionManager;
 import com.nomagic.magicdraw.plugins.Plugin;
 import com.nomagic.magicdraw.plugins.PluginDescriptor;
 import com.nomagic.magicdraw.plugins.PluginUtils;
@@ -37,8 +38,10 @@ import com.nomagic.magicdraw.properties.Property;
 import com.nomagic.magicdraw.ui.browser.Node;
 import com.nomagic.magicdraw.ui.browser.Tree;
 import com.nomagic.magicdraw.uml.DiagramTypeConstants;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralInteger;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
+import akka.util.Collections;
 import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputQueueStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputSyncRunner;
 import gov.nasa.jpl.mbee.mdk.mms.sync.status.SyncStatusConfigurator;
@@ -145,27 +148,31 @@ public class MDKPlugin extends Plugin {
 					private static final long serialVersionUID = 1L;
 					@Override
 					public void actionPerformed(ActionEvent event) {
-						for (Stereotype stereotype : stereotypes) {
-							try {
-								BaseIndexOptions baseIndexOptions = new BaseIndexOptions().withFeatureFilterConfiguration(new IBaseIndexFeatureFilter() {
-									@Override
-									public boolean isFiltered(EStructuralFeature arg0) {
-										if (arg0 instanceof EReference && ((EReference)arg0).isContainment()) {
-											return arg0.getName().contains("_from_");
-										}
-										return false;
-									}
-								}).withStrictNotificationMode(false);
-								AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(Application.getInstance().getProject().getModel(), baseIndexOptions));
-								ViatraQueryLoggingUtil.getDefaultLogger().setLevel(Level.FATAL);
-								for (BlockPropertiesMatch blockPropertiesMatch : BlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null, null)) {
-									System.out.println(blockPropertiesMatch.prettyPrint());
-								}
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}						
+						try {
+							new Transformer(Application.getInstance().getProject(), stereotypes, createEngine());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+//						for (Stereotype stereotype : stereotypes) {
+//							try {
+//								;
+//								ViatraQueryLoggingUtil.getDefaultLogger().setLevel(Level.FATAL);
+//								for (BlockPropertiesMatch blockPropertiesMatch : BlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null, null)) {
+//									System.out.println(blockPropertiesMatch.prettyPrint());
+//									if (blockPropertiesMatch.getLiteral() instanceof LiteralInteger) {
+//										System.out.println(((LiteralInteger) blockPropertiesMatch.getLiteral()).getValue());
+//										SessionManager.getInstance().createSession(Application.getInstance().getProject(), "NameSet");
+//										blockPropertiesMatch.getBlock().setName("SzilvaKorteCseresznye" + blockPropertiesMatch.prettyPrint());
+//										SessionManager.getInstance().closeSession(Application.getInstance().getProject());
+//									}
+//								}
+//								
+//							} catch (Exception e) {
+//								e.printStackTrace();
+//							}
+//						}						
 					}
+					
 				});
 				manager.addCategory(category);
 			}
@@ -218,7 +225,7 @@ public class MDKPlugin extends Plugin {
 							System.out.println("Hello");
 							ClassOperationsMatcher.on(engine).forEachMatch(it -> System.out.println(it.prettyPrint()));
 							
-							new Transformer(engine);
+							new Transformer(Application.getInstance().getProject(), java.util.Collections.emptyList(), engine);
 							
 							
 						} catch (ViatraQueryException | InconsistentEventSemanticsException e1) {
@@ -243,6 +250,19 @@ public class MDKPlugin extends Plugin {
         //   SpecificationDialogManager.getManager().addConfigurator(Element.class, new SpecificationNodeAspectsConfigurator());
 
     }
+    
+    private AdvancedViatraQueryEngine createEngine() throws ViatraQueryException {
+		BaseIndexOptions baseIndexOptions = new BaseIndexOptions().withFeatureFilterConfiguration(new IBaseIndexFeatureFilter() {
+			@Override
+			public boolean isFiltered(EStructuralFeature arg0) {
+				if (arg0 instanceof EReference && ((EReference)arg0).isContainment()) {
+					return arg0.getName().contains("_from_");
+				}
+				return false;
+			}
+		}).withStrictNotificationMode(false);
+		return AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(Application.getInstance().getProject().getModel(), baseIndexOptions));
+	}
 
     @Override
     public boolean isSupported() {
