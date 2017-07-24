@@ -56,7 +56,7 @@ public class DependencyChainMatcher extends BaseMatcher<DependencyChainMatch> {
     // check if matcher already exists
     DependencyChainMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
-    	matcher = (DependencyChainMatcher)engine.getMatcher(querySpecification());
+        matcher = (DependencyChainMatcher)engine.getMatcher(querySpecification());
     }
     return matcher;
   }
@@ -174,7 +174,7 @@ public class DependencyChainMatcher extends BaseMatcher<DependencyChainMatch> {
   
   /**
    * Retrieve the set of values that occur in matches for source.
-   * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+   * @return the Set of all values or empty set if there are no matches
    * 
    */
   protected Set<Dependency> rawAccumulateAllValuesOfsource(final Object[] parameters) {
@@ -185,7 +185,7 @@ public class DependencyChainMatcher extends BaseMatcher<DependencyChainMatch> {
   
   /**
    * Retrieve the set of values that occur in matches for source.
-   * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+   * @return the Set of all values or empty set if there are no matches
    * 
    */
   public Set<Dependency> getAllValuesOfsource() {
@@ -194,7 +194,7 @@ public class DependencyChainMatcher extends BaseMatcher<DependencyChainMatch> {
   
   /**
    * Retrieve the set of values that occur in matches for source.
-   * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+   * @return the Set of all values or empty set if there are no matches
    * 
    */
   public Set<Dependency> getAllValuesOfsource(final DependencyChainMatch partialMatch) {
@@ -203,7 +203,7 @@ public class DependencyChainMatcher extends BaseMatcher<DependencyChainMatch> {
   
   /**
    * Retrieve the set of values that occur in matches for source.
-   * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+   * @return the Set of all values or empty set if there are no matches
    * 
    */
   public Set<Dependency> getAllValuesOfsource(final Dependency pTarget) {
@@ -215,7 +215,7 @@ public class DependencyChainMatcher extends BaseMatcher<DependencyChainMatch> {
   
   /**
    * Retrieve the set of values that occur in matches for target.
-   * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+   * @return the Set of all values or empty set if there are no matches
    * 
    */
   protected Set<Dependency> rawAccumulateAllValuesOftarget(final Object[] parameters) {
@@ -226,7 +226,7 @@ public class DependencyChainMatcher extends BaseMatcher<DependencyChainMatch> {
   
   /**
    * Retrieve the set of values that occur in matches for target.
-   * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+   * @return the Set of all values or empty set if there are no matches
    * 
    */
   public Set<Dependency> getAllValuesOftarget() {
@@ -235,7 +235,7 @@ public class DependencyChainMatcher extends BaseMatcher<DependencyChainMatch> {
   
   /**
    * Retrieve the set of values that occur in matches for target.
-   * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+   * @return the Set of all values or empty set if there are no matches
    * 
    */
   public Set<Dependency> getAllValuesOftarget(final DependencyChainMatch partialMatch) {
@@ -244,7 +244,7 @@ public class DependencyChainMatcher extends BaseMatcher<DependencyChainMatch> {
   
   /**
    * Retrieve the set of values that occur in matches for target.
-   * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+   * @return the Set of all values or empty set if there are no matches
    * 
    */
   public Set<Dependency> getAllValuesOftarget(final Dependency pSource) {
@@ -257,30 +257,30 @@ public class DependencyChainMatcher extends BaseMatcher<DependencyChainMatch> {
   @Override
   protected DependencyChainMatch tupleToMatch(final Tuple t) {
     try {
-    	return DependencyChainMatch.newMatch((Dependency) t.get(POSITION_SOURCE), (Dependency) t.get(POSITION_TARGET));
+        return DependencyChainMatch.newMatch((Dependency) t.get(POSITION_SOURCE), (Dependency) t.get(POSITION_TARGET));
     } catch(ClassCastException e) {
-    	LOGGER.error("Element(s) in tuple not properly typed!",e);
-    	return null;
+        LOGGER.error("Element(s) in tuple not properly typed!",e);
+        return null;
     }
   }
   
   @Override
   protected DependencyChainMatch arrayToMatch(final Object[] match) {
     try {
-    	return DependencyChainMatch.newMatch((Dependency) match[POSITION_SOURCE], (Dependency) match[POSITION_TARGET]);
+        return DependencyChainMatch.newMatch((Dependency) match[POSITION_SOURCE], (Dependency) match[POSITION_TARGET]);
     } catch(ClassCastException e) {
-    	LOGGER.error("Element(s) in array not properly typed!",e);
-    	return null;
+        LOGGER.error("Element(s) in array not properly typed!",e);
+        return null;
     }
   }
   
   @Override
   protected DependencyChainMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return DependencyChainMatch.newMutableMatch((Dependency) match[POSITION_SOURCE], (Dependency) match[POSITION_TARGET]);
+        return DependencyChainMatch.newMutableMatch((Dependency) match[POSITION_SOURCE], (Dependency) match[POSITION_TARGET]);
     } catch(ClassCastException e) {
-    	LOGGER.error("Element(s) in array not properly typed!",e);
-    	return null;
+        LOGGER.error("Element(s) in array not properly typed!",e);
+        return null;
     }
   }
   

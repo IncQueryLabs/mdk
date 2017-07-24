@@ -56,7 +56,7 @@ public class CircularDependencyErrorMatcher extends BaseMatcher<CircularDependen
     // check if matcher already exists
     CircularDependencyErrorMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
-    	matcher = (CircularDependencyErrorMatcher)engine.getMatcher(querySpecification());
+        matcher = (CircularDependencyErrorMatcher)engine.getMatcher(querySpecification());
     }
     return matcher;
   }
@@ -165,7 +165,7 @@ public class CircularDependencyErrorMatcher extends BaseMatcher<CircularDependen
   
   /**
    * Retrieve the set of values that occur in matches for dep.
-   * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+   * @return the Set of all values or empty set if there are no matches
    * 
    */
   protected Set<Dependency> rawAccumulateAllValuesOfdep(final Object[] parameters) {
@@ -176,7 +176,7 @@ public class CircularDependencyErrorMatcher extends BaseMatcher<CircularDependen
   
   /**
    * Retrieve the set of values that occur in matches for dep.
-   * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+   * @return the Set of all values or empty set if there are no matches
    * 
    */
   public Set<Dependency> getAllValuesOfdep() {
@@ -186,30 +186,30 @@ public class CircularDependencyErrorMatcher extends BaseMatcher<CircularDependen
   @Override
   protected CircularDependencyErrorMatch tupleToMatch(final Tuple t) {
     try {
-    	return CircularDependencyErrorMatch.newMatch((Dependency) t.get(POSITION_DEP));
+        return CircularDependencyErrorMatch.newMatch((Dependency) t.get(POSITION_DEP));
     } catch(ClassCastException e) {
-    	LOGGER.error("Element(s) in tuple not properly typed!",e);
-    	return null;
+        LOGGER.error("Element(s) in tuple not properly typed!",e);
+        return null;
     }
   }
   
   @Override
   protected CircularDependencyErrorMatch arrayToMatch(final Object[] match) {
     try {
-    	return CircularDependencyErrorMatch.newMatch((Dependency) match[POSITION_DEP]);
+        return CircularDependencyErrorMatch.newMatch((Dependency) match[POSITION_DEP]);
     } catch(ClassCastException e) {
-    	LOGGER.error("Element(s) in array not properly typed!",e);
-    	return null;
+        LOGGER.error("Element(s) in array not properly typed!",e);
+        return null;
     }
   }
   
   @Override
   protected CircularDependencyErrorMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return CircularDependencyErrorMatch.newMutableMatch((Dependency) match[POSITION_DEP]);
+        return CircularDependencyErrorMatch.newMutableMatch((Dependency) match[POSITION_DEP]);
     } catch(ClassCastException e) {
-    	LOGGER.error("Element(s) in array not properly typed!",e);
-    	return null;
+        LOGGER.error("Element(s) in array not properly typed!",e);
+        return null;
     }
   }
   

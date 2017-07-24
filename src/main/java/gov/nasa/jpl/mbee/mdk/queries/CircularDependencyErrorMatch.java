@@ -48,8 +48,8 @@ public abstract class CircularDependencyErrorMatch extends BasePatternMatch {
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("dep".equals(parameterName) ) {
-    	this.fDep = (Dependency) newValue;
-    	return true;
+        this.fDep = (Dependency) newValue;
+        return true;
     }
     return false;
   }
@@ -98,18 +98,18 @@ public abstract class CircularDependencyErrorMatch extends BasePatternMatch {
   @Override
   public boolean equals(final Object obj) {
     if (this == obj)
-    	return true;
+        return true;
     if (!(obj instanceof CircularDependencyErrorMatch)) { // this should be infrequent
-    	if (obj == null) {
-    		return false;
-    	}
-    	if (!(obj instanceof IPatternMatch)) {
-    		return false;
-    	}
-    	IPatternMatch otherSig  = (IPatternMatch) obj;
-    	if (!specification().equals(otherSig.specification()))
-    		return false;
-    	return Arrays.deepEquals(toArray(), otherSig.toArray());
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof IPatternMatch)) {
+            return false;
+        }
+        IPatternMatch otherSig  = (IPatternMatch) obj;
+        if (!specification().equals(otherSig.specification()))
+            return false;
+        return Arrays.deepEquals(toArray(), otherSig.toArray());
     }
     CircularDependencyErrorMatch other = (CircularDependencyErrorMatch) obj;
     if (fDep == null) {if (other.fDep != null) return false;}
@@ -120,10 +120,10 @@ public abstract class CircularDependencyErrorMatch extends BasePatternMatch {
   @Override
   public CircularDependencyErrorQuerySpecification specification() {
     try {
-    	return CircularDependencyErrorQuerySpecification.instance();
+        return CircularDependencyErrorQuerySpecification.instance();
     } catch (ViatraQueryException ex) {
-     	// This cannot happen, as the match object can only be instantiated if the query specification exists
-     	throw new IllegalStateException (ex);
+         // This cannot happen, as the match object can only be instantiated if the query specification exists
+         throw new IllegalStateException (ex);
     }
   }
   

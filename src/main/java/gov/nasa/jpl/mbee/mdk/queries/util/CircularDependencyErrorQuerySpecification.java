@@ -48,9 +48,9 @@ public final class CircularDependencyErrorQuerySpecification extends BaseGenerat
    */
   public static CircularDependencyErrorQuerySpecification instance() throws ViatraQueryException {
     try{
-    	return LazyHolder.INSTANCE;
+        return LazyHolder.INSTANCE;
     } catch (ExceptionInInitializerError err) {
-    	throw processInitializerError(err);
+        throw processInitializerError(err);
     }
   }
   
@@ -76,8 +76,8 @@ public final class CircularDependencyErrorQuerySpecification extends BaseGenerat
   
   /**
    * Inner class allowing the singleton instance of {@link CircularDependencyErrorQuerySpecification} to be created 
-   * 	<b>not</b> at the class load time of the outer class, 
-   * 	but rather at the first call to {@link CircularDependencyErrorQuerySpecification#instance()}.
+   *     <b>not</b> at the class load time of the outer class, 
+   *     but rather at the first call to {@link CircularDependencyErrorQuerySpecification#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 
@@ -127,21 +127,21 @@ public final class CircularDependencyErrorQuerySpecification extends BaseGenerat
       setEvaluationHints(new QueryEvaluationHint(null, (IQueryBackendFactory)null));
       Set<PBody> bodies = Sets.newLinkedHashSet();
       try {
-      	{
-      		PBody body = new PBody(this);
-      		PVariable var_dep = body.getOrCreateVariableByName("dep");
-      		new TypeConstraint(body, new FlatTuple(var_dep), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Dependency")));
-      		body.setSymbolicParameters(Arrays.<ExportedParameter>asList(
-      		   new ExportedParameter(body, var_dep, parameter_pDep)
-      		));
-      		//     //Call transitive closure of sub-pattern 'DependencyChain'    find DependencyChain+(dep, dep)
-      		new BinaryTransitiveClosure(body, new FlatTuple(var_dep, var_dep), DependencyChainQuerySpecification.instance().getInternalQueryRepresentation());
-      		bodies.add(body);
-      	}
-      	// to silence compiler error
-      	if (false) throw new ViatraQueryException("Never", "happens");
+          {
+              PBody body = new PBody(this);
+              PVariable var_dep = body.getOrCreateVariableByName("dep");
+              new TypeConstraint(body, new FlatTuple(var_dep), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Dependency")));
+              body.setSymbolicParameters(Arrays.<ExportedParameter>asList(
+                 new ExportedParameter(body, var_dep, parameter_pDep)
+              ));
+              //     //Call transitive closure of sub-pattern 'DependencyChain'    find DependencyChain+(dep, dep)
+              new BinaryTransitiveClosure(body, new FlatTuple(var_dep, var_dep), DependencyChainQuerySpecification.instance().getInternalQueryRepresentation());
+              bodies.add(body);
+          }
+          // to silence compiler error
+          if (false) throw new ViatraQueryException("Never", "happens");
       } catch (ViatraQueryException ex) {
-      	throw processDependencyException(ex);
+          throw processDependencyException(ex);
       }
       return bodies;
     }

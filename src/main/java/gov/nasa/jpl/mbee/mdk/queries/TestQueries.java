@@ -3,10 +3,22 @@
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
+import gov.nasa.jpl.mbee.mdk.queries.BlockPropertiesMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.BlocksMatcher;
 import gov.nasa.jpl.mbee.mdk.queries.CircularDependencyErrorMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.DependenciesMatcher;
 import gov.nasa.jpl.mbee.mdk.queries.DependencyChainMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.GeneralizationsMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.StereotypesMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.TopmostBlockPropertiesMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.util.BlockPropertiesQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.BlocksQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.util.CircularDependencyErrorQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.DependenciesQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.util.DependencyChainQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.GeneralizationsQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.StereotypesQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.TopmostBlockPropertiesQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -21,6 +33,12 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
  * <p> From package gov.nasa.jpl.mbee.mdk.queries, the group contains the definition of the following patterns: <ul>
  * <li>CircularDependencyError</li>
  * <li>DependencyChain</li>
+ * <li>dependencies</li>
+ * <li>blocks</li>
+ * <li>generalizations</li>
+ * <li>blockProperties</li>
+ * <li>topmostBlockProperties</li>
+ * <li>stereotypes</li>
  * </ul>
  * 
  * @see IPatternGroup
@@ -37,7 +55,7 @@ public final class TestQueries extends BaseGeneratedPatternGroup {
    */
   public static TestQueries instance() throws ViatraQueryException {
     if (INSTANCE == null) {
-    	INSTANCE = new TestQueries();
+        INSTANCE = new TestQueries();
     }
     return INSTANCE;
   }
@@ -47,6 +65,12 @@ public final class TestQueries extends BaseGeneratedPatternGroup {
   private TestQueries() throws ViatraQueryException {
     querySpecifications.add(CircularDependencyErrorQuerySpecification.instance());
     querySpecifications.add(DependencyChainQuerySpecification.instance());
+    querySpecifications.add(DependenciesQuerySpecification.instance());
+    querySpecifications.add(BlocksQuerySpecification.instance());
+    querySpecifications.add(GeneralizationsQuerySpecification.instance());
+    querySpecifications.add(BlockPropertiesQuerySpecification.instance());
+    querySpecifications.add(TopmostBlockPropertiesQuerySpecification.instance());
+    querySpecifications.add(StereotypesQuerySpecification.instance());
   }
   
   public CircularDependencyErrorQuerySpecification getCircularDependencyError() throws ViatraQueryException {
@@ -63,5 +87,53 @@ public final class TestQueries extends BaseGeneratedPatternGroup {
   
   public DependencyChainMatcher getDependencyChain(final ViatraQueryEngine engine) throws ViatraQueryException {
     return DependencyChainMatcher.on(engine);
+  }
+  
+  public DependenciesQuerySpecification getDependencies() throws ViatraQueryException {
+    return DependenciesQuerySpecification.instance();
+  }
+  
+  public DependenciesMatcher getDependencies(final ViatraQueryEngine engine) throws ViatraQueryException {
+    return DependenciesMatcher.on(engine);
+  }
+  
+  public BlocksQuerySpecification getBlocks() throws ViatraQueryException {
+    return BlocksQuerySpecification.instance();
+  }
+  
+  public BlocksMatcher getBlocks(final ViatraQueryEngine engine) throws ViatraQueryException {
+    return BlocksMatcher.on(engine);
+  }
+  
+  public GeneralizationsQuerySpecification getGeneralizations() throws ViatraQueryException {
+    return GeneralizationsQuerySpecification.instance();
+  }
+  
+  public GeneralizationsMatcher getGeneralizations(final ViatraQueryEngine engine) throws ViatraQueryException {
+    return GeneralizationsMatcher.on(engine);
+  }
+  
+  public BlockPropertiesQuerySpecification getBlockProperties() throws ViatraQueryException {
+    return BlockPropertiesQuerySpecification.instance();
+  }
+  
+  public BlockPropertiesMatcher getBlockProperties(final ViatraQueryEngine engine) throws ViatraQueryException {
+    return BlockPropertiesMatcher.on(engine);
+  }
+  
+  public TopmostBlockPropertiesQuerySpecification getTopmostBlockProperties() throws ViatraQueryException {
+    return TopmostBlockPropertiesQuerySpecification.instance();
+  }
+  
+  public TopmostBlockPropertiesMatcher getTopmostBlockProperties(final ViatraQueryEngine engine) throws ViatraQueryException {
+    return TopmostBlockPropertiesMatcher.on(engine);
+  }
+  
+  public StereotypesQuerySpecification getStereotypes() throws ViatraQueryException {
+    return StereotypesQuerySpecification.instance();
+  }
+  
+  public StereotypesMatcher getStereotypes(final ViatraQueryEngine engine) throws ViatraQueryException {
+    return StereotypesMatcher.on(engine);
   }
 }
