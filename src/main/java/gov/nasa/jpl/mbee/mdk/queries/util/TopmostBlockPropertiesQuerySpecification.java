@@ -139,8 +139,10 @@ public final class TopmostBlockPropertiesQuerySpecification extends BaseGenerate
               PVariable var_stereotype = body.getOrCreateVariableByName("stereotype");
               PVariable var_property = body.getOrCreateVariableByName("property");
               PVariable var___0_ = body.getOrCreateVariableByName("_<0>");
-              PVariable var_general = body.getOrCreateVariableByName("general");
               PVariable var___1_ = body.getOrCreateVariableByName("_<1>");
+              PVariable var_general = body.getOrCreateVariableByName("general");
+              PVariable var___2_ = body.getOrCreateVariableByName("_<2>");
+              PVariable var___3_ = body.getOrCreateVariableByName("_<3>");
               new TypeConstraint(body, new FlatTuple(var_block), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Class")));
               new TypeConstraint(body, new FlatTuple(var_stereotype), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Stereotype")));
               new TypeConstraint(body, new FlatTuple(var_property), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Property")));
@@ -149,12 +151,12 @@ public final class TopmostBlockPropertiesQuerySpecification extends BaseGenerate
                  new ExportedParameter(body, var_stereotype, parameter_pStereotype),
                  new ExportedParameter(body, var_property, parameter_pProperty)
               ));
-              // 	find blockProperties(block, stereotype, property, _)
-              new PositivePatternCall(body, new FlatTuple(var_block, var_stereotype, var_property, var___0_), BlockPropertiesQuerySpecification.instance().getInternalQueryRepresentation());
+              // 	find blockProperties(block, stereotype, _, property, _)
+              new PositivePatternCall(body, new FlatTuple(var_block, var_stereotype, var___0_, var_property, var___1_), BlockPropertiesQuerySpecification.instance().getInternalQueryRepresentation());
               // 	find generalizations(general, block)
               new PositivePatternCall(body, new FlatTuple(var_general, var_block), GeneralizationsQuerySpecification.instance().getInternalQueryRepresentation());
-              // 	neg find blockProperties(general, stereotype, property, _)
-              new NegativePatternCall(body, new FlatTuple(var_general, var_stereotype, var_property, var___1_), BlockPropertiesQuerySpecification.instance().getInternalQueryRepresentation());
+              // 	neg find blockProperties(general, stereotype, _, property, _)
+              new NegativePatternCall(body, new FlatTuple(var_general, var_stereotype, var___2_, var_property, var___3_), BlockPropertiesQuerySpecification.instance().getInternalQueryRepresentation());
               bodies.add(body);
           }
           {
@@ -163,6 +165,7 @@ public final class TopmostBlockPropertiesQuerySpecification extends BaseGenerate
               PVariable var_stereotype = body.getOrCreateVariableByName("stereotype");
               PVariable var_property = body.getOrCreateVariableByName("property");
               PVariable var___0_ = body.getOrCreateVariableByName("_<0>");
+              PVariable var___1_ = body.getOrCreateVariableByName("_<1>");
               PVariable var__general = body.getOrCreateVariableByName("_general");
               new TypeConstraint(body, new FlatTuple(var_block), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Class")));
               new TypeConstraint(body, new FlatTuple(var_stereotype), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Stereotype")));
@@ -172,8 +175,8 @@ public final class TopmostBlockPropertiesQuerySpecification extends BaseGenerate
                  new ExportedParameter(body, var_stereotype, parameter_pStereotype),
                  new ExportedParameter(body, var_property, parameter_pProperty)
               ));
-              // 	find blockProperties(block, stereotype, property, _)
-              new PositivePatternCall(body, new FlatTuple(var_block, var_stereotype, var_property, var___0_), BlockPropertiesQuerySpecification.instance().getInternalQueryRepresentation());
+              // 	find blockProperties(block, stereotype, _, property, _)
+              new PositivePatternCall(body, new FlatTuple(var_block, var_stereotype, var___0_, var_property, var___1_), BlockPropertiesQuerySpecification.instance().getInternalQueryRepresentation());
               // 	neg find generalizations(_general, block)
               new NegativePatternCall(body, new FlatTuple(var__general, var_block), GeneralizationsQuerySpecification.instance().getInternalQueryRepresentation());
               bodies.add(body);

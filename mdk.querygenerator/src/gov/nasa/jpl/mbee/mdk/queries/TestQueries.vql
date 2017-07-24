@@ -37,7 +37,7 @@ pattern generalizations(general : Class, specific : Class) {
 /**
  * Returns blocks with tags (properties). These tags are attributes of a Stereotypes and have a type (literal) and value.
  */
-pattern blockProperties(block : Class, stereotype : Stereotype, property : Property, literal : LiteralSpecification) {
+pattern blockProperties(block : Class, stereotype : Stereotype, slot : Slot, property : Property, literal : LiteralSpecification) {
 	find blocks(block);
 	Class.appliedStereotypeInstance.slot(block, slot);
 	Slot.definingFeature(slot, property); // Property of  Stereotype
@@ -47,11 +47,11 @@ pattern blockProperties(block : Class, stereotype : Stereotype, property : Prope
 }
 
 pattern topmostBlockProperties(block : Class, stereotype : Stereotype, property : Property) {
-	find blockProperties(block, stereotype, property, _);
+	find blockProperties(block, stereotype, _, property, _);
 	find generalizations(general, block);
-	neg find blockProperties(general, stereotype, property, _);
+	neg find blockProperties(general, stereotype, _, property, _);
 } or {
-	find blockProperties(block, stereotype, property, _);
+	find blockProperties(block, stereotype, _, property, _);
 	neg find generalizations(_general, block);
 }
 

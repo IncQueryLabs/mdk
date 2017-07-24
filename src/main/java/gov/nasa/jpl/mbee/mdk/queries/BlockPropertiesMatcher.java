@@ -5,6 +5,7 @@ package gov.nasa.jpl.mbee.mdk.queries;
 
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Slot;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 import gov.nasa.jpl.mbee.mdk.queries.BlockPropertiesMatch;
 import gov.nasa.jpl.mbee.mdk.queries.util.BlockPropertiesQuerySpecification;
@@ -33,7 +34,7 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * <code><pre>
  * Returns blocks with tags (properties). These tags are attributes of a Stereotypes and have a type (literal) and value.
  *  
- * pattern blockProperties(block : Class, stereotype : Stereotype, property : Property, literal : LiteralSpecification) {
+ * pattern blockProperties(block : Class, stereotype : Stereotype, slot : Slot, property : Property, literal : LiteralSpecification) {
  * 	find blocks(block);
  * 	Class.appliedStereotypeInstance.slot(block, slot);
  * 	Slot.definingFeature(slot, property); // Property of  Stereotype
@@ -81,9 +82,11 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
   
   private final static int POSITION_STEREOTYPE = 1;
   
-  private final static int POSITION_PROPERTY = 2;
+  private final static int POSITION_SLOT = 2;
   
-  private final static int POSITION_LITERAL = 3;
+  private final static int POSITION_PROPERTY = 3;
+  
+  private final static int POSITION_LITERAL = 4;
   
   private final static Logger LOGGER = ViatraQueryLoggingUtil.getLogger(BlockPropertiesMatcher.class);
   
@@ -103,13 +106,14 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
    * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
    * @param pBlock the fixed value of pattern parameter block, or null if not bound.
    * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
    * @param pProperty the fixed value of pattern parameter property, or null if not bound.
    * @param pLiteral the fixed value of pattern parameter literal, or null if not bound.
    * @return matches represented as a BlockPropertiesMatch object.
    * 
    */
-  public Collection<BlockPropertiesMatch> getAllMatches(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Property pProperty, final LiteralSpecification pLiteral) {
-    return rawGetAllMatches(new Object[]{pBlock, pStereotype, pProperty, pLiteral});
+  public Collection<BlockPropertiesMatch> getAllMatches(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral) {
+    return rawGetAllMatches(new Object[]{pBlock, pStereotype, pSlot, pProperty, pLiteral});
   }
   
   /**
@@ -117,13 +121,14 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
    * Neither determinism nor randomness of selection is guaranteed.
    * @param pBlock the fixed value of pattern parameter block, or null if not bound.
    * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
    * @param pProperty the fixed value of pattern parameter property, or null if not bound.
    * @param pLiteral the fixed value of pattern parameter literal, or null if not bound.
    * @return a match represented as a BlockPropertiesMatch object, or null if no match is found.
    * 
    */
-  public BlockPropertiesMatch getOneArbitraryMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Property pProperty, final LiteralSpecification pLiteral) {
-    return rawGetOneArbitraryMatch(new Object[]{pBlock, pStereotype, pProperty, pLiteral});
+  public BlockPropertiesMatch getOneArbitraryMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral) {
+    return rawGetOneArbitraryMatch(new Object[]{pBlock, pStereotype, pSlot, pProperty, pLiteral});
   }
   
   /**
@@ -131,39 +136,42 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
    * under any possible substitution of the unspecified parameters (if any).
    * @param pBlock the fixed value of pattern parameter block, or null if not bound.
    * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
    * @param pProperty the fixed value of pattern parameter property, or null if not bound.
    * @param pLiteral the fixed value of pattern parameter literal, or null if not bound.
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Property pProperty, final LiteralSpecification pLiteral) {
-    return rawHasMatch(new Object[]{pBlock, pStereotype, pProperty, pLiteral});
+  public boolean hasMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral) {
+    return rawHasMatch(new Object[]{pBlock, pStereotype, pSlot, pProperty, pLiteral});
   }
   
   /**
    * Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.
    * @param pBlock the fixed value of pattern parameter block, or null if not bound.
    * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
    * @param pProperty the fixed value of pattern parameter property, or null if not bound.
    * @param pLiteral the fixed value of pattern parameter literal, or null if not bound.
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Property pProperty, final LiteralSpecification pLiteral) {
-    return rawCountMatches(new Object[]{pBlock, pStereotype, pProperty, pLiteral});
+  public int countMatches(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral) {
+    return rawCountMatches(new Object[]{pBlock, pStereotype, pSlot, pProperty, pLiteral});
   }
   
   /**
    * Executes the given processor on each match of the pattern that conforms to the given fixed values of some parameters.
    * @param pBlock the fixed value of pattern parameter block, or null if not bound.
    * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
    * @param pProperty the fixed value of pattern parameter property, or null if not bound.
    * @param pLiteral the fixed value of pattern parameter literal, or null if not bound.
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Property pProperty, final LiteralSpecification pLiteral, final IMatchProcessor<? super BlockPropertiesMatch> processor) {
-    rawForEachMatch(new Object[]{pBlock, pStereotype, pProperty, pLiteral}, processor);
+  public void forEachMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral, final IMatchProcessor<? super BlockPropertiesMatch> processor) {
+    rawForEachMatch(new Object[]{pBlock, pStereotype, pSlot, pProperty, pLiteral}, processor);
   }
   
   /**
@@ -171,14 +179,15 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
    * Neither determinism nor randomness of selection is guaranteed.
    * @param pBlock the fixed value of pattern parameter block, or null if not bound.
    * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
    * @param pProperty the fixed value of pattern parameter property, or null if not bound.
    * @param pLiteral the fixed value of pattern parameter literal, or null if not bound.
    * @param processor the action that will process the selected match.
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Property pProperty, final LiteralSpecification pLiteral, final IMatchProcessor<? super BlockPropertiesMatch> processor) {
-    return rawForOneArbitraryMatch(new Object[]{pBlock, pStereotype, pProperty, pLiteral}, processor);
+  public boolean forOneArbitraryMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral, final IMatchProcessor<? super BlockPropertiesMatch> processor) {
+    return rawForOneArbitraryMatch(new Object[]{pBlock, pStereotype, pSlot, pProperty, pLiteral}, processor);
   }
   
   /**
@@ -187,13 +196,14 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pBlock the fixed value of pattern parameter block, or null if not bound.
    * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
    * @param pProperty the fixed value of pattern parameter property, or null if not bound.
    * @param pLiteral the fixed value of pattern parameter literal, or null if not bound.
    * @return the (partial) match object.
    * 
    */
-  public BlockPropertiesMatch newMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Property pProperty, final LiteralSpecification pLiteral) {
-    return BlockPropertiesMatch.newMatch(pBlock, pStereotype, pProperty, pLiteral);
+  public BlockPropertiesMatch newMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral) {
+    return BlockPropertiesMatch.newMatch(pBlock, pStereotype, pSlot, pProperty, pLiteral);
   }
   
   /**
@@ -230,10 +240,11 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
    * @return the Set of all values or empty set if there are no matches
    * 
    */
-  public Set<com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class> getAllValuesOfblock(final Stereotype pStereotype, final Property pProperty, final LiteralSpecification pLiteral) {
+  public Set<com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class> getAllValuesOfblock(final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral) {
     return rawAccumulateAllValuesOfblock(new Object[]{
     null, 
     pStereotype, 
+    pSlot, 
     pProperty, 
     pLiteral
     });
@@ -273,9 +284,54 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
    * @return the Set of all values or empty set if there are no matches
    * 
    */
-  public Set<Stereotype> getAllValuesOfstereotype(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Property pProperty, final LiteralSpecification pLiteral) {
+  public Set<Stereotype> getAllValuesOfstereotype(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral) {
     return rawAccumulateAllValuesOfstereotype(new Object[]{
     pBlock, 
+    null, 
+    pSlot, 
+    pProperty, 
+    pLiteral
+    });
+  }
+  
+  /**
+   * Retrieve the set of values that occur in matches for slot.
+   * @return the Set of all values or empty set if there are no matches
+   * 
+   */
+  protected Set<Slot> rawAccumulateAllValuesOfslot(final Object[] parameters) {
+    Set<Slot> results = new HashSet<Slot>();
+    rawAccumulateAllValues(POSITION_SLOT, parameters, results);
+    return results;
+  }
+  
+  /**
+   * Retrieve the set of values that occur in matches for slot.
+   * @return the Set of all values or empty set if there are no matches
+   * 
+   */
+  public Set<Slot> getAllValuesOfslot() {
+    return rawAccumulateAllValuesOfslot(emptyArray());
+  }
+  
+  /**
+   * Retrieve the set of values that occur in matches for slot.
+   * @return the Set of all values or empty set if there are no matches
+   * 
+   */
+  public Set<Slot> getAllValuesOfslot(final BlockPropertiesMatch partialMatch) {
+    return rawAccumulateAllValuesOfslot(partialMatch.toArray());
+  }
+  
+  /**
+   * Retrieve the set of values that occur in matches for slot.
+   * @return the Set of all values or empty set if there are no matches
+   * 
+   */
+  public Set<Slot> getAllValuesOfslot(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Property pProperty, final LiteralSpecification pLiteral) {
+    return rawAccumulateAllValuesOfslot(new Object[]{
+    pBlock, 
+    pStereotype, 
     null, 
     pProperty, 
     pLiteral
@@ -316,10 +372,11 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
    * @return the Set of all values or empty set if there are no matches
    * 
    */
-  public Set<Property> getAllValuesOfproperty(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final LiteralSpecification pLiteral) {
+  public Set<Property> getAllValuesOfproperty(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final LiteralSpecification pLiteral) {
     return rawAccumulateAllValuesOfproperty(new Object[]{
     pBlock, 
     pStereotype, 
+    pSlot, 
     null, 
     pLiteral
     });
@@ -359,10 +416,11 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
    * @return the Set of all values or empty set if there are no matches
    * 
    */
-  public Set<LiteralSpecification> getAllValuesOfliteral(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Property pProperty) {
+  public Set<LiteralSpecification> getAllValuesOfliteral(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty) {
     return rawAccumulateAllValuesOfliteral(new Object[]{
     pBlock, 
     pStereotype, 
+    pSlot, 
     pProperty, 
     null
     });
@@ -371,7 +429,7 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
   @Override
   protected BlockPropertiesMatch tupleToMatch(final Tuple t) {
     try {
-        return BlockPropertiesMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) t.get(POSITION_BLOCK), (Stereotype) t.get(POSITION_STEREOTYPE), (Property) t.get(POSITION_PROPERTY), (LiteralSpecification) t.get(POSITION_LITERAL));
+        return BlockPropertiesMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) t.get(POSITION_BLOCK), (Stereotype) t.get(POSITION_STEREOTYPE), (Slot) t.get(POSITION_SLOT), (Property) t.get(POSITION_PROPERTY), (LiteralSpecification) t.get(POSITION_LITERAL));
     } catch(ClassCastException e) {
         LOGGER.error("Element(s) in tuple not properly typed!",e);
         return null;
@@ -381,7 +439,7 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
   @Override
   protected BlockPropertiesMatch arrayToMatch(final Object[] match) {
     try {
-        return BlockPropertiesMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) match[POSITION_BLOCK], (Stereotype) match[POSITION_STEREOTYPE], (Property) match[POSITION_PROPERTY], (LiteralSpecification) match[POSITION_LITERAL]);
+        return BlockPropertiesMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) match[POSITION_BLOCK], (Stereotype) match[POSITION_STEREOTYPE], (Slot) match[POSITION_SLOT], (Property) match[POSITION_PROPERTY], (LiteralSpecification) match[POSITION_LITERAL]);
     } catch(ClassCastException e) {
         LOGGER.error("Element(s) in array not properly typed!",e);
         return null;
@@ -391,7 +449,7 @@ public class BlockPropertiesMatcher extends BaseMatcher<BlockPropertiesMatch> {
   @Override
   protected BlockPropertiesMatch arrayToMatchMutable(final Object[] match) {
     try {
-        return BlockPropertiesMatch.newMutableMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) match[POSITION_BLOCK], (Stereotype) match[POSITION_STEREOTYPE], (Property) match[POSITION_PROPERTY], (LiteralSpecification) match[POSITION_LITERAL]);
+        return BlockPropertiesMatch.newMutableMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) match[POSITION_BLOCK], (Stereotype) match[POSITION_STEREOTYPE], (Slot) match[POSITION_SLOT], (Property) match[POSITION_PROPERTY], (LiteralSpecification) match[POSITION_LITERAL]);
     } catch(ClassCastException e) {
         LOGGER.error("Element(s) in array not properly typed!",e);
         return null;

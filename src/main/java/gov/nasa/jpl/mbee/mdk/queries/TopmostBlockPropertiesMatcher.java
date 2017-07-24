@@ -31,11 +31,11 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * <p>Original source:
  * <code><pre>
  * pattern topmostBlockProperties(block : Class, stereotype : Stereotype, property : Property) {
- * 	find blockProperties(block, stereotype, property, _);
+ * 	find blockProperties(block, stereotype, _, property, _);
  * 	find generalizations(general, block);
- * 	neg find blockProperties(general, stereotype, property, _);
+ * 	neg find blockProperties(general, stereotype, _, property, _);
  * } or {
- * 	find blockProperties(block, stereotype, property, _);
+ * 	find blockProperties(block, stereotype, _, property, _);
  * 	neg find generalizations(_general, block);
  * }
  * </pre></code>

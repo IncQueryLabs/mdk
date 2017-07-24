@@ -74,7 +74,7 @@ public final class BlockPropertiesQuerySpecification extends BaseGeneratedEMFQue
   
   @Override
   public BlockPropertiesMatch newMatch(final Object... parameters) {
-    return BlockPropertiesMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) parameters[0], (com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype) parameters[1], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property) parameters[2], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification) parameters[3]);
+    return BlockPropertiesMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) parameters[0], (com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype) parameters[1], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Slot) parameters[2], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property) parameters[3], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification) parameters[4]);
   }
   
   /**
@@ -110,11 +110,13 @@ public final class BlockPropertiesQuerySpecification extends BaseGeneratedEMFQue
     
     private final PParameter parameter_pStereotype = new PParameter("stereotype", "com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5", "Stereotype")), PParameterDirection.INOUT);
     
+    private final PParameter parameter_pSlot = new PParameter("slot", "com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Slot", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5", "Slot")), PParameterDirection.INOUT);
+    
     private final PParameter parameter_pProperty = new PParameter("property", "com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5", "Property")), PParameterDirection.INOUT);
     
     private final PParameter parameter_pLiteral = new PParameter("literal", "com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5", "LiteralSpecification")), PParameterDirection.INOUT);
     
-    private final List<PParameter> parameters = Arrays.asList(parameter_pBlock, parameter_pStereotype, parameter_pProperty, parameter_pLiteral);
+    private final List<PParameter> parameters = Arrays.asList(parameter_pBlock, parameter_pStereotype, parameter_pSlot, parameter_pProperty, parameter_pLiteral);
     
     @Override
     public String getFullyQualifiedName() {
@@ -123,7 +125,7 @@ public final class BlockPropertiesQuerySpecification extends BaseGeneratedEMFQue
     
     @Override
     public List<String> getParameterNames() {
-      return Arrays.asList("block","stereotype","property","literal");
+      return Arrays.asList("block","stereotype","slot","property","literal");
     }
     
     @Override
@@ -140,16 +142,18 @@ public final class BlockPropertiesQuerySpecification extends BaseGeneratedEMFQue
               PBody body = new PBody(this);
               PVariable var_block = body.getOrCreateVariableByName("block");
               PVariable var_stereotype = body.getOrCreateVariableByName("stereotype");
+              PVariable var_slot = body.getOrCreateVariableByName("slot");
               PVariable var_property = body.getOrCreateVariableByName("property");
               PVariable var_literal = body.getOrCreateVariableByName("literal");
-              PVariable var_slot = body.getOrCreateVariableByName("slot");
               new TypeConstraint(body, new FlatTuple(var_block), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Class")));
               new TypeConstraint(body, new FlatTuple(var_stereotype), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Stereotype")));
+              new TypeConstraint(body, new FlatTuple(var_slot), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Slot")));
               new TypeConstraint(body, new FlatTuple(var_property), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Property")));
               new TypeConstraint(body, new FlatTuple(var_literal), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "LiteralSpecification")));
               body.setSymbolicParameters(Arrays.<ExportedParameter>asList(
                  new ExportedParameter(body, var_block, parameter_pBlock),
                  new ExportedParameter(body, var_stereotype, parameter_pStereotype),
+                 new ExportedParameter(body, var_slot, parameter_pSlot),
                  new ExportedParameter(body, var_property, parameter_pProperty),
                  new ExportedParameter(body, var_literal, parameter_pLiteral)
               ));

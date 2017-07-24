@@ -15,6 +15,7 @@ import com.nomagic.magicdraw.copypaste.CopyPasting;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.openapi.uml.SessionManager;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.InstanceSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Type;
@@ -67,6 +68,7 @@ public class Transformer {
 //		statements.fireAllCurrent(stereotypesRule);
 		createAttributesFromTags();
 		redefineAttributes();
+		removeTags();
 	}
 
 //	private BatchTransformationRule<StereotypesMatch, StereotypesMatcher> createStereotypesRule() throws InconsistentEventSemanticsException, ViatraQueryException {
@@ -82,15 +84,15 @@ public class Transformer {
 	
 	private void createAttributesFromTags() throws ViatraQueryException {
 		for (Stereotype stereotype : stereotypes) {
-			for (BlockPropertiesMatch blockPropertiesMatch : BlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null, null)) {
+			for (BlockPropertiesMatch blockPropertiesMatch : BlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null, null, null)) {
 				SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Create attribute");
 				// The stereotype property to be transformed to attribute
 				Property stereotypeAttribute = blockPropertiesMatch.getProperty();
-				// Copying the property and putting it into the attribute list of the block
+				// Copying the property and putting it into the attribute list of the block (the attribute list is selected implicitly by CopyPasting)
 				Property newAttribute = (Property) CopyPasting.copyPasteElement(stereotypeAttribute, blockPropertiesMatch.getBlock());
 				// Setting the deafult value
 				LiteralSpecification defaultValue = (LiteralSpecification) CopyPasting.copyPasteElement(blockPropertiesMatch.getLiteral(), newAttribute);
-				newAttribute.setDefaultValue(defaultValue); // Without this, the value would set multiplicity				
+				newAttribute.setDefaultValue(defaultValue); // Without this line, the value would set the multiplicity of the attribute
 				SessionManager.getInstance().closeSession(Application.getInstance().getProject());
 			}
 		}
@@ -117,11 +119,26 @@ public class Transformer {
 		Property redefinableProperty = equalProperties.get(0);
 		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Redefine attribute");
 		// Setting the property of the generalized class redefined
-		redefinableProperty.getRedefinedElement().add(property);
+		if (!(property.getOwner() instanceof Stereotype)) {
+			// For the first call, the property is the element of a Stereotype, so redefinition must not be done
+			redefinableProperty.getRedefinedElement().add(property);
+		}
 		SessionManager.getInstance().closeSession(Application.getInstance().getProject());
 		// Recursively redefining attributes in descendant classes
 		for (GeneralizationsMatch generalizationsMatch : GeneralizationsMatcher.on(engine).getAllMatches(clazz, null)) {
 			redefineAttribute(generalizationsMatch.getSpecific(), redefinableProperty);
+		}
+	}
+	
+	private void removeTags() throws ViatraQueryException {
+		for (Stereotype stereotype : stereotypes) {
+			for (BlockPropertiesMatch blockPropertiesMatch : BlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null, null, null)) {
+				SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Remove tag");
+				// Removing the tag value from the block
+				InstanceSpecification instanceSpecification = blockPropertiesMatch.getSlot().getOwningInstance();
+				instanceSpecification.getSlot().remove(blockPropertiesMatch.getSlot());
+				SessionManager.getInstance().closeSession(Application.getInstance().getProject());
+			}
 		}
 	}
 	
