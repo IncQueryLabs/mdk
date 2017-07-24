@@ -149,7 +149,8 @@ public class MDKPlugin extends Plugin {
 					@Override
 					public void actionPerformed(ActionEvent event) {
 						try {
-							new Transformer(Application.getInstance().getProject(), stereotypes, createEngine());
+							Transformer transformer = new Transformer(Application.getInstance().getProject(), stereotypes, createEngine());
+							transformer.execute();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

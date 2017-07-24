@@ -1,6 +1,7 @@
 package gov.nasa.jpl.mbee.mdk;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -11,17 +12,24 @@ import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchT
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformationStatements;
 import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.InconsistentEventSemanticsException;
 
+import com.nomagic.magicdraw.copypaste.CopyPasting;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.openapi.uml.SessionManager;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Type;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 import com.nomagic.uml2.impl.ElementsFactory;
 
 import gov.nasa.jpl.mbee.mdk.queries.BlockPropertiesMatch;
 import gov.nasa.jpl.mbee.mdk.queries.BlockPropertiesMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.GeneralizationsMatch;
+import gov.nasa.jpl.mbee.mdk.queries.GeneralizationsMatcher;
 import gov.nasa.jpl.mbee.mdk.queries.StereotypesMatch;
 import gov.nasa.jpl.mbee.mdk.queries.StereotypesMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.TopmostBlockPropertiesMatch;
+import gov.nasa.jpl.mbee.mdk.queries.TopmostBlockPropertiesMatcher;
 
 public class Transformer {	
 	
@@ -44,7 +52,6 @@ public class Transformer {
 		this.stereotypes = stereotypes;
 		createTransformations();
 		createRules();
-		execute();
 	}
 	
 	private void createTransformations() throws ViatraQueryException {
@@ -60,9 +67,10 @@ public class Transformer {
 //		stereotypesRule = createStereotypesRule();
 	}
 	
-	private void execute() throws ViatraQueryException {
+	public void execute() throws ViatraQueryException {
 //		statements.fireAllCurrent(stereotypesRule);
 		createAttributesFromTags();
+		redefineAttributes();
 	}
 
 //	private BatchTransformationRule<StereotypesMatch, StereotypesMatcher> createStereotypesRule() throws InconsistentEventSemanticsException, ViatraQueryException {
@@ -80,11 +88,44 @@ public class Transformer {
 		for (Stereotype stereotype : stereotypes) {
 			for (BlockPropertiesMatch blockPropertiesMatch : BlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null, null)) {
 				SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Create attribute");
-				Property attribute = elementsFactory.createPropertyInstance();
-				attribute.setName(blockPropertiesMatch.getProperty().getName());
-				blockPropertiesMatch.getBlock().getOwnedAttribute().add(attribute);
+				Property stereotypeAttribute = blockPropertiesMatch.getProperty();
+				// Copying the property and putting it into the attribute list of the block
+				CopyPasting.copyPasteElement(stereotypeAttribute, blockPropertiesMatch.getBlock());
+//				stereotypeAttribute.getRedefinedProperty().
+//				blockPropertiesMatch.getBlock().getOwnedAttribute().add(attribute);
 				SessionManager.getInstance().closeSession(Application.getInstance().getProject());
 			}
+		}
+	}
+	
+	
+	private void redefineAttributes() throws ViatraQueryException {
+		for (Stereotype stereotype : stereotypes) {
+			for (TopmostBlockPropertiesMatch topmostBlockPropertiesMatch : TopmostBlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null)) {
+				redefineAttribute(topmostBlockPropertiesMatch.getBlock(), topmostBlockPropertiesMatch.getProperty());
+			}
+		}
+	}
+	
+	private void redefineAttribute(com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class clazz, Property property) throws ViatraQueryException {
+		if (clazz == null) {
+			// The last class does not have any generalizations
+			return;
+		}
+		String propertyName = property.getName();
+		Type type = property.getType();
+		// Filtering the attributes to redefine
+		List<Property> equalProperties = clazz.getOwnedAttribute().stream().filter(it -> it.getName().equals(propertyName)
+									&& it.getType() == type).collect(Collectors.toList());
+		if (equalProperties.size() != 1) {
+			throw new IllegalArgumentException("Warning: attribute redefinition chain aborted or multiple attributes need to be redefined: " + equalProperties.size());
+		}
+		Property redefinableProperty = equalProperties.get(0);
+		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Redefine attribute");
+		redefinableProperty.getRedefinedElement().add(property);
+		SessionManager.getInstance().closeSession(Application.getInstance().getProject());
+		for (GeneralizationsMatch generalizationsMatch : GeneralizationsMatcher.on(engine).getAllMatches(clazz, null)) {
+			redefineAttribute(generalizationsMatch.getSpecific(), redefinableProperty);
 		}
 	}
 	
