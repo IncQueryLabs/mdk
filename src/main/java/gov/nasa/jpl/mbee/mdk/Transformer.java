@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.SimpleModelManipulations;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRuleFactory;
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation;
@@ -16,7 +15,7 @@ import com.nomagic.magicdraw.copypaste.CopyPasting;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.openapi.uml.SessionManager;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Type;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
@@ -34,7 +33,6 @@ import gov.nasa.jpl.mbee.mdk.queries.TopmostBlockPropertiesMatcher;
 public class Transformer {	
 	
 	private AdvancedViatraQueryEngine engine;
-	private SimpleModelManipulations manipulation;
 	private BatchTransformation transformation;
 	private BatchTransformationStatements statements;
 	private BatchTransformationRuleFactory ruleFactory = new BatchTransformationRuleFactory();
@@ -55,8 +53,6 @@ public class Transformer {
 	}
 	
 	private void createTransformations() throws ViatraQueryException {
-		//Create VIATRA model manipulations
-		this.manipulation = new SimpleModelManipulations(engine);
 		//Create VIATRA Batch transformation
 		transformation = BatchTransformation.forEngine(engine).build();
 		//Initialize batch transformation statements
@@ -88,11 +84,13 @@ public class Transformer {
 		for (Stereotype stereotype : stereotypes) {
 			for (BlockPropertiesMatch blockPropertiesMatch : BlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null, null)) {
 				SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Create attribute");
+				// The stereotype property to be transformed to attribute
 				Property stereotypeAttribute = blockPropertiesMatch.getProperty();
 				// Copying the property and putting it into the attribute list of the block
-				CopyPasting.copyPasteElement(stereotypeAttribute, blockPropertiesMatch.getBlock());
-//				stereotypeAttribute.getRedefinedProperty().
-//				blockPropertiesMatch.getBlock().getOwnedAttribute().add(attribute);
+				Property newAttribute = (Property) CopyPasting.copyPasteElement(stereotypeAttribute, blockPropertiesMatch.getBlock());
+				// Setting the deafult value
+				LiteralSpecification defaultValue = (LiteralSpecification) CopyPasting.copyPasteElement(blockPropertiesMatch.getLiteral(), newAttribute);
+				newAttribute.setDefaultValue(defaultValue); // Without this, the value would set multiplicity				
 				SessionManager.getInstance().closeSession(Application.getInstance().getProject());
 			}
 		}
@@ -108,22 +106,20 @@ public class Transformer {
 	}
 	
 	private void redefineAttribute(com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class clazz, Property property) throws ViatraQueryException {
-		if (clazz == null) {
-			// The last class does not have any generalizations
-			return;
-		}
 		String propertyName = property.getName();
 		Type type = property.getType();
 		// Filtering the attributes to redefine
 		List<Property> equalProperties = clazz.getOwnedAttribute().stream().filter(it -> it.getName().equals(propertyName)
 									&& it.getType() == type).collect(Collectors.toList());
 		if (equalProperties.size() != 1) {
-			throw new IllegalArgumentException("Warning: attribute redefinition chain aborted or multiple attributes need to be redefined: " + equalProperties.size());
+			System.out.println("Warning: attribute redefinition chain aborted or multiple attributes need to be redefined: " + equalProperties.size());
 		}
 		Property redefinableProperty = equalProperties.get(0);
 		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Redefine attribute");
+		// Setting the property of the generalized class redefined
 		redefinableProperty.getRedefinedElement().add(property);
 		SessionManager.getInstance().closeSession(Application.getInstance().getProject());
+		// Recursively redefining attributes in descendant classes
 		for (GeneralizationsMatch generalizationsMatch : GeneralizationsMatcher.on(engine).getAllMatches(clazz, null)) {
 			redefineAttribute(generalizationsMatch.getSpecific(), redefinableProperty);
 		}
