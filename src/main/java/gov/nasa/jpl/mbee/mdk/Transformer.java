@@ -15,6 +15,7 @@ import com.nomagic.magicdraw.copypaste.CopyPasting;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.openapi.uml.SessionManager;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.InstanceSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
@@ -69,6 +70,7 @@ public class Transformer {
 		createAttributesFromTags();
 		redefineAttributes();
 		removeTags();
+		deleteStereotype();
 	}
 
 //	private BatchTransformationRule<StereotypesMatch, StereotypesMatcher> createStereotypesRule() throws InconsistentEventSemanticsException, ViatraQueryException {
@@ -114,7 +116,7 @@ public class Transformer {
 		List<Property> equalProperties = clazz.getOwnedAttribute().stream().filter(it -> it.getName().equals(propertyName)
 									&& it.getType() == type).collect(Collectors.toList());
 		if (equalProperties.size() != 1) {
-			System.out.println("Warning: attribute redefinition chain aborted or multiple attributes need to be redefined: " + equalProperties.size());
+			System.err.println("Warning: attribute redefinition chain aborted or multiple attributes need to be redefined: " + equalProperties.size());
 		}
 		Property redefinableProperty = equalProperties.get(0);
 		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Redefine attribute");
@@ -137,8 +139,23 @@ public class Transformer {
 				// Removing the tag value from the block
 				InstanceSpecification instanceSpecification = blockPropertiesMatch.getSlot().getOwningInstance();
 				instanceSpecification.getSlot().remove(blockPropertiesMatch.getSlot());
+				// Removing the stereotype from the block
+				instanceSpecification.getClassifier().remove(blockPropertiesMatch.getStereotype());				
 				SessionManager.getInstance().closeSession(Application.getInstance().getProject());
 			}
+		}
+	}
+	
+	private void deleteStereotype() throws ViatraQueryException {
+		for (Stereotype stereotype : stereotypes) {
+			SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Delete stereotype");
+			if (stereotype.canBeDeleted()) {
+				stereotype.refDelete();
+			}
+			else {
+				System.err.println("This stereotype cannot be deleted: " + stereotype.getName());
+			}
+			SessionManager.getInstance().closeSession(Application.getInstance().getProject());
 		}
 	}
 	
