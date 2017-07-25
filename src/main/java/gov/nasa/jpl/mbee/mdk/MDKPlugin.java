@@ -17,7 +17,6 @@ import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexFeatureFilter
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.InconsistentEventSemanticsException;
 
 import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsCategory;
@@ -30,7 +29,6 @@ import com.nomagic.magicdraw.actions.MDActionsCategory;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.options.EnvironmentOptions;
 import com.nomagic.magicdraw.evaluation.EvaluationConfigurator;
-import com.nomagic.magicdraw.openapi.uml.SessionManager;
 import com.nomagic.magicdraw.plugins.Plugin;
 import com.nomagic.magicdraw.plugins.PluginDescriptor;
 import com.nomagic.magicdraw.plugins.PluginUtils;
@@ -38,19 +36,14 @@ import com.nomagic.magicdraw.properties.Property;
 import com.nomagic.magicdraw.ui.browser.Node;
 import com.nomagic.magicdraw.ui.browser.Tree;
 import com.nomagic.magicdraw.uml.DiagramTypeConstants;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralInteger;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
-import akka.util.Collections;
 import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputQueueStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputSyncRunner;
 import gov.nasa.jpl.mbee.mdk.mms.sync.status.SyncStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.ocl.OclQueryConfigurator;
 import gov.nasa.jpl.mbee.mdk.options.MDKOptionsGroup;
-import gov.nasa.jpl.mbee.mdk.queries.BlockPropertiesMatch;
-import gov.nasa.jpl.mbee.mdk.queries.BlockPropertiesMatcher;
 import gov.nasa.jpl.mbee.mdk.queries.ClassOperationsMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.SlotsMatcher;
 import gov.nasa.jpl.mbee.mdk.queries.TestQueries;
 import gov.nasa.jpl.mbee.mdk.systems_reasoner.SRConfigurator;
 import gov.nasa.jpl.mbee.mdk.util.MDUtils;
@@ -129,7 +122,8 @@ public class MDKPlugin extends Plugin {
 
         acm.addMainToolbarConfigurator(new OutputQueueStatusConfigurator());
         acm.addMainToolbarConfigurator(new SyncStatusConfigurator());
-
+        
+        // Creating a context menu
         acm.addContainmentBrowserContextConfigurator(new BrowserContextAMConfigurator() {			
 			@Override
 			public int getPriority() {
@@ -138,6 +132,7 @@ public class MDKPlugin extends Plugin {
 			@Override
 			public void configure(ActionsManager manager, Tree tree) {
 				List<Stereotype> stereotypes = new ArrayList<Stereotype>();
+				// Collecting the stereotypes selected by the user 
 				for (final Node node : tree.getSelectedNodes()) {
 		            if (node.getUserObject() instanceof Stereotype) {
 		                stereotypes.add((Stereotype) node.getUserObject());
@@ -145,47 +140,27 @@ public class MDKPlugin extends Plugin {
 		        }
 				MDActionsCategory category = new MDActionsCategory("Transform", "Transform");
 				category.addAction(new NMAction("Transform", "Transform", null, null) {
-					private static final long serialVersionUID = 1L;
+					private static final long serialVersionUID = 1L; // Serial id to avoid waring
 					@Override
 					public void actionPerformed(ActionEvent event) {
+						// Creating a transformer and executing it
 						try {
 							Transformer transformer = new Transformer(Application.getInstance().getProject(), stereotypes, createEngine());
 							transformer.execute();
 						} catch (Exception e) {
 							e.printStackTrace();
-						}
-//						for (Stereotype stereotype : stereotypes) {
-//							try {
-//								;
-//								ViatraQueryLoggingUtil.getDefaultLogger().setLevel(Level.FATAL);
-//								for (BlockPropertiesMatch blockPropertiesMatch : BlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null, null)) {
-//									System.out.println(blockPropertiesMatch.prettyPrint());
-//									if (blockPropertiesMatch.getLiteral() instanceof LiteralInteger) {
-//										System.out.println(((LiteralInteger) blockPropertiesMatch.getLiteral()).getValue());
-//										SessionManager.getInstance().createSession(Application.getInstance().getProject(), "NameSet");
-//										blockPropertiesMatch.getBlock().setName("SzilvaKorteCseresznye" + blockPropertiesMatch.prettyPrint());
-//										SessionManager.getInstance().closeSession(Application.getInstance().getProject());
-//									}
-//								}
-//								
-//							} catch (Exception e) {
-//								e.printStackTrace();
-//							}
-//						}						
-					}
-					
+						}					
+					}					
 				});
 				manager.addCategory(category);
 			}
 		});
-        //TEST VIATRA
-        acm.addMainToolbarConfigurator(new AMConfigurator() {
-			
+        // VIATRA test
+        acm.addMainToolbarConfigurator(new AMConfigurator() {			
 			@Override
 			public int getPriority() {
 				return AMConfigurator.MEDIUM_PRIORITY;
-			}
-			
+			}			
 			@Override
 			public void configure(ActionsManager manager) {
 				MDActionsCategory category = new MDActionsCategory("TEST", "TEST");
@@ -194,13 +169,12 @@ public class MDKPlugin extends Plugin {
 					public void actionPerformed(ActionEvent e){
 						try {
 							BaseIndexOptions baseIndexOptions = new BaseIndexOptions().withFeatureFilterConfiguration(new IBaseIndexFeatureFilter() {
-
 								@Override
 								public boolean isFiltered(EStructuralFeature arg0) {
-
 									if (arg0 instanceof EReference && ((EReference)arg0).isContainment()) {
 										// XXX Omitting references can cause semantic errors (so far we are in the clear though)
-										// these references are only present in UML profiles, typically their contents are equal to the original references inherited from the UML type hierarchy, however there are some cases when this might not be the case.
+										// these references are only present in UML profiles, typically their contents are equal
+										// to the original references inherited from the UML type hierarchy, however there are some cases when this might not be the case.
 										return arg0.getName().contains("_from_");
 									}
 									return false;
@@ -208,9 +182,7 @@ public class MDKPlugin extends Plugin {
 							}).withStrictNotificationMode(false);
 							AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(Application.getInstance().getProject().getModel(),
 									baseIndexOptions));
-							ViatraQueryLoggingUtil.getDefaultLogger().setLevel(Level.FATAL);
-							
-							
+							ViatraQueryLoggingUtil.getDefaultLogger().setLevel(Level.FATAL);						
 							
 //							EMFScope.extractUnderlyingEMFIndex(engine).coalesceTraversals( () -> {
 //								TestQueries.instance().getCircularDependencyError().getMatcher(engine);
@@ -218,24 +190,12 @@ public class MDKPlugin extends Plugin {
 //								
 //							});
 							
-							
-							
-//							System.out.println("Hello2");
-							
 							TestQueries.instance().getCircularDependencyError().getMatcher(engine).forEachMatch(match -> System.out.println("ASD" + match.prettyPrint()));
 							System.out.println("Hello");
-							ClassOperationsMatcher.on(engine).forEachMatch(it -> System.out.println(it.prettyPrint()));
-							
-							new Transformer(Application.getInstance().getProject(), java.util.Collections.emptyList(), engine);
-							
-							
-						} catch (ViatraQueryException | InconsistentEventSemanticsException e1) {
-							// TODO Auto-generated catch block
+							ClassOperationsMatcher.on(engine).forEachMatch(it -> System.out.println(it.prettyPrint()));							
+						} catch (ViatraQueryException e1) {
 							e1.printStackTrace();
-						}
-						
-						
-						
+						}						
 				    }
 				});
 				manager.addCategory(category);
@@ -249,7 +209,6 @@ public class MDKPlugin extends Plugin {
         configureEnvironmentOptions();
 
         //   SpecificationDialogManager.getManager().addConfigurator(Element.class, new SpecificationNodeAspectsConfigurator());
-
     }
     
     private AdvancedViatraQueryEngine createEngine() throws ViatraQueryException {
