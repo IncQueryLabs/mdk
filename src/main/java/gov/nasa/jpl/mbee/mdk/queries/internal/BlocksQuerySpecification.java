@@ -1,19 +1,16 @@
 /**
  * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TestQueries.vql
  */
-package gov.nasa.jpl.mbee.mdk.queries.util;
+package gov.nasa.jpl.mbee.mdk.queries.internal;
 
 import com.google.common.collect.Sets;
-import gov.nasa.jpl.mbee.mdk.queries.ClassOperationsMatch;
-import gov.nasa.jpl.mbee.mdk.queries.ClassOperationsMatcher;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery;
-import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
+import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
@@ -32,15 +29,15 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 
 /**
- * A pattern-specific query specification that can instantiate ClassOperationsMatcher in a type-safe way.
+ * A pattern-specific query specification that can instantiate BlocksMatcher in a type-safe way.
  * 
- * @see ClassOperationsMatcher
- * @see ClassOperationsMatch
+ * @see BlocksMatcher
+ * @see BlocksMatch
  * 
  */
 @SuppressWarnings("all")
-public final class ClassOperationsQuerySpecification extends BaseGeneratedEMFQuerySpecification<ClassOperationsMatcher> {
-  private ClassOperationsQuerySpecification() {
+public final class BlocksQuerySpecification extends BaseGeneratedPrivateEMFQuerySpecification {
+  private BlocksQuerySpecification() {
     super(GeneratedPQuery.INSTANCE);
   }
   
@@ -49,7 +46,7 @@ public final class ClassOperationsQuerySpecification extends BaseGeneratedEMFQue
    * @throws ViatraQueryException if the pattern definition could not be loaded
    * 
    */
-  public static ClassOperationsQuerySpecification instance() throws ViatraQueryException {
+  public static BlocksQuerySpecification instance() throws ViatraQueryException {
     try{
         return LazyHolder.INSTANCE;
     } catch (ExceptionInInitializerError err) {
@@ -57,36 +54,16 @@ public final class ClassOperationsQuerySpecification extends BaseGeneratedEMFQue
     }
   }
   
-  @Override
-  protected ClassOperationsMatcher instantiate(final ViatraQueryEngine engine) throws ViatraQueryException {
-    return ClassOperationsMatcher.on(engine);
-  }
-  
-  @Override
-  public ClassOperationsMatcher instantiate() throws ViatraQueryException {
-    return ClassOperationsMatcher.create();
-  }
-  
-  @Override
-  public ClassOperationsMatch newEmptyMatch() {
-    return ClassOperationsMatch.newEmptyMatch();
-  }
-  
-  @Override
-  public ClassOperationsMatch newMatch(final Object... parameters) {
-    return ClassOperationsMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) parameters[0], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Operation) parameters[1]);
-  }
-  
   /**
-   * Inner class allowing the singleton instance of {@link ClassOperationsQuerySpecification} to be created 
+   * Inner class allowing the singleton instance of {@link BlocksQuerySpecification} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link ClassOperationsQuerySpecification#instance()}.
+   *     but rather at the first call to {@link BlocksQuerySpecification#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 
    */
   private static class LazyHolder {
-    private final static ClassOperationsQuerySpecification INSTANCE = new ClassOperationsQuerySpecification();
+    private final static BlocksQuerySpecification INSTANCE = new BlocksQuerySpecification();
     
     /**
      * Statically initializes the query specification <b>after</b> the field {@link #INSTANCE} is assigned.
@@ -104,22 +81,20 @@ public final class ClassOperationsQuerySpecification extends BaseGeneratedEMFQue
   }
   
   private static class GeneratedPQuery extends BaseGeneratedEMFPQuery {
-    private final static ClassOperationsQuerySpecification.GeneratedPQuery INSTANCE = new GeneratedPQuery();
+    private final static BlocksQuerySpecification.GeneratedPQuery INSTANCE = new GeneratedPQuery();
     
     private final PParameter parameter_pClass = new PParameter("class", "com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5", "Class")), PParameterDirection.INOUT);
     
-    private final PParameter parameter_pOperation = new PParameter("operation", "com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Operation", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5", "Operation")), PParameterDirection.INOUT);
-    
-    private final List<PParameter> parameters = Arrays.asList(parameter_pClass, parameter_pOperation);
+    private final List<PParameter> parameters = Arrays.asList(parameter_pClass);
     
     @Override
     public String getFullyQualifiedName() {
-      return "gov.nasa.jpl.mbee.mdk.queries.classOperations";
+      return "gov.nasa.jpl.mbee.mdk.queries.blocks";
     }
     
     @Override
     public List<String> getParameterNames() {
-      return Arrays.asList("class","operation");
+      return Arrays.asList("class");
     }
     
     @Override
@@ -135,14 +110,11 @@ public final class ClassOperationsQuerySpecification extends BaseGeneratedEMFQue
           {
               PBody body = new PBody(this);
               PVariable var_class = body.getOrCreateVariableByName("class");
-              PVariable var_operation = body.getOrCreateVariableByName("operation");
               PVariable var_block = body.getOrCreateVariableByName("block");
               PVariable var_instance = body.getOrCreateVariableByName("instance");
               new TypeConstraint(body, new FlatTuple(var_class), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Class")));
-              new TypeConstraint(body, new FlatTuple(var_operation), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Operation")));
               body.setSymbolicParameters(Arrays.<ExportedParameter>asList(
-                 new ExportedParameter(body, var_class, parameter_pClass),
-                 new ExportedParameter(body, var_operation, parameter_pOperation)
+                 new ExportedParameter(body, var_class, parameter_pClass)
               ));
               // 	Classifier.name(block, "Block")
               PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
@@ -164,12 +136,6 @@ public final class ClassOperationsQuerySpecification extends BaseGeneratedEMFQue
               new TypeConstraint(body, new FlatTuple(var_class, var__virtual_3_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Element", "appliedStereotypeInstance")));
               new TypeConstraint(body, new FlatTuple(var__virtual_3_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "InstanceSpecification")));
               new Equality(body, var__virtual_3_, var_instance);
-              //     Class.ownedOperation(class, operation)
-              new TypeConstraint(body, new FlatTuple(var_class), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Class")));
-              PVariable var__virtual_4_ = body.getOrCreateVariableByName(".virtual{4}");
-              new TypeConstraint(body, new FlatTuple(var_class, var__virtual_4_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Class", "ownedOperation")));
-              new TypeConstraint(body, new FlatTuple(var__virtual_4_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Operation")));
-              new Equality(body, var__virtual_4_, var_operation);
               bodies.add(body);
           }
           // to silence compiler error

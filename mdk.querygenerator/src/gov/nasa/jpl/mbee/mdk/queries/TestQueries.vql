@@ -2,34 +2,22 @@ package gov.nasa.jpl.mbee.mdk.queries
 
 import "http://www.nomagic.com/magicdraw/UML/2.5.0"
 
-/*
- * Pattern responsible for detecting circular dependency chains in UML models
- */
-pattern CircularDependencyError(dep : Dependency) {
-    //Call transitive closure of sub-pattern 'DependencyChain'
-    find DependencyChain+(dep, dep);
-}
-
-/**
- * Pattern describing succession relation between two dependencies
- */
-pattern DependencyChain(source : Dependency, target : Dependency) {
-    Dependency.supplier(source, elem);
-    Dependency.client(target, elem);
-}
-
-pattern dependencies(dependency : Dependency, source : NamedElement, target : NamedElement) {
-	Dependency.supplier(dependency, target);
-	Dependency.client(dependency, source);
-}
-
-pattern blocks(class : Class) {
+private pattern blocks(class : Class) {
 	Classifier.name(block, "Block");
 	InstanceSpecification.classifier(instance, block);
 	Class.appliedStereotypeInstance(class, instance);
 }
 
-pattern generalizations(general : Class, specific : Class) {
+private pattern properties(property : Property, name : java String, type : Type) {
+	Property.name(property, name);
+	Property.type(property, type);
+}
+
+private pattern stereotypes(stereotype : Stereotype, attribute : Property) {
+	Stereotype.ownedAttribute(stereotype, attribute);
+}
+
+private pattern generalizations(general : Class, specific : Class) {
 	Generalization.general(generalization, general);
 	Generalization.specific(generalization, specific);
 }
@@ -37,25 +25,41 @@ pattern generalizations(general : Class, specific : Class) {
 /**
  * Returns blocks with tags (properties). These tags are attributes of a Stereotypes and have a type (literal) and value.
  */
-pattern blockProperties(block : Class, stereotype : Stereotype, slot : Slot, property : Property, literal : LiteralSpecification) {
+pattern taggedBlocks(block : Class, stereotype : Stereotype, slot : Slot, property : Property, value : LiteralSpecification) {
 	find blocks(block);
 	Class.appliedStereotypeInstance.slot(block, slot);
 	Slot.definingFeature(slot, property); // Property of  Stereotype
+	Slot.value(slot, value); // Slot value
 	find stereotypes(stereotype, property);
-	// Slot value
-	Slot.value(slot, literal);
+} 
+
+//pattern topmostTaggedBlocks(block : Class, stereotype : Stereotype, property : Property) {
+//	neg find descendantTaggedBlocks(_, block, _, _);
+//	find taggedBlocks(block, stereotype, _, property, _);
+//}
+
+private pattern descendantTaggedBlocks(parentBlock : Class, childBlock : Class, stereotype : Stereotype, property : Property) {
+	find taggedBlocks(parentBlock, stereotype, _, property, _);
+	find generalizations(parentBlock, childBlock);
+	find taggedBlocks(childBlock, stereotype, _, property, _);
 }
 
-pattern topmostBlockProperties(block : Class, stereotype : Stereotype, property : Property) {
-	find blockProperties(block, stereotype, _, property, _);
-	find generalizations(general, block);
-	neg find blockProperties(general, stereotype, _, property, _);
-} or {
-	find blockProperties(block, stereotype, _, property, _);
-	neg find generalizations(_general, block);
+pattern generalizedTaggedBlockPairs(parentBlock : Class, childBlock : Class, stereotype : Stereotype, parentAttribute : Property, childAttribute : Property) {
+	find descendantTaggedBlocks(parentBlock, childBlock, stereotype, property);
+	Class.ownedAttribute(parentBlock, parentAttribute);
+	Class.ownedAttribute(childBlock, childAttribute);
+	find properties(property, name, type);
+	find properties(parentAttribute, name, type);
+	find properties(childAttribute, name, type);	
 }
 
-pattern stereotypes(stereotype : Stereotype, attribute : Property) {
-	Stereotype.ownedAttribute(stereotype, attribute);
+private pattern referredStereotypes(stereotype : Stereotype) {
+	find stereotypes(stereotype, property);
+	Class.appliedStereotypeInstance.classifier(class, stereotype);
+	Class.appliedStereotypeInstance.slot.definingFeature(class, property);
+}
+
+pattern unreferredStereotypes(stereotype : Stereotype) {
+	neg find referredStereotypes(stereotype);
 }
 

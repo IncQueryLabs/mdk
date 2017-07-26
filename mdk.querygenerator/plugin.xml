@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><plugin>
   <extension id="gov.nasa.jpl.mbee.mdk.queries.TestQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:gov.nasa.jpl.mbee.mdk.queries.TestQueries" id="gov.nasa.jpl.mbee.mdk.queries.TestQueries">
-      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.CircularDependencyError"/>
-      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.DependencyChain"/>
-      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.dependencies"/>
-      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.blocks"/>
-      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.generalizations"/>
-      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.blockProperties"/>
-      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.topmostBlockProperties"/>
-      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.stereotypes"/>
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.taggedBlocks"/>
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.generalizedTaggedBlockPairs"/>
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.unreferredStereotypes"/>
     </group>
   </extension>
 </plugin>

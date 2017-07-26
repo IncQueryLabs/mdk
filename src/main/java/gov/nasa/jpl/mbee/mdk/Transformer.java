@@ -1,9 +1,9 @@
 package gov.nasa.jpl.mbee.mdk;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRuleFactory;
@@ -13,24 +13,21 @@ import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.
 
 import com.nomagic.magicdraw.copypaste.CopyPasting;
 import com.nomagic.magicdraw.core.Application;
-import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.openapi.uml.SessionManager;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.InstanceSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Type;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
-import com.nomagic.uml2.impl.ElementsFactory;
 
-import gov.nasa.jpl.mbee.mdk.queries.BlockPropertiesMatch;
-import gov.nasa.jpl.mbee.mdk.queries.BlockPropertiesMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.GeneralizationsMatch;
-import gov.nasa.jpl.mbee.mdk.queries.GeneralizationsMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.StereotypesMatch;
-import gov.nasa.jpl.mbee.mdk.queries.StereotypesMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.TopmostBlockPropertiesMatch;
-import gov.nasa.jpl.mbee.mdk.queries.TopmostBlockPropertiesMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.GeneralizedTaggedBlockPairsMatch;
+import gov.nasa.jpl.mbee.mdk.queries.GeneralizedTaggedBlockPairsMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.TaggedBlocksMatch;
+import gov.nasa.jpl.mbee.mdk.queries.TaggedBlocksMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.UnreferredStereotypesMatch;
+import gov.nasa.jpl.mbee.mdk.queries.UnreferredStereotypesMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.util.GeneralizedTaggedBlockPairsQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification;
 
 public class Transformer {	
 	
@@ -39,19 +36,17 @@ public class Transformer {
 	private BatchTransformationStatements statements;
 	private BatchTransformationRuleFactory ruleFactory = new BatchTransformationRuleFactory();
 
-	private Project project;
-	private ElementsFactory elementsFactory;
 	private List<Stereotype> stereotypes;
 	
-	private BatchTransformationRule<StereotypesMatch, StereotypesMatcher> stereotypesRule = null;
+	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> attributeCreation;
+	private BatchTransformationRule<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher> attributeRedefinition;
+	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> stereotypeRemoval;
+	private BatchTransformationRule<UnreferredStereotypesMatch, UnreferredStereotypesMatcher> stereotypeDeletion;
 	
-	public Transformer(Project project, List<Stereotype> stereotypes, AdvancedViatraQueryEngine engine) throws ViatraQueryException, InconsistentEventSemanticsException {
-		this.project = project;
-		this.elementsFactory = this.project.getElementsFactory();
+	public Transformer(List<Stereotype> stereotypes, AdvancedViatraQueryEngine engine) throws ViatraQueryException, InconsistentEventSemanticsException {
 		this.engine = engine;
 		this.stereotypes = stereotypes;
 		createTransformations();
-		createRules();
 	}
 	
 	private void createTransformations() throws ViatraQueryException {
@@ -61,102 +56,93 @@ public class Transformer {
 		statements = transformation.getTransformationStatements();
 	}
 	
-	private void createRules() throws InconsistentEventSemanticsException, ViatraQueryException {
-//		stereotypesRule = createStereotypesRule();
+	public void execute() throws ViatraQueryException, InconsistentEventSemanticsException {
+		statements.fireAllCurrent(getAttributeCreationRule(), match -> stereotypes.contains(match.getStereotype()));
+		statements.fireAllCurrent(getAttributeRedefinitionRule(), match -> stereotypes.contains(match.getStereotype()));
+		statements.fireAllCurrent(getStereotypeRemovalRule(), match -> stereotypes.contains(match.getStereotype()));
+		statements.fireAllCurrent(getStereotypeDeletionRule(), match -> stereotypes.contains(match.getStereotype()));
 	}
 	
-	public void execute() throws ViatraQueryException {
-//		statements.fireAllCurrent(stereotypesRule);
-		createAttributesFromTags();
-		redefineAttributes();
-		removeTags();
-		deleteStereotype();
-	}
-
-//	private BatchTransformationRule<StereotypesMatch, StereotypesMatcher> createStereotypesRule() throws InconsistentEventSemanticsException, ViatraQueryException {
-//		return ruleFactory.<StereotypesMatch, StereotypesMatcher>createRule().name("StereotypesRule").precondition(StereotypesQuerySpecification.instance()).action(new IMatchProcessor<StereotypesMatch>() {
-//			public void process(StereotypesMatch match) {
-//				SessionManager.getInstance().createSession(Application.getInstance().getProject(), "NameSet");
-//				System.out.println("Helloooo");
-//				System.out.println(match.prettyPrint());
-//				SessionManager.getInstance().closeSession(Application.getInstance().getProject());						
-//			}
-//		}).build();
-//	}
-	
-	private void createAttributesFromTags() throws ViatraQueryException {
-		for (Stereotype stereotype : stereotypes) {
-			for (BlockPropertiesMatch blockPropertiesMatch : BlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null, null, null)) {
-				SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Create attribute");
-				// The stereotype property to be transformed to attribute
-				Property stereotypeAttribute = blockPropertiesMatch.getProperty();
-				// Copying the property and putting it into the attribute list of the block (the attribute list is selected implicitly by CopyPasting)
-				Property newAttribute = (Property) CopyPasting.copyPasteElement(stereotypeAttribute, blockPropertiesMatch.getBlock());
-				// Setting the deafult value
-				LiteralSpecification defaultValue = (LiteralSpecification) CopyPasting.copyPasteElement(blockPropertiesMatch.getLiteral(), newAttribute);
-				newAttribute.setDefaultValue(defaultValue); // Without this line, the value would set the multiplicity of the attribute
-				SessionManager.getInstance().closeSession(Application.getInstance().getProject());
-			}
+	/**
+	 * The returned rule creates attributes (value properties) based on the tag values of blocks labeled with the selected stereotypes (sterotypes list).
+	 * This rule should be fired first as it does not depend on any other rule.
+	 */
+	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> getAttributeCreationRule() throws InconsistentEventSemanticsException, ViatraQueryException {
+		if (attributeCreation == null) {
+			attributeCreation = ruleFactory.<TaggedBlocksMatch, TaggedBlocksMatcher>createRule().name("AttributesFromTagsRule").precondition(TaggedBlocksQuerySpecification.instance()).action(
+			new IMatchProcessor<TaggedBlocksMatch>() {
+				public void process(TaggedBlocksMatch match) {
+					SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Create attribute");
+					// The stereotype property to be transformed to attribute
+					Property stereotypeAttribute = match.getProperty();
+					// Copying the property and putting it into the attribute list of the block (the attribute list is selected implicitly by CopyPasting)
+					Property newAttribute = (Property) CopyPasting.copyPasteElement(stereotypeAttribute, match.getBlock());
+					// Setting the deafult value
+					LiteralSpecification defaultValue = (LiteralSpecification) CopyPasting.copyPasteElement(match.getValue(), newAttribute);
+					newAttribute.setDefaultValue(defaultValue); // Without this line, the value would set the multiplicity of the attribute
+					SessionManager.getInstance().closeSession(Application.getInstance().getProject());					
+				}
+			}).build();
 		}
+		return attributeCreation;
 	}
 	
-	
-	private void redefineAttributes() throws ViatraQueryException {
-		for (Stereotype stereotype : stereotypes) {
-			for (TopmostBlockPropertiesMatch topmostBlockPropertiesMatch : TopmostBlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null)) {
-				redefineAttribute(topmostBlockPropertiesMatch.getBlock(), topmostBlockPropertiesMatch.getProperty());
-			}
+	/**
+	 * The returned rule redefines attributes that are created by attributeCreation. The attribute of a block redefines the same attribute (same name and type) of the parent block (generalization between the blocks).
+	 * This rule should be fired after the attributeCreationRule.
+	 */
+	private BatchTransformationRule<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher> getAttributeRedefinitionRule() throws InconsistentEventSemanticsException, ViatraQueryException {
+		if (attributeRedefinition == null) {
+			attributeRedefinition = ruleFactory.<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher>createRule().name("AttributeRedefinitionRule").precondition(GeneralizedTaggedBlockPairsQuerySpecification.instance()).action(
+			new IMatchProcessor<GeneralizedTaggedBlockPairsMatch>() {
+				public void process(GeneralizedTaggedBlockPairsMatch match) {
+					SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Redefine attribute");
+					match.getChildAttribute().getRedefinedProperty().add(match.getParentAttribute());
+					SessionManager.getInstance().closeSession(Application.getInstance().getProject());					
+				}
+			}).build();
 		}
+		return attributeRedefinition;
 	}
 	
-	private void redefineAttribute(com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class clazz, Property property) throws ViatraQueryException {
-		String propertyName = property.getName();
-		Type type = property.getType();
-		// Filtering the attributes to redefine
-		List<Property> equalProperties = clazz.getOwnedAttribute().stream().filter(it -> it.getName().equals(propertyName)
-									&& it.getType() == type).collect(Collectors.toList());
-		if (equalProperties.size() != 1) {
-			System.err.println("Warning: attribute redefinition chain aborted or multiple attributes need to be redefined: " + equalProperties.size());
+	/**
+	 * The returned rule removes the labels of the selected stereotypes (sterotypes list) and the inherent tagged values from blocks.
+	 * This rule should be fired after the attributeRedefinitionRule.
+	 */
+	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> getStereotypeRemovalRule() throws InconsistentEventSemanticsException, ViatraQueryException {
+		if (stereotypeRemoval == null) {
+			stereotypeRemoval = ruleFactory.<TaggedBlocksMatch, TaggedBlocksMatcher>createRule().name("StereotypeRemovalRule").precondition(TaggedBlocksQuerySpecification.instance()).action(
+			new IMatchProcessor<TaggedBlocksMatch>() {
+				public void process(TaggedBlocksMatch match) {
+					SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Remove tag");
+					// Removing the tag value from the block
+					InstanceSpecification instanceSpecification = match.getSlot().getOwningInstance();
+					instanceSpecification.getSlot().remove(match.getSlot());
+					// Removing the stereotype from the block
+					instanceSpecification.getClassifier().remove(match.getStereotype());				
+					SessionManager.getInstance().closeSession(Application.getInstance().getProject());					
+				}
+			}).build();
 		}
-		Property redefinableProperty = equalProperties.get(0);
-		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Redefine attribute");
-		// Setting the property of the generalized class redefined
-		if (!(property.getOwner() instanceof Stereotype)) {
-			// For the first call, the property is the element of a Stereotype, so redefinition must not be done
-			redefinableProperty.getRedefinedElement().add(property);
-		}
-		SessionManager.getInstance().closeSession(Application.getInstance().getProject());
-		// Recursively redefining attributes in descendant classes
-		for (GeneralizationsMatch generalizationsMatch : GeneralizationsMatcher.on(engine).getAllMatches(clazz, null)) {
-			redefineAttribute(generalizationsMatch.getSpecific(), redefinableProperty);
-		}
+		return stereotypeRemoval;
 	}
 	
-	private void removeTags() throws ViatraQueryException {
-		for (Stereotype stereotype : stereotypes) {
-			for (BlockPropertiesMatch blockPropertiesMatch : BlockPropertiesMatcher.on(engine).getAllMatches(null, stereotype, null, null, null)) {
-				SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Remove tag");
-				// Removing the tag value from the block
-				InstanceSpecification instanceSpecification = blockPropertiesMatch.getSlot().getOwningInstance();
-				instanceSpecification.getSlot().remove(blockPropertiesMatch.getSlot());
-				// Removing the stereotype from the block
-				instanceSpecification.getClassifier().remove(blockPropertiesMatch.getStereotype());				
-				SessionManager.getInstance().closeSession(Application.getInstance().getProject());
-			}
+	/**
+	 * The returned rule deletes the selected stereotypes (sterotypes list) if it does not have a property that is referred by a class.
+	 * This rule should be fired after the stereotypeRemovalRule.
+	 */
+	private BatchTransformationRule<UnreferredStereotypesMatch, UnreferredStereotypesMatcher> getStereotypeDeletionRule() throws InconsistentEventSemanticsException, ViatraQueryException {
+		if (stereotypeDeletion == null) {
+			stereotypeDeletion = ruleFactory.<UnreferredStereotypesMatch, UnreferredStereotypesMatcher>createRule().name("StereotypeDeletionRule").precondition(UnreferredStereotypesQuerySpecification.instance()).action(
+			new IMatchProcessor<UnreferredStereotypesMatch>() {
+				public void process(UnreferredStereotypesMatch match) {
+					SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Delete stereotype");
+					match.getStereotype().refDelete();
+					SessionManager.getInstance().closeSession(Application.getInstance().getProject());					
+				}
+			}).build();
 		}
-	}
-	
-	private void deleteStereotype() throws ViatraQueryException {
-		for (Stereotype stereotype : stereotypes) {
-			SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Delete stereotype");
-			if (stereotype.canBeDeleted()) {
-				stereotype.refDelete();
-			}
-			else {
-				System.err.println("This stereotype cannot be deleted: " + stereotype.getName());
-			}
-			SessionManager.getInstance().closeSession(Application.getInstance().getProject());
-		}
+		return stereotypeDeletion;
 	}
 	
 }

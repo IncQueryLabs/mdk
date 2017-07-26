@@ -1,10 +1,4 @@
-/.CircularDependencyErrorMatch.java._trace
-/.CircularDependencyErrorMatcher.java._trace
-/.DependencyChainMatch.java._trace
-/.DependencyChainMatcher.java._trace
-/.TestQueries.java._trace
-/CircularDependencyErrorMatch.java
-/CircularDependencyErrorMatcher.java
-/DependencyChainMatch.java
-/DependencyChainMatcher.java
-/TestQueries.java
+# Ignore everything in this directory
+*
+# Except this file
+!.gitignore

@@ -36,6 +36,7 @@ import com.nomagic.magicdraw.properties.Property;
 import com.nomagic.magicdraw.ui.browser.Node;
 import com.nomagic.magicdraw.ui.browser.Tree;
 import com.nomagic.magicdraw.uml.DiagramTypeConstants;
+import com.nomagic.uml2.ext.magicdraw.mdprofiles.Profile;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
 import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputQueueStatusConfigurator;
@@ -43,8 +44,6 @@ import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputSyncRunner;
 import gov.nasa.jpl.mbee.mdk.mms.sync.status.SyncStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.ocl.OclQueryConfigurator;
 import gov.nasa.jpl.mbee.mdk.options.MDKOptionsGroup;
-import gov.nasa.jpl.mbee.mdk.queries.ClassOperationsMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.TestQueries;
 import gov.nasa.jpl.mbee.mdk.systems_reasoner.SRConfigurator;
 import gov.nasa.jpl.mbee.mdk.util.MDUtils;
 
@@ -133,7 +132,13 @@ public class MDKPlugin extends Plugin {
 			public void configure(ActionsManager manager, Tree tree) {
 				List<Stereotype> stereotypes = new ArrayList<Stereotype>();
 				// Collecting the stereotypes selected by the user 
-				for (final Node node : tree.getSelectedNodes()) {
+				for (final Node node : tree.getSelectedNodes()) { 
+					if (node.getUserObject() instanceof Profile) {
+						Profile selectedProfile = (Profile) node.getUserObject();
+						for (Stereotype stereotype : selectedProfile.getOwnedStereotype()) {
+							stereotypes.add(stereotype);
+						}
+					}
 		            if (node.getUserObject() instanceof Stereotype) {
 		                stereotypes.add((Stereotype) node.getUserObject());
 		            }
@@ -145,7 +150,7 @@ public class MDKPlugin extends Plugin {
 					public void actionPerformed(ActionEvent event) {
 						// Creating a transformer and executing it
 						try {
-							Transformer transformer = new Transformer(Application.getInstance().getProject(), stereotypes, createEngine());
+							Transformer transformer = new Transformer(stereotypes, createEngine());
 							transformer.execute();
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -190,9 +195,6 @@ public class MDKPlugin extends Plugin {
 //								
 //							});
 							
-							TestQueries.instance().getCircularDependencyError().getMatcher(engine).forEachMatch(match -> System.out.println("ASD" + match.prettyPrint()));
-							System.out.println("Hello");
-							ClassOperationsMatcher.on(engine).forEachMatch(it -> System.out.println(it.prettyPrint()));							
 						} catch (ViatraQueryException e1) {
 							e1.printStackTrace();
 						}						

@@ -7,7 +7,7 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Slot;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
-import gov.nasa.jpl.mbee.mdk.queries.util.BlockPropertiesQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification;
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
@@ -15,20 +15,20 @@ import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
- * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.blockProperties pattern,
- * to be used in conjunction with {@link BlockPropertiesMatcher}.
+ * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.taggedBlocks pattern,
+ * to be used in conjunction with {@link TaggedBlocksMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
  * Each instance is a (possibly partial) substitution of pattern parameters,
  * usable to represent a match of the pattern in the result of a query,
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
- * @see BlockPropertiesMatcher
- * @see BlockPropertiesProcessor
+ * @see TaggedBlocksMatcher
+ * @see TaggedBlocksProcessor
  * 
  */
 @SuppressWarnings("all")
-public abstract class BlockPropertiesMatch extends BasePatternMatch {
+public abstract class TaggedBlocksMatch extends BasePatternMatch {
   private com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class fBlock;
   
   private Stereotype fStereotype;
@@ -37,16 +37,16 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
   
   private Property fProperty;
   
-  private LiteralSpecification fLiteral;
+  private LiteralSpecification fValue;
   
-  private static List<String> parameterNames = makeImmutableList("block", "stereotype", "slot", "property", "literal");
+  private static List<String> parameterNames = makeImmutableList("block", "stereotype", "slot", "property", "value");
   
-  private BlockPropertiesMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral) {
+  private TaggedBlocksMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
     this.fBlock = pBlock;
     this.fStereotype = pStereotype;
     this.fSlot = pSlot;
     this.fProperty = pProperty;
-    this.fLiteral = pLiteral;
+    this.fValue = pValue;
   }
   
   @Override
@@ -55,7 +55,7 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
     if ("stereotype".equals(parameterName)) return this.fStereotype;
     if ("slot".equals(parameterName)) return this.fSlot;
     if ("property".equals(parameterName)) return this.fProperty;
-    if ("literal".equals(parameterName)) return this.fLiteral;
+    if ("value".equals(parameterName)) return this.fValue;
     return null;
   }
   
@@ -75,8 +75,8 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
     return this.fProperty;
   }
   
-  public LiteralSpecification getLiteral() {
-    return this.fLiteral;
+  public LiteralSpecification getValue() {
+    return this.fValue;
   }
   
   @Override
@@ -98,8 +98,8 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
         this.fProperty = (Property) newValue;
         return true;
     }
-    if ("literal".equals(parameterName) ) {
-        this.fLiteral = (LiteralSpecification) newValue;
+    if ("value".equals(parameterName) ) {
+        this.fValue = (LiteralSpecification) newValue;
         return true;
     }
     return false;
@@ -125,29 +125,29 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
     this.fProperty = pProperty;
   }
   
-  public void setLiteral(final LiteralSpecification pLiteral) {
+  public void setValue(final LiteralSpecification pValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
-    this.fLiteral = pLiteral;
+    this.fValue = pValue;
   }
   
   @Override
   public String patternName() {
-    return "gov.nasa.jpl.mbee.mdk.queries.blockProperties";
+    return "gov.nasa.jpl.mbee.mdk.queries.taggedBlocks";
   }
   
   @Override
   public List<String> parameterNames() {
-    return BlockPropertiesMatch.parameterNames;
+    return TaggedBlocksMatch.parameterNames;
   }
   
   @Override
   public Object[] toArray() {
-    return new Object[]{fBlock, fStereotype, fSlot, fProperty, fLiteral};
+    return new Object[]{fBlock, fStereotype, fSlot, fProperty, fValue};
   }
   
   @Override
-  public BlockPropertiesMatch toImmutable() {
-    return isMutable() ? newMatch(fBlock, fStereotype, fSlot, fProperty, fLiteral) : this;
+  public TaggedBlocksMatch toImmutable() {
+    return isMutable() ? newMatch(fBlock, fStereotype, fSlot, fProperty, fValue) : this;
   }
   
   @Override
@@ -161,7 +161,7 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
     
     result.append("\"property\"=" + prettyPrintValue(fProperty) + ", ");
     
-    result.append("\"literal\"=" + prettyPrintValue(fLiteral)
+    result.append("\"value\"=" + prettyPrintValue(fValue)
     );
     return result.toString();
   }
@@ -174,7 +174,7 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
     result = prime * result + ((fStereotype == null) ? 0 : fStereotype.hashCode());
     result = prime * result + ((fSlot == null) ? 0 : fSlot.hashCode());
     result = prime * result + ((fProperty == null) ? 0 : fProperty.hashCode());
-    result = prime * result + ((fLiteral == null) ? 0 : fLiteral.hashCode());
+    result = prime * result + ((fValue == null) ? 0 : fValue.hashCode());
     return result;
   }
   
@@ -182,7 +182,7 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
   public boolean equals(final Object obj) {
     if (this == obj)
         return true;
-    if (!(obj instanceof BlockPropertiesMatch)) { // this should be infrequent
+    if (!(obj instanceof TaggedBlocksMatch)) { // this should be infrequent
         if (obj == null) {
             return false;
         }
@@ -194,7 +194,7 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
             return false;
         return Arrays.deepEquals(toArray(), otherSig.toArray());
     }
-    BlockPropertiesMatch other = (BlockPropertiesMatch) obj;
+    TaggedBlocksMatch other = (TaggedBlocksMatch) obj;
     if (fBlock == null) {if (other.fBlock != null) return false;}
     else if (!fBlock.equals(other.fBlock)) return false;
     if (fStereotype == null) {if (other.fStereotype != null) return false;}
@@ -203,15 +203,15 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
     else if (!fSlot.equals(other.fSlot)) return false;
     if (fProperty == null) {if (other.fProperty != null) return false;}
     else if (!fProperty.equals(other.fProperty)) return false;
-    if (fLiteral == null) {if (other.fLiteral != null) return false;}
-    else if (!fLiteral.equals(other.fLiteral)) return false;
+    if (fValue == null) {if (other.fValue != null) return false;}
+    else if (!fValue.equals(other.fValue)) return false;
     return true;
   }
   
   @Override
-  public BlockPropertiesQuerySpecification specification() {
+  public TaggedBlocksQuerySpecification specification() {
     try {
-        return BlockPropertiesQuerySpecification.instance();
+        return TaggedBlocksQuerySpecification.instance();
     } catch (ViatraQueryException ex) {
          // This cannot happen, as the match object can only be instantiated if the query specification exists
          throw new IllegalStateException (ex);
@@ -225,7 +225,7 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
    * @return the empty match.
    * 
    */
-  public static BlockPropertiesMatch newEmptyMatch() {
+  public static TaggedBlocksMatch newEmptyMatch() {
     return new Mutable(null, null, null, null, null);
   }
   
@@ -237,12 +237,12 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
    * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
    * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
    * @param pProperty the fixed value of pattern parameter property, or null if not bound.
-   * @param pLiteral the fixed value of pattern parameter literal, or null if not bound.
+   * @param pValue the fixed value of pattern parameter value, or null if not bound.
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static BlockPropertiesMatch newMutableMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral) {
-    return new Mutable(pBlock, pStereotype, pSlot, pProperty, pLiteral);
+  public static TaggedBlocksMatch newMutableMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
+    return new Mutable(pBlock, pStereotype, pSlot, pProperty, pValue);
   }
   
   /**
@@ -253,17 +253,17 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
    * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
    * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
    * @param pProperty the fixed value of pattern parameter property, or null if not bound.
-   * @param pLiteral the fixed value of pattern parameter literal, or null if not bound.
+   * @param pValue the fixed value of pattern parameter value, or null if not bound.
    * @return the (partial) match object.
    * 
    */
-  public static BlockPropertiesMatch newMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral) {
-    return new Immutable(pBlock, pStereotype, pSlot, pProperty, pLiteral);
+  public static TaggedBlocksMatch newMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
+    return new Immutable(pBlock, pStereotype, pSlot, pProperty, pValue);
   }
   
-  private static final class Mutable extends BlockPropertiesMatch {
-    Mutable(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral) {
-      super(pBlock, pStereotype, pSlot, pProperty, pLiteral);
+  private static final class Mutable extends TaggedBlocksMatch {
+    Mutable(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
+      super(pBlock, pStereotype, pSlot, pProperty, pValue);
     }
     
     @Override
@@ -272,9 +272,9 @@ public abstract class BlockPropertiesMatch extends BasePatternMatch {
     }
   }
   
-  private static final class Immutable extends BlockPropertiesMatch {
-    Immutable(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pLiteral) {
-      super(pBlock, pStereotype, pSlot, pProperty, pLiteral);
+  private static final class Immutable extends TaggedBlocksMatch {
+    Immutable(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
+      super(pBlock, pStereotype, pSlot, pProperty, pValue);
     }
     
     @Override

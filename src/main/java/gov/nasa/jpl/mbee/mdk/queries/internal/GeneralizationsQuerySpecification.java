@@ -1,18 +1,15 @@
 /**
  * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TestQueries.vql
  */
-package gov.nasa.jpl.mbee.mdk.queries.util;
+package gov.nasa.jpl.mbee.mdk.queries.internal;
 
 import com.google.common.collect.Sets;
-import gov.nasa.jpl.mbee.mdk.queries.GeneralizationsMatch;
-import gov.nasa.jpl.mbee.mdk.queries.GeneralizationsMatcher;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery;
-import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
+import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -36,7 +33,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
  * 
  */
 @SuppressWarnings("all")
-public final class GeneralizationsQuerySpecification extends BaseGeneratedEMFQuerySpecification<GeneralizationsMatcher> {
+public final class GeneralizationsQuerySpecification extends BaseGeneratedPrivateEMFQuerySpecification {
   private GeneralizationsQuerySpecification() {
     super(GeneratedPQuery.INSTANCE);
   }
@@ -52,26 +49,6 @@ public final class GeneralizationsQuerySpecification extends BaseGeneratedEMFQue
     } catch (ExceptionInInitializerError err) {
         throw processInitializerError(err);
     }
-  }
-  
-  @Override
-  protected GeneralizationsMatcher instantiate(final ViatraQueryEngine engine) throws ViatraQueryException {
-    return GeneralizationsMatcher.on(engine);
-  }
-  
-  @Override
-  public GeneralizationsMatcher instantiate() throws ViatraQueryException {
-    return GeneralizationsMatcher.create();
-  }
-  
-  @Override
-  public GeneralizationsMatch newEmptyMatch() {
-    return GeneralizationsMatch.newEmptyMatch();
-  }
-  
-  @Override
-  public GeneralizationsMatch newMatch(final Object... parameters) {
-    return GeneralizationsMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) parameters[0], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) parameters[1]);
   }
   
   /**
