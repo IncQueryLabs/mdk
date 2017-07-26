@@ -27,15 +27,15 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 
 /**
- * A pattern-specific query specification that can instantiate DescendantTaggedBlocksMatcher in a type-safe way.
+ * A pattern-specific query specification that can instantiate GeneralizedTaggedBlocksMatcher in a type-safe way.
  * 
- * @see DescendantTaggedBlocksMatcher
- * @see DescendantTaggedBlocksMatch
+ * @see GeneralizedTaggedBlocksMatcher
+ * @see GeneralizedTaggedBlocksMatch
  * 
  */
 @SuppressWarnings("all")
-public final class DescendantTaggedBlocksQuerySpecification extends BaseGeneratedPrivateEMFQuerySpecification {
-  private DescendantTaggedBlocksQuerySpecification() {
+public final class GeneralizedTaggedBlocksQuerySpecification extends BaseGeneratedPrivateEMFQuerySpecification {
+  private GeneralizedTaggedBlocksQuerySpecification() {
     super(GeneratedPQuery.INSTANCE);
   }
   
@@ -44,7 +44,7 @@ public final class DescendantTaggedBlocksQuerySpecification extends BaseGenerate
    * @throws ViatraQueryException if the pattern definition could not be loaded
    * 
    */
-  public static DescendantTaggedBlocksQuerySpecification instance() throws ViatraQueryException {
+  public static GeneralizedTaggedBlocksQuerySpecification instance() throws ViatraQueryException {
     try{
         return LazyHolder.INSTANCE;
     } catch (ExceptionInInitializerError err) {
@@ -53,15 +53,15 @@ public final class DescendantTaggedBlocksQuerySpecification extends BaseGenerate
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link DescendantTaggedBlocksQuerySpecification} to be created 
+   * Inner class allowing the singleton instance of {@link GeneralizedTaggedBlocksQuerySpecification} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link DescendantTaggedBlocksQuerySpecification#instance()}.
+   *     but rather at the first call to {@link GeneralizedTaggedBlocksQuerySpecification#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 
    */
   private static class LazyHolder {
-    private final static DescendantTaggedBlocksQuerySpecification INSTANCE = new DescendantTaggedBlocksQuerySpecification();
+    private final static GeneralizedTaggedBlocksQuerySpecification INSTANCE = new GeneralizedTaggedBlocksQuerySpecification();
     
     /**
      * Statically initializes the query specification <b>after</b> the field {@link #INSTANCE} is assigned.
@@ -79,7 +79,7 @@ public final class DescendantTaggedBlocksQuerySpecification extends BaseGenerate
   }
   
   private static class GeneratedPQuery extends BaseGeneratedEMFPQuery {
-    private final static DescendantTaggedBlocksQuerySpecification.GeneratedPQuery INSTANCE = new GeneratedPQuery();
+    private final static GeneralizedTaggedBlocksQuerySpecification.GeneratedPQuery INSTANCE = new GeneratedPQuery();
     
     private final PParameter parameter_pParentBlock = new PParameter("parentBlock", "com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5", "Class")), PParameterDirection.INOUT);
     
@@ -93,7 +93,7 @@ public final class DescendantTaggedBlocksQuerySpecification extends BaseGenerate
     
     @Override
     public String getFullyQualifiedName() {
-      return "gov.nasa.jpl.mbee.mdk.queries.descendantTaggedBlocks";
+      return "gov.nasa.jpl.mbee.mdk.queries.generalizedTaggedBlocks";
     }
     
     @Override

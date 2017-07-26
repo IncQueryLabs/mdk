@@ -31,7 +31,7 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * <p>Original source:
  * <code><pre>
  * pattern generalizedTaggedBlockPairs(parentBlock : Class, childBlock : Class, stereotype : Stereotype, parentAttribute : Property, childAttribute : Property) {
- * 	find descendantTaggedBlocks(parentBlock, childBlock, stereotype, property);
+ * 	find generalizedTaggedBlocks(parentBlock, childBlock, stereotype, property);
  * 	Class.ownedAttribute(parentBlock, parentAttribute);
  * 	Class.ownedAttribute(childBlock, childAttribute);
  * 	find properties(property, name, type);

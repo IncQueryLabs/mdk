@@ -152,6 +152,7 @@ public class MDKPlugin extends Plugin {
 						try {
 							Transformer transformer = new Transformer(stereotypes, createEngine());
 							transformer.execute();
+							transformer.dispose();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}					

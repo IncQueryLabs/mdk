@@ -145,4 +145,12 @@ public class Transformer {
 		return stereotypeDeletion;
 	}
 	
+	public void dispose() {
+		if (transformation != null) {
+			transformation.getRuleEngine().dispose();
+			transformation.dispose();
+		}
+		transformation = null;
+	}
+	
 }

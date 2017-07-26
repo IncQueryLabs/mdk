@@ -4,8 +4,8 @@
 package gov.nasa.jpl.mbee.mdk.queries.internal;
 
 import gov.nasa.jpl.mbee.mdk.queries.internal.BlocksQuerySpecification;
-import gov.nasa.jpl.mbee.mdk.queries.internal.DescendantTaggedBlocksQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.internal.GeneralizationsQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.internal.GeneralizedTaggedBlocksQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.internal.PropertiesQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.internal.ReferredStereotypesQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.internal.StereotypesQuerySpecification;
@@ -26,7 +26,7 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
  * <li>stereotypes</li>
  * <li>generalizations</li>
  * <li>taggedBlocks</li>
- * <li>descendantTaggedBlocks</li>
+ * <li>generalizedTaggedBlocks</li>
  * <li>generalizedTaggedBlockPairs</li>
  * <li>referredStereotypes</li>
  * <li>unreferredStereotypes</li>
@@ -59,7 +59,7 @@ public final class TestQueriesAll extends BaseGeneratedPatternGroup {
     querySpecifications.add(StereotypesQuerySpecification.instance());
     querySpecifications.add(GeneralizationsQuerySpecification.instance());
     querySpecifications.add(TaggedBlocksQuerySpecification.instance());
-    querySpecifications.add(DescendantTaggedBlocksQuerySpecification.instance());
+    querySpecifications.add(GeneralizedTaggedBlocksQuerySpecification.instance());
     querySpecifications.add(GeneralizedTaggedBlockPairsQuerySpecification.instance());
     querySpecifications.add(ReferredStereotypesQuerySpecification.instance());
     querySpecifications.add(UnreferredStereotypesQuerySpecification.instance());

@@ -34,18 +34,18 @@ pattern taggedBlocks(block : Class, stereotype : Stereotype, slot : Slot, proper
 } 
 
 //pattern topmostTaggedBlocks(block : Class, stereotype : Stereotype, property : Property) {
-//	neg find descendantTaggedBlocks(_, block, _, _);
+//	neg find generalizedTaggedBlocks(_, block, _, _);
 //	find taggedBlocks(block, stereotype, _, property, _);
 //}
 
-private pattern descendantTaggedBlocks(parentBlock : Class, childBlock : Class, stereotype : Stereotype, property : Property) {
+private pattern generalizedTaggedBlocks(parentBlock : Class, childBlock : Class, stereotype : Stereotype, property : Property) {
 	find taggedBlocks(parentBlock, stereotype, _, property, _);
 	find generalizations(parentBlock, childBlock);
 	find taggedBlocks(childBlock, stereotype, _, property, _);
 }
 
 pattern generalizedTaggedBlockPairs(parentBlock : Class, childBlock : Class, stereotype : Stereotype, parentAttribute : Property, childAttribute : Property) {
-	find descendantTaggedBlocks(parentBlock, childBlock, stereotype, property);
+	find generalizedTaggedBlocks(parentBlock, childBlock, stereotype, property);
 	Class.ownedAttribute(parentBlock, parentAttribute);
 	Class.ownedAttribute(childBlock, childAttribute);
 	find properties(property, name, type);

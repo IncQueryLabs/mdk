@@ -6,7 +6,7 @@ package gov.nasa.jpl.mbee.mdk.queries.util;
 import com.google.common.collect.Sets;
 import gov.nasa.jpl.mbee.mdk.queries.GeneralizedTaggedBlockPairsMatch;
 import gov.nasa.jpl.mbee.mdk.queries.GeneralizedTaggedBlockPairsMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.internal.DescendantTaggedBlocksQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.internal.GeneralizedTaggedBlocksQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.internal.PropertiesQuerySpecification;
 import java.util.Arrays;
 import java.util.List;
@@ -160,8 +160,8 @@ public final class GeneralizedTaggedBlockPairsQuerySpecification extends BaseGen
                  new ExportedParameter(body, var_parentAttribute, parameter_pParentAttribute),
                  new ExportedParameter(body, var_childAttribute, parameter_pChildAttribute)
               ));
-              // 	find descendantTaggedBlocks(parentBlock, childBlock, stereotype, property)
-              new PositivePatternCall(body, new FlatTuple(var_parentBlock, var_childBlock, var_stereotype, var_property), DescendantTaggedBlocksQuerySpecification.instance().getInternalQueryRepresentation());
+              // 	find generalizedTaggedBlocks(parentBlock, childBlock, stereotype, property)
+              new PositivePatternCall(body, new FlatTuple(var_parentBlock, var_childBlock, var_stereotype, var_property), GeneralizedTaggedBlocksQuerySpecification.instance().getInternalQueryRepresentation());
               // 	Class.ownedAttribute(parentBlock, parentAttribute)
               new TypeConstraint(body, new FlatTuple(var_parentBlock), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Class")));
               PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
