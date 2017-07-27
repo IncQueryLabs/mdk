@@ -130,6 +130,7 @@ public class MDKPlugin extends Plugin {
 			}			
 			@Override
 			public void configure(ActionsManager manager, Tree tree) {
+				MDActionsCategory category = new MDActionsCategory("Transform", "Transform");
 				List<Stereotype> stereotypes = new ArrayList<Stereotype>();
 				// Collecting the stereotypes selected by the user 
 				for (final Node node : tree.getSelectedNodes()) { 
@@ -139,11 +140,15 @@ public class MDKPlugin extends Plugin {
 							stereotypes.add(stereotype);
 						}
 					}
-		            if (node.getUserObject() instanceof Stereotype) {
+					else if (node.getUserObject() instanceof Stereotype) {
 		                stereotypes.add((Stereotype) node.getUserObject());
 		            }
+					else {
+						category.setEnabled(false);
+						return;
+					}
 		        }
-				MDActionsCategory category = new MDActionsCategory("Transform", "Transform");
+				category.setEnabled(true);
 				category.addAction(new NMAction("Transform", "Transform", null, null) {
 					private static final long serialVersionUID = 1L; // Serial id to avoid waring
 					@Override
