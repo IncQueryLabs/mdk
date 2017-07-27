@@ -75,8 +75,10 @@ public class Transformer {
 					SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Create attribute");
 					// The stereotype property to be transformed to attribute
 					Property stereotypeAttribute = match.getProperty();
-					// Copying the property and putting it into the attribute list of the block (the attribute list is selected implicitly by CopyPasting)
+					// Copying the property and putting it into the attribute list of the block
+					// CloneNotSupportedException is thrown if BasedElement.clone() is used
 					Property newAttribute = (Property) CopyPasting.copyPasteElement(stereotypeAttribute, match.getBlock());
+					match.getBlock().getOwnedAttribute().add(newAttribute);
 					// Setting the deafult value
 					LiteralSpecification defaultValue = (LiteralSpecification) CopyPasting.copyPasteElement(match.getValue(), newAttribute);
 					newAttribute.setDefaultValue(defaultValue); // Without this line, the value would set the multiplicity of the attribute

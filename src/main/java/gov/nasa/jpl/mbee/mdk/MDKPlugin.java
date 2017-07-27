@@ -144,10 +144,12 @@ public class MDKPlugin extends Plugin {
 		                stereotypes.add((Stereotype) node.getUserObject());
 		            }
 					else {
+						// If different element is selected, the menu item should not appear
 						category.setEnabled(false);
 						return;
 					}
 		        }
+				// Only profiles and stereotypes are selected
 				category.setEnabled(true);
 				category.addAction(new NMAction("Transform", "Transform", null, null) {
 					private static final long serialVersionUID = 1L; // Serial id to avoid waring
