@@ -23,7 +23,8 @@ private pattern generalizations(general : Class, specific : Class) {
 }
 
 /**
- * Returns blocks with tags (properties). These tags are attributes of a Stereotypes and have a type (literal) and value.
+ * Returns blocks with tag values (a slot referring to a property). These properties are owned attributes of a stereotype.
+ * A slot assigns a value to the property.
  */
 pattern taggedBlocks(block : Class, stereotype : Stereotype, slot : Slot, property : Property, value : LiteralSpecification) {
 	find blocks(block);
@@ -44,6 +45,11 @@ private pattern generalizedTaggedBlocks(parentBlock : Class, childBlock : Class,
 	find taggedBlocks(childBlock, stereotype, _, property, _);
 }
 
+/**
+ * Returns a pair of blocks that are in a generalization relationship (parent and child).
+ * Also, it returns the stereotype that is assigned to the blocks, as well as the attributes
+ * (parentAttribute and childAttribute) that should be in a redefinition relationship according to the desired design pattern.
+ */
 pattern generalizedTaggedBlockPairs(parentBlock : Class, childBlock : Class, stereotype : Stereotype, parentAttribute : Property, childAttribute : Property) {
 	find generalizedTaggedBlocks(parentBlock, childBlock, stereotype, property);
 	Class.ownedAttribute(parentBlock, parentAttribute);
@@ -54,11 +60,15 @@ pattern generalizedTaggedBlockPairs(parentBlock : Class, childBlock : Class, ste
 }
 
 private pattern referredStereotypes(stereotype : Stereotype) {
+	Class.appliedStereotypeInstance.classifier(_class, stereotype);
+} or {
 	find stereotypes(stereotype, property);
-	Class.appliedStereotypeInstance.classifier(class, stereotype);
-	Class.appliedStereotypeInstance.slot.definingFeature(class, property);
+	Class.appliedStereotypeInstance.slot.definingFeature(_class, property);
 }
 
+/**
+ * Returns stereotypes that are not assigned to any classes and none of whose attrubutes are referred.
+ */
 pattern unreferredStereotypes(stereotype : Stereotype) {
 	neg find referredStereotypes(stereotype);
 }

@@ -29,6 +29,8 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * 
  * <p>Original source:
  * <code><pre>
+ * Returns stereotypes that are not assigned to any classes and none of whose attrubutes are referred.
+ *  
  * pattern unreferredStereotypes(stereotype : Stereotype) {
  * 	neg find referredStereotypes(stereotype);
  * }
