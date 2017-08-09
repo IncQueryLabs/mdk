@@ -3,10 +3,12 @@
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
-import gov.nasa.jpl.mbee.mdk.queries.CircularDependencyErrorMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.DependencyChainMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.util.CircularDependencyErrorQuerySpecification;
-import gov.nasa.jpl.mbee.mdk.queries.util.DependencyChainQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.GeneralizedTaggedBlockPairsMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.TaggedBlocksMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.UnreferredStereotypesMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.util.GeneralizedTaggedBlockPairsQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -19,8 +21,9 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
  * in order to achieve better performance than one-by-one on-demand matcher initialization.
  * 
  * <p> From package gov.nasa.jpl.mbee.mdk.queries, the group contains the definition of the following patterns: <ul>
- * <li>CircularDependencyError</li>
- * <li>DependencyChain</li>
+ * <li>taggedBlocks</li>
+ * <li>generalizedTaggedBlockPairs</li>
+ * <li>unreferredStereotypes</li>
  * </ul>
  * 
  * @see IPatternGroup
@@ -37,7 +40,7 @@ public final class TestQueries extends BaseGeneratedPatternGroup {
    */
   public static TestQueries instance() throws ViatraQueryException {
     if (INSTANCE == null) {
-    	INSTANCE = new TestQueries();
+        INSTANCE = new TestQueries();
     }
     return INSTANCE;
   }
@@ -45,23 +48,32 @@ public final class TestQueries extends BaseGeneratedPatternGroup {
   private static TestQueries INSTANCE;
   
   private TestQueries() throws ViatraQueryException {
-    querySpecifications.add(CircularDependencyErrorQuerySpecification.instance());
-    querySpecifications.add(DependencyChainQuerySpecification.instance());
+    querySpecifications.add(TaggedBlocksQuerySpecification.instance());
+    querySpecifications.add(GeneralizedTaggedBlockPairsQuerySpecification.instance());
+    querySpecifications.add(UnreferredStereotypesQuerySpecification.instance());
   }
   
-  public CircularDependencyErrorQuerySpecification getCircularDependencyError() throws ViatraQueryException {
-    return CircularDependencyErrorQuerySpecification.instance();
+  public TaggedBlocksQuerySpecification getTaggedBlocks() throws ViatraQueryException {
+    return TaggedBlocksQuerySpecification.instance();
   }
   
-  public CircularDependencyErrorMatcher getCircularDependencyError(final ViatraQueryEngine engine) throws ViatraQueryException {
-    return CircularDependencyErrorMatcher.on(engine);
+  public TaggedBlocksMatcher getTaggedBlocks(final ViatraQueryEngine engine) throws ViatraQueryException {
+    return TaggedBlocksMatcher.on(engine);
   }
   
-  public DependencyChainQuerySpecification getDependencyChain() throws ViatraQueryException {
-    return DependencyChainQuerySpecification.instance();
+  public GeneralizedTaggedBlockPairsQuerySpecification getGeneralizedTaggedBlockPairs() throws ViatraQueryException {
+    return GeneralizedTaggedBlockPairsQuerySpecification.instance();
   }
   
-  public DependencyChainMatcher getDependencyChain(final ViatraQueryEngine engine) throws ViatraQueryException {
-    return DependencyChainMatcher.on(engine);
+  public GeneralizedTaggedBlockPairsMatcher getGeneralizedTaggedBlockPairs(final ViatraQueryEngine engine) throws ViatraQueryException {
+    return GeneralizedTaggedBlockPairsMatcher.on(engine);
+  }
+  
+  public UnreferredStereotypesQuerySpecification getUnreferredStereotypes() throws ViatraQueryException {
+    return UnreferredStereotypesQuerySpecification.instance();
+  }
+  
+  public UnreferredStereotypesMatcher getUnreferredStereotypes(final ViatraQueryEngine engine) throws ViatraQueryException {
+    return UnreferredStereotypesMatcher.on(engine);
   }
 }

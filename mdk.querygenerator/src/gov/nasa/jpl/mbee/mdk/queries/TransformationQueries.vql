@@ -1,0 +1,92 @@
+package gov.nasa.jpl.mbee.mdk.queries
+
+import "http://www.nomagic.com/magicdraw/UML/2.5.0"
+
+/*
+ * Queries instances of block objects 
+ */
+private pattern blocks(class : Class) {
+	Classifier.name(block, "Block");
+	InstanceSpecification.classifier(instance, block);
+	Class.appliedStereotypeInstance(class, instance);
+}
+
+/*
+ * Queries Properties with a given name and type
+ * 
+ */
+private pattern properties(property : Property, name : java String, type : Type) {
+	Property.name(property, name);
+	Property.type(property, type);
+}
+
+/**
+ * Maps stereotypes and their defined attributes
+ * 
+ */
+private pattern stereotypes(stereotype : Stereotype, attribute : Property) {
+	Stereotype.ownedAttribute(stereotype, attribute);
+}
+
+
+/**
+ * Defines parent-child relation between classes
+ */
+private pattern generalizations(general : Class, specific : Class) {
+	Generalization.general(generalization, general);
+	Generalization.specific(generalization, specific);
+}
+
+/**
+ * Returns blocks with tag values (a slot referring to a property). These properties are owned attributes of a stereotype.
+ * A slot assigns a value to the property.
+ */
+pattern taggedBlocks(block : Class, stereotype : Stereotype, slot : Slot, property : Property, value : LiteralSpecification) {
+	find blocks(block);
+	Class.appliedStereotypeInstance.slot(block, slot);
+	Slot.definingFeature(slot, property); // Property of  Stereotype
+	Slot.value(slot, value); // Slot value
+	find stereotypes(stereotype, property);
+} 
+
+/**
+ * Returns 2 blocks that have a generalization relation between them, and define a value for the same stereotype attribute.
+ * 
+ */
+private pattern generalizedTaggedBlocks(parentBlock : Class, childBlock : Class, stereotype : Stereotype, property : Property) {
+	find taggedBlocks(parentBlock, stereotype, _, property, _);
+	find generalizations(parentBlock, childBlock);
+	find taggedBlocks(childBlock, stereotype, _, property, _);
+}
+
+/**
+ * Returns a pair of blocks that are in a generalization relationship (parent and child).
+ * Also, it returns the stereotype that is assigned to the blocks, as well as the attributes
+ * (parentAttribute and childAttribute) that should be in a redefinition relationship according to the desired design pattern.
+ */
+pattern generalizedTaggedBlockPairs(parentBlock : Class, childBlock : Class, stereotype : Stereotype, parentAttribute : Property, childAttribute : Property) {
+	find generalizedTaggedBlocks(parentBlock, childBlock, stereotype, property);
+	Class.ownedAttribute(parentBlock, parentAttribute);
+	Class.ownedAttribute(childBlock, childAttribute);
+	find properties(property, name, type);
+	find properties(parentAttribute, name, type);
+	find properties(childAttribute, name, type);	
+}
+
+/**
+ * Returns stereotypes that are used as applied instances.
+ */
+private pattern referredStereotypes(stereotype : Stereotype) {
+	Class.appliedStereotypeInstance.classifier(_class, stereotype);
+} or {
+	find stereotypes(stereotype, property);
+	Class.appliedStereotypeInstance.slot.definingFeature(_class, property);
+}
+
+/**
+ * Returns stereotypes that are not assigned to any classes and none of whose attrubutes are referred.
+ */
+pattern unreferredStereotypes(stereotype : Stereotype) {
+	neg find referredStereotypes(stereotype);
+}
+
