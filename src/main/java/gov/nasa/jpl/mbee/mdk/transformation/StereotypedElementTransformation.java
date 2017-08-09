@@ -1,4 +1,4 @@
-package gov.nasa.jpl.mbee.mdk;
+package gov.nasa.jpl.mbee.mdk.transformation;
 
 import java.util.List;
 
@@ -14,6 +14,7 @@ import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.
 import com.nomagic.magicdraw.copypaste.CopyPasting;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.openapi.uml.SessionManager;
+import com.nomagic.task.ProgressStatus;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.InstanceSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
@@ -29,7 +30,7 @@ import gov.nasa.jpl.mbee.mdk.queries.util.GeneralizedTaggedBlockPairsQuerySpecif
 import gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification;
 
-public class Transformer {	
+public class StereotypedElementTransformation {	
 	
 	private AdvancedViatraQueryEngine engine;
 	private BatchTransformation transformation;
@@ -47,17 +48,27 @@ public class Transformer {
 	//Rule responsible for the deletion of now unused stereotypes
 	private BatchTransformationRule<UnreferredStereotypesMatch, UnreferredStereotypesMatcher> stereotypeDeletion;
 	
-	public Transformer(List<Stereotype> stereotypes, AdvancedViatraQueryEngine engine) throws ViatraQueryException, InconsistentEventSemanticsException {
+	//Required for displaying transformation status
+	private ProgressStatus status;
+	
+	public StereotypedElementTransformation(List<Stereotype> stereotypes, AdvancedViatraQueryEngine engine, ProgressStatus status) throws ViatraQueryException, InconsistentEventSemanticsException {
 		this.engine = engine;
 		this.stereotypes = stereotypes;
-		createTransformations();
+		this.status = status;
+		initTransformation();
 	}
 	
-	private void createTransformations() throws ViatraQueryException {
+	private void initTransformation() throws ViatraQueryException {
+		//Set status description
+		status.setDescription("Initializing Transformation");
+		
 		//Create VIATRA Batch transformation
 		transformation = BatchTransformation.forEngine(engine).build();
 		//Initialize batch transformation statements
 		statements = transformation.getTransformationStatements();
+		
+		//Report status change
+		status.increase();
 	}
 	
 	public void execute() throws ViatraQueryException, InconsistentEventSemanticsException {
@@ -65,14 +76,40 @@ public class Transformer {
 		//Each set of elements that match the preconditions of each rule result in a set of rule activations
 		//These rule activations are executed here in a predefined order
 		
+		//Set status description
+		status.setDescription("Creating attributes");
+		//Session is created for model modification
+		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Creating attributes");
 		//Attribute creation and default value setting activations
 		statements.fireAllCurrent(getAttributeCreationRule(), match -> stereotypes.contains(match.getStereotype()));
+		//Closing session
+		SessionManager.getInstance().closeSession(Application.getInstance().getProject());
+		//Report status change
+		status.increase();
+		
+		
+		status.setDescription("Setting redefine attribute relations");
+		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Setting redefine attribute relations");
 		//Attribute redefinition relation setting activations
 		statements.fireAllCurrent(getAttributeRedefinitionRule(), match -> stereotypes.contains(match.getStereotype()));
+		SessionManager.getInstance().closeSession(Application.getInstance().getProject());	
+		status.increase();
+		
+		
+		status.setDescription("Removing tagged values");
+		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Removing tagged values");
 		//Stereotype instance removal activations
 		statements.fireAllCurrent(getStereotypeRemovalRule(), match -> stereotypes.contains(match.getStereotype()));
+		SessionManager.getInstance().closeSession(Application.getInstance().getProject());
+		status.increase();
+		
+		status.setDescription("Deleting unused profile stereotypes");
+		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Deleting unused profile stereotypes");
 		//Unused stereotype removal activations
 		statements.fireAllCurrent(getStereotypeDeletionRule(), match -> stereotypes.contains(match.getStereotype()));
+		SessionManager.getInstance().closeSession(Application.getInstance().getProject());	
+		status.increase();
+		
 	}
 	
 	/**
@@ -90,9 +127,6 @@ public class Transformer {
 			attributeCreation = ruleFactory.<TaggedBlocksMatch, TaggedBlocksMatcher>createRule().name("AttributesFromTagsRule").precondition(TaggedBlocksQuerySpecification.instance()).action(
 			new IMatchProcessor<TaggedBlocksMatch>() {
 				public void process(TaggedBlocksMatch match) {
-					//Session is created for model modification
-					SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Create attribute");
-					
 					// The stereotype property to be transformed to attribute
 					Property stereotypeAttribute = match.getProperty();
 					
@@ -104,9 +138,6 @@ public class Transformer {
 					// Setting the default value
 					LiteralSpecification defaultValue = (LiteralSpecification) CopyPasting.copyPasteElement(match.getValue(), newAttribute);
 					newAttribute.setDefaultValue(defaultValue); // Without this line, the value would set the multiplicity of the attribute
-					
-					//Closing session
-					SessionManager.getInstance().closeSession(Application.getInstance().getProject());					
 				}
 			}).build();
 		}
@@ -129,12 +160,8 @@ public class Transformer {
 			attributeRedefinition = ruleFactory.<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher>createRule().name("AttributeRedefinitionRule").precondition(GeneralizedTaggedBlockPairsQuerySpecification.instance()).action(
 			new IMatchProcessor<GeneralizedTaggedBlockPairsMatch>() {
 				public void process(GeneralizedTaggedBlockPairsMatch match) {
-					SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Redefine attribute");
-
 					//Setting redefined relation between attributes that activated the rule.
 					match.getChildAttribute().getRedefinedProperty().add(match.getParentAttribute());
-					
-					SessionManager.getInstance().closeSession(Application.getInstance().getProject());					
 				}
 			}).build();
 		}
@@ -151,13 +178,11 @@ public class Transformer {
 			stereotypeRemoval = ruleFactory.<TaggedBlocksMatch, TaggedBlocksMatcher>createRule().name("StereotypeRemovalRule").precondition(TaggedBlocksQuerySpecification.instance()).action(
 			new IMatchProcessor<TaggedBlocksMatch>() {
 				public void process(TaggedBlocksMatch match) {
-					SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Remove tag");
 					// Removing the tag value from the block
 					InstanceSpecification instanceSpecification = match.getSlot().getOwningInstance();
 					instanceSpecification.getSlot().remove(match.getSlot());
 					// Removing the stereotype from the block
 					instanceSpecification.getClassifier().remove(match.getStereotype());				
-					SessionManager.getInstance().closeSession(Application.getInstance().getProject());					
 				}
 			}).build();
 		}
@@ -173,12 +198,8 @@ public class Transformer {
 			stereotypeDeletion = ruleFactory.<UnreferredStereotypesMatch, UnreferredStereotypesMatcher>createRule().name("StereotypeDeletionRule").precondition(UnreferredStereotypesQuerySpecification.instance()).action(
 			new IMatchProcessor<UnreferredStereotypesMatch>() {
 				public void process(UnreferredStereotypesMatch match) {
-					SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Delete stereotype");
-					
 					//Delete unused stereotypes contained in the specified profile (selected by the user)
 					match.getStereotype().refDelete();
-					
-					SessionManager.getInstance().closeSession(Application.getInstance().getProject());					
 				}
 			}).build();
 		}
@@ -186,12 +207,14 @@ public class Transformer {
 	}
 	
 	public void dispose() {
+		status.setDescription("Disposing transformation");
 		//Here the transformation and query engine are disposed
 		if (transformation != null) {
 			transformation.getRuleEngine().dispose();
 			transformation.dispose();
 		}
 		transformation = null;
+		status.increase();
 	}
 	
 }

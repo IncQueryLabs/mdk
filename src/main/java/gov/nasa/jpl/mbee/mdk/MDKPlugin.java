@@ -1,6 +1,5 @@
 package gov.nasa.jpl.mbee.mdk;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -8,21 +7,10 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
-import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexFeatureFilter;
-import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-
-import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsCategory;
 import com.nomagic.actions.ActionsManager;
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.actions.ActionsConfiguratorsManager;
-import com.nomagic.magicdraw.actions.BrowserContextAMConfigurator;
-import com.nomagic.magicdraw.actions.MDActionsCategory;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.options.EnvironmentOptions;
 import com.nomagic.magicdraw.evaluation.EvaluationConfigurator;
@@ -30,11 +18,7 @@ import com.nomagic.magicdraw.plugins.Plugin;
 import com.nomagic.magicdraw.plugins.PluginDescriptor;
 import com.nomagic.magicdraw.plugins.PluginUtils;
 import com.nomagic.magicdraw.properties.Property;
-import com.nomagic.magicdraw.ui.browser.Node;
-import com.nomagic.magicdraw.ui.browser.Tree;
 import com.nomagic.magicdraw.uml.DiagramTypeConstants;
-import com.nomagic.uml2.ext.magicdraw.mdprofiles.Profile;
-import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
 import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputQueueStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputSyncRunner;
@@ -42,10 +26,11 @@ import gov.nasa.jpl.mbee.mdk.mms.sync.status.SyncStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.ocl.OclQueryConfigurator;
 import gov.nasa.jpl.mbee.mdk.options.MDKOptionsGroup;
 import gov.nasa.jpl.mbee.mdk.systems_reasoner.SRConfigurator;
+import gov.nasa.jpl.mbee.mdk.transformation.StereotypeTransformationConfigurator;
 import gov.nasa.jpl.mbee.mdk.util.MDUtils;
 
 public class MDKPlugin extends Plugin {
-    public static final String MAIN_TOOLBAR_CATEGORY_NAME = "MDK";
+	public static final String MAIN_TOOLBAR_CATEGORY_NAME = "MDK";
 
     private static String VERSION;
     public static ClassLoader extensionsClassloader;
@@ -120,53 +105,7 @@ public class MDKPlugin extends Plugin {
         acm.addMainToolbarConfigurator(new SyncStatusConfigurator());
         
         // Creating context menu for VIATRA based transformation
-        acm.addContainmentBrowserContextConfigurator(new BrowserContextAMConfigurator() {			
-			@Override
-			public int getPriority() {
-				return AMConfigurator.MEDIUM_PRIORITY;
-			}			
-			@Override
-			public void configure(ActionsManager manager, Tree tree) {
-				MDActionsCategory category = new MDActionsCategory("Transform Stereotyped Elements", "Transform Stereotyped Elements");
-				List<Stereotype> stereotypes = new ArrayList<Stereotype>();
-				// Collecting the stereotypes selected by the user 
-				for (final Node node : tree.getSelectedNodes()) { 
-					if (node.getUserObject() instanceof Profile) {
-						//If a profile is selected transform every stereotype of the profile
-						Profile selectedProfile = (Profile) node.getUserObject();
-						for (Stereotype stereotype : selectedProfile.getOwnedStereotype()) {
-							stereotypes.add(stereotype);
-						}
-					}
-					else if (node.getUserObject() instanceof Stereotype) {
-		                stereotypes.add((Stereotype) node.getUserObject());
-		            }
-					else {
-						// If different element is selected, the menu item should not appear
-						category.setEnabled(false);
-						return;
-					}
-		        }
-				// MEnu is enabled only when profiles or stereotypes are selected
-				category.setEnabled(true);
-				category.addAction(new NMAction("Transform Stereotyped Elements", "Transform Stereotyped Elements", null, null) {
-					private static final long serialVersionUID = 1L;
-					@Override
-					public void actionPerformed(ActionEvent event) {
-						// Creating a transformer and executing it
-						try {
-							//Transformer is initialized with a VIATRA query engine and a set of stereotypes to be transformed
-							Transformer transformer = new Transformer(stereotypes, createEngine());
-							transformer.execute();
-							transformer.dispose();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}					
-					}					
-				});
-				manager.addCategory(category);
-			}
-		});
+        acm.addContainmentBrowserContextConfigurator(new StereotypeTransformationConfigurator());
         
         MMSSyncPlugin.getInstance().init();
         (new Thread(new OutputSyncRunner())).start();
@@ -174,19 +113,6 @@ public class MDKPlugin extends Plugin {
         loadExtensionJars();
         configureEnvironmentOptions();
     }
-    
-    private AdvancedViatraQueryEngine createEngine() throws ViatraQueryException {
-		BaseIndexOptions baseIndexOptions = new BaseIndexOptions().withFeatureFilterConfiguration(new IBaseIndexFeatureFilter() {
-			@Override
-			public boolean isFiltered(EStructuralFeature arg0) {
-				if (arg0 instanceof EReference && ((EReference)arg0).isContainment()) {
-					return arg0.getName().contains("_from_");
-				}
-				return false;
-			}
-		}).withStrictNotificationMode(false);
-		return AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(Application.getInstance().getProject().getModel(), baseIndexOptions));
-	}
 
     @Override
     public boolean isSupported() {
