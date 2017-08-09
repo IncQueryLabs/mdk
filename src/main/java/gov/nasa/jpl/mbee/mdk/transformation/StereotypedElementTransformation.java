@@ -66,8 +66,6 @@ public class StereotypedElementTransformation {
 		transformation = BatchTransformation.forEngine(engine).build();
 		//Initialize batch transformation statements
 		statements = transformation.getTransformationStatements();
-		
-		//Report status change
 		status.increase();
 	}
 	
@@ -76,42 +74,65 @@ public class StereotypedElementTransformation {
 		//Each set of elements that match the preconditions of each rule result in a set of rule activations
 		//These rule activations are executed here in a predefined order
 		
-		//Set status description
-		status.setDescription("Creating attributes");
 		//Session is created for model modification
-		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Creating attributes");
-		//Attribute creation and default value setting activations
-		statements.fireAllCurrent(getAttributeCreationRule(), match -> stereotypes.contains(match.getStereotype()));
-		//Closing session
-		SessionManager.getInstance().closeSession(Application.getInstance().getProject());
-		//Report status change
-		status.increase();
+		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Transforming model");
+		try {
+			doExecute();
+		} catch (Exception e) {
+			SessionManager.getInstance().cancelSession(Application.getInstance().getProject());
+		} finally {
+			SessionManager.getInstance().closeSession(Application.getInstance().getProject());
+		}
 		
 		
-		status.setDescription("Setting redefine attribute relations");
-		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Setting redefine attribute relations");
-		//Attribute redefinition relation setting activations
-		statements.fireAllCurrent(getAttributeRedefinitionRule(), match -> stereotypes.contains(match.getStereotype()));
-		SessionManager.getInstance().closeSession(Application.getInstance().getProject());	
-		status.increase();
 		
 		
-		status.setDescription("Removing tagged values");
-		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Removing tagged values");
-		//Stereotype instance removal activations
-		statements.fireAllCurrent(getStereotypeRemovalRule(), match -> stereotypes.contains(match.getStereotype()));
-		SessionManager.getInstance().closeSession(Application.getInstance().getProject());
-		status.increase();
 		
-		status.setDescription("Deleting unused profile stereotypes");
-		SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Deleting unused profile stereotypes");
-		//Unused stereotype removal activations
-		statements.fireAllCurrent(getStereotypeDeletionRule(), match -> stereotypes.contains(match.getStereotype()));
-		SessionManager.getInstance().closeSession(Application.getInstance().getProject());	
-		status.increase();
 		
 	}
 	
+	private void doExecute() throws InconsistentEventSemanticsException, ViatraQueryException  {
+		
+		//Set status description
+		status.setDescription("Creating attributes");
+		//Attribute creation and default value setting activations
+		statements.fireAllCurrent(getAttributeCreationRule(), match -> stereotypes.contains(match.getStereotype()));
+		if(status.isCancel()){
+			SessionManager.getInstance().cancelSession(Application.getInstance().getProject());
+			return;
+		}
+		status.increase();
+		
+		
+		
+		status.setDescription("Setting redefine attribute relations");
+		//Attribute redefinition relation setting activations
+		statements.fireAllCurrent(getAttributeRedefinitionRule(), match -> stereotypes.contains(match.getStereotype()));
+		if(status.isCancel()){
+			SessionManager.getInstance().cancelSession(Application.getInstance().getProject());
+			return;
+		}
+		status.increase();
+		
+		status.setDescription("Removing tagged values");
+		//Stereotype instance removal activations
+		statements.fireAllCurrent(getStereotypeRemovalRule(), match -> stereotypes.contains(match.getStereotype()));
+		if(status.isCancel()){
+			SessionManager.getInstance().cancelSession(Application.getInstance().getProject());
+			return;
+		}
+		status.increase();
+		
+		status.setDescription("Deleting unused profile stereotypes");
+		//Unused stereotype removal activations
+		statements.fireAllCurrent(getStereotypeDeletionRule(), match -> stereotypes.contains(match.getStereotype()));
+		if(status.isCancel()){
+			SessionManager.getInstance().cancelSession(Application.getInstance().getProject());
+			return;
+		}
+		status.increase();
+	}
+
 	/**
 	 * The returned rule creates attributes (value properties) based on the tag values of blocks labeled with the selected stereotypes (sterotypes list).
 	 * This rule should be fired first as it does not depend on any other rule.

@@ -59,7 +59,7 @@ public class StereotypeTransformationConfigurator implements BrowserContextAMCon
 						e.printStackTrace();
 					}
 				}
-			}, "Stereotyped Element Transformation", false);
+			}, "Stereotyped Element Transformation", true);
 			
 			
 			
