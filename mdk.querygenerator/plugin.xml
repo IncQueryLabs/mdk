@@ -6,4 +6,11 @@
       <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.unreferredStereotypes"/>
     </group>
   </extension>
+  <extension id="gov.nasa.jpl.mbee.mdk.queries.TransformationQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:gov.nasa.jpl.mbee.mdk.queries.TransformationQueries" id="gov.nasa.jpl.mbee.mdk.queries.TransformationQueries">
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.taggedBlocks"/>
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.generalizedTaggedBlockPairs"/>
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.unreferredStereotypes"/>
+    </group>
+  </extension>
 </plugin>

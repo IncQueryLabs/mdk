@@ -38,9 +38,13 @@ public class Transformer {
 
 	private List<Stereotype> stereotypes;
 	
+	//Transformation rule responsible for creating attributes in elements in accordance to the stereotype tagged values
 	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> attributeCreation;
+	//Transformation rule responsible for setting redefinition relations between parent and child attributes
 	private BatchTransformationRule<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher> attributeRedefinition;
+	//Rule responsible for removing stereotype instances from classes
 	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> stereotypeRemoval;
+	//Rule responsible for the deletion of now unused stereotypes
 	private BatchTransformationRule<UnreferredStereotypesMatch, UnreferredStereotypesMatcher> stereotypeDeletion;
 	
 	public Transformer(List<Stereotype> stereotypes, AdvancedViatraQueryEngine engine) throws ViatraQueryException, InconsistentEventSemanticsException {
@@ -57,31 +61,51 @@ public class Transformer {
 	}
 	
 	public void execute() throws ViatraQueryException, InconsistentEventSemanticsException {
+		//Rule instances are executed here
+		//Each set of elements that match the preconditions of each rule result in a set of rule activations
+		//These rule activations are executed here in a predefined order
+		
+		//Attribute creation and default value setting activations
 		statements.fireAllCurrent(getAttributeCreationRule(), match -> stereotypes.contains(match.getStereotype()));
+		//Attribute redefinition relation setting activations
 		statements.fireAllCurrent(getAttributeRedefinitionRule(), match -> stereotypes.contains(match.getStereotype()));
+		//Stereotype instance removal activations
 		statements.fireAllCurrent(getStereotypeRemovalRule(), match -> stereotypes.contains(match.getStereotype()));
+		//Unused stereotype removal activations
 		statements.fireAllCurrent(getStereotypeDeletionRule(), match -> stereotypes.contains(match.getStereotype()));
 	}
 	
 	/**
 	 * The returned rule creates attributes (value properties) based on the tag values of blocks labeled with the selected stereotypes (sterotypes list).
 	 * This rule should be fired first as it does not depend on any other rule.
+	 * 
+	 * Precondition:
+	 * 
+	 * Returns blocks with tag values (a slot referring to a property). These properties are owned attributes of a stereotype.
+	 * A slot assigns a value to the property.
+	 * 
 	 */
 	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> getAttributeCreationRule() throws InconsistentEventSemanticsException, ViatraQueryException {
 		if (attributeCreation == null) {
 			attributeCreation = ruleFactory.<TaggedBlocksMatch, TaggedBlocksMatcher>createRule().name("AttributesFromTagsRule").precondition(TaggedBlocksQuerySpecification.instance()).action(
 			new IMatchProcessor<TaggedBlocksMatch>() {
 				public void process(TaggedBlocksMatch match) {
+					//Session is created for model modification
 					SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Create attribute");
+					
 					// The stereotype property to be transformed to attribute
 					Property stereotypeAttribute = match.getProperty();
+					
 					// Copying the property and putting it into the attribute list of the block
 					// CloneNotSupportedException is thrown if BasedElement.clone() is used
 					Property newAttribute = (Property) CopyPasting.copyPasteElement(stereotypeAttribute, match.getBlock());
 					match.getBlock().getOwnedAttribute().add(newAttribute);
-					// Setting the deafult value
+					
+					// Setting the default value
 					LiteralSpecification defaultValue = (LiteralSpecification) CopyPasting.copyPasteElement(match.getValue(), newAttribute);
 					newAttribute.setDefaultValue(defaultValue); // Without this line, the value would set the multiplicity of the attribute
+					
+					//Closing session
 					SessionManager.getInstance().closeSession(Application.getInstance().getProject());					
 				}
 			}).build();
@@ -92,6 +116,13 @@ public class Transformer {
 	/**
 	 * The returned rule redefines attributes that are created by attributeCreation. The attribute of a block redefines the same attribute (same name and type) of the parent block (generalization between the blocks).
 	 * This rule should be fired after the attributeCreationRule.
+	 * 
+	 * Precondition:
+	 * 
+	 * Returns a pair of blocks that are in a generalization relationship (parent and child).
+	 * Also, it returns the stereotype that is assigned to the blocks, as well as the attributes
+	 * (parentAttribute and childAttribute) that should be in a redefinition relationship according to the desired design pattern.
+	 * 
 	 */
 	private BatchTransformationRule<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher> getAttributeRedefinitionRule() throws InconsistentEventSemanticsException, ViatraQueryException {
 		if (attributeRedefinition == null) {
@@ -99,7 +130,10 @@ public class Transformer {
 			new IMatchProcessor<GeneralizedTaggedBlockPairsMatch>() {
 				public void process(GeneralizedTaggedBlockPairsMatch match) {
 					SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Redefine attribute");
+
+					//Setting redefined relation between attributes that activated the rule.
 					match.getChildAttribute().getRedefinedProperty().add(match.getParentAttribute());
+					
 					SessionManager.getInstance().closeSession(Application.getInstance().getProject());					
 				}
 			}).build();
@@ -110,6 +144,7 @@ public class Transformer {
 	/**
 	 * The returned rule removes the labels of the selected stereotypes (sterotypes list) and the inherent tagged values from blocks.
 	 * This rule should be fired after the attributeRedefinitionRule.
+	 *  
 	 */
 	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> getStereotypeRemovalRule() throws InconsistentEventSemanticsException, ViatraQueryException {
 		if (stereotypeRemoval == null) {
@@ -139,7 +174,10 @@ public class Transformer {
 			new IMatchProcessor<UnreferredStereotypesMatch>() {
 				public void process(UnreferredStereotypesMatch match) {
 					SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Delete stereotype");
+					
+					//Delete unused stereotypes contained in the specified profile (selected by the user)
 					match.getStereotype().refDelete();
+					
 					SessionManager.getInstance().closeSession(Application.getInstance().getProject());					
 				}
 			}).build();
@@ -148,6 +186,7 @@ public class Transformer {
 	}
 	
 	public void dispose() {
+		//Here the transformation and query engine are disposed
 		if (transformation != null) {
 			transformation.getRuleEngine().dispose();
 			transformation.dispose();

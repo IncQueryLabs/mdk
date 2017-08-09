@@ -8,7 +8,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
@@ -16,7 +15,6 @@ import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexFeatureFilter;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsCategory;
@@ -24,7 +22,6 @@ import com.nomagic.actions.ActionsManager;
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.actions.ActionsConfiguratorsManager;
 import com.nomagic.magicdraw.actions.BrowserContextAMConfigurator;
-import com.nomagic.magicdraw.actions.MDAction;
 import com.nomagic.magicdraw.actions.MDActionsCategory;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.options.EnvironmentOptions;
@@ -122,7 +119,7 @@ public class MDKPlugin extends Plugin {
         acm.addMainToolbarConfigurator(new OutputQueueStatusConfigurator());
         acm.addMainToolbarConfigurator(new SyncStatusConfigurator());
         
-        // Creating a context menu
+        // Creating context menu for VIATRA based transformation
         acm.addContainmentBrowserContextConfigurator(new BrowserContextAMConfigurator() {			
 			@Override
 			public int getPriority() {
@@ -130,11 +127,12 @@ public class MDKPlugin extends Plugin {
 			}			
 			@Override
 			public void configure(ActionsManager manager, Tree tree) {
-				MDActionsCategory category = new MDActionsCategory("Transform", "Transform");
+				MDActionsCategory category = new MDActionsCategory("Transform Stereotyped Elements", "Transform Stereotyped Elements");
 				List<Stereotype> stereotypes = new ArrayList<Stereotype>();
 				// Collecting the stereotypes selected by the user 
 				for (final Node node : tree.getSelectedNodes()) { 
 					if (node.getUserObject() instanceof Profile) {
+						//If a profile is selected transform every stereotype of the profile
 						Profile selectedProfile = (Profile) node.getUserObject();
 						for (Stereotype stereotype : selectedProfile.getOwnedStereotype()) {
 							stereotypes.add(stereotype);
@@ -149,14 +147,15 @@ public class MDKPlugin extends Plugin {
 						return;
 					}
 		        }
-				// Only profiles and stereotypes are selected
+				// MEnu is enabled only when profiles or stereotypes are selected
 				category.setEnabled(true);
-				category.addAction(new NMAction("Transform", "Transform", null, null) {
-					private static final long serialVersionUID = 1L; // Serial id to avoid waring
+				category.addAction(new NMAction("Transform Stereotyped Elements", "Transform Stereotyped Elements", null, null) {
+					private static final long serialVersionUID = 1L;
 					@Override
 					public void actionPerformed(ActionEvent event) {
 						// Creating a transformer and executing it
 						try {
+							//Transformer is initialized with a VIATRA query engine and a set of stereotypes to be transformed
 							Transformer transformer = new Transformer(stereotypes, createEngine());
 							transformer.execute();
 							transformer.dispose();
@@ -168,57 +167,12 @@ public class MDKPlugin extends Plugin {
 				manager.addCategory(category);
 			}
 		});
-        // VIATRA test
-        acm.addMainToolbarConfigurator(new AMConfigurator() {			
-			@Override
-			public int getPriority() {
-				return AMConfigurator.MEDIUM_PRIORITY;
-			}			
-			@Override
-			public void configure(ActionsManager manager) {
-				MDActionsCategory category = new MDActionsCategory("TEST", "TEST");
-				category.addAction(new MDAction("Query_Benchmark", "Query_Benchmark", null, null){
-					@Override
-					public void actionPerformed(ActionEvent e){
-						try {
-							BaseIndexOptions baseIndexOptions = new BaseIndexOptions().withFeatureFilterConfiguration(new IBaseIndexFeatureFilter() {
-								@Override
-								public boolean isFiltered(EStructuralFeature arg0) {
-									if (arg0 instanceof EReference && ((EReference)arg0).isContainment()) {
-										// XXX Omitting references can cause semantic errors (so far we are in the clear though)
-										// these references are only present in UML profiles, typically their contents are equal
-										// to the original references inherited from the UML type hierarchy, however there are some cases when this might not be the case.
-										return arg0.getName().contains("_from_");
-									}
-									return false;
-								}
-							}).withStrictNotificationMode(false);
-							AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(Application.getInstance().getProject().getModel(),
-									baseIndexOptions));
-							ViatraQueryLoggingUtil.getDefaultLogger().setLevel(Level.FATAL);						
-							
-//							EMFScope.extractUnderlyingEMFIndex(engine).coalesceTraversals( () -> {
-//								TestQueries.instance().getCircularDependencyError().getMatcher(engine);
-//								return null;
-//								
-//							});
-							
-						} catch (ViatraQueryException e1) {
-							e1.printStackTrace();
-						}						
-				    }
-				});
-				manager.addCategory(category);
-			}
-		});
         
         MMSSyncPlugin.getInstance().init();
         (new Thread(new OutputSyncRunner())).start();
 
         loadExtensionJars();
         configureEnvironmentOptions();
-
-        //   SpecificationDialogManager.getManager().addConfigurator(Element.class, new SpecificationNodeAspectsConfigurator());
     }
     
     private AdvancedViatraQueryEngine createEngine() throws ViatraQueryException {
