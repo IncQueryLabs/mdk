@@ -2,21 +2,36 @@ package gov.nasa.jpl.mbee.mdk.queries
 
 import "http://www.nomagic.com/magicdraw/UML/2.5.0"
 
+/*
+ * Queries instances of block objects 
+ */
 private pattern blocks(class : Class) {
 	Classifier.name(block, "Block");
 	InstanceSpecification.classifier(instance, block);
 	Class.appliedStereotypeInstance(class, instance);
 }
 
+/*
+ * Queries Properties with a given name and type
+ * 
+ */
 private pattern properties(property : Property, name : java String, type : Type) {
 	Property.name(property, name);
 	Property.type(property, type);
 }
 
+/**
+ * Maps stereotypes and their defined attributes
+ * 
+ */
 private pattern stereotypes(stereotype : Stereotype, attribute : Property) {
 	Stereotype.ownedAttribute(stereotype, attribute);
 }
 
+
+/**
+ * Defines parent-child relation between classes
+ */
 private pattern generalizations(general : Class, specific : Class) {
 	Generalization.general(generalization, general);
 	Generalization.specific(generalization, specific);
@@ -34,6 +49,10 @@ pattern taggedBlocks(block : Class, stereotype : Stereotype, slot : Slot, proper
 	find stereotypes(stereotype, property);
 } 
 
+/**
+ * Returns 2 blocks that have a generalization relation between them, and define a value for the same stereotype attribute.
+ * 
+ */
 private pattern generalizedTaggedBlocks(parentBlock : Class, childBlock : Class, stereotype : Stereotype, property : Property) {
 	find taggedBlocks(parentBlock, stereotype, _, property, _);
 	find generalizations(parentBlock, childBlock);
@@ -54,6 +73,9 @@ pattern generalizedTaggedBlockPairs(parentBlock : Class, childBlock : Class, ste
 	find properties(childAttribute, name, type);	
 }
 
+/**
+ * Returns stereotypes that are used as applied instances.
+ */
 private pattern referredStereotypes(stereotype : Stereotype) {
 	Class.appliedStereotypeInstance.classifier(_class, stereotype);
 } or {
