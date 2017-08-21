@@ -107,6 +107,8 @@ public class MDKPlugin extends Plugin {
         // Creating context menu for VIATRA based transformation
         acm.addContainmentBrowserContextConfigurator(new StereotypeTransformationConfigurator());
         
+        EvaluationConfigurator.getInstance().registerBinaryImplementers(MDKPlugin.class.getClassLoader());
+
         MMSSyncPlugin.getInstance().init();
         (new Thread(new OutputSyncRunner())).start();
 

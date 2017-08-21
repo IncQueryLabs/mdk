@@ -1,5 +1,9 @@
 package gov.nasa.jpl.mbee.mdk.generator;
 
+import com.nomagic.magicdraw.commands.Command;
+import com.nomagic.magicdraw.commands.CommandHistory;
+import com.nomagic.magicdraw.commands.MacroCommand;
+import com.nomagic.magicdraw.commands.RemoveCommandCreator;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
 import com.nomagic.uml2.ext.jmi.helpers.ModelHelper;
@@ -31,12 +35,7 @@ public class PresentationElementUtils {
             tableC,
             listC,
             imageC,
-            sectionC,
-            tsectionC;
-
-    private Stereotype presentsStereotype,
-            productStereotype,
-            viewClassStereotype;
+            sectionC;
 
     private Property generatedFromView,
             generatedFromElement;
@@ -51,10 +50,6 @@ public class PresentationElementUtils {
         this.listC = PresentationElementEnum.OPAQUE_LIST.get().apply(project);
         this.imageC = PresentationElementEnum.OPAQUE_IMAGE.get().apply(project);
         this.sectionC = PresentationElementEnum.OPAQUE_SECTION.get().apply(project);
-        this.tsectionC = PresentationElementEnum.SECTION.get().apply(project);
-        this.presentsStereotype = Utils.getPresentsStereotype(project);
-        this.productStereotype = Utils.getProductStereotype(project);
-        this.viewClassStereotype = Utils.getViewClassStereotype(project);
         this.generatedFromView = Utils.getGeneratedFromViewProperty(project);
         this.generatedFromElement = Utils.getGeneratedFromElementProperty(project);
         this.ef = project.getElementsFactory();
@@ -163,134 +158,7 @@ public class PresentationElementUtils {
                 }
             }
         }
-        if (isView) {
-            Package viewp = findViewInstancePackage(view);
-            if (viewp != null) {
-                for (Element el : viewp.getOwnedElement()) {
-                    if (el instanceof InstanceSpecification && ((InstanceSpecification) el).get_instanceValueOfInstance().isEmpty()) {
-                        unused.add((InstanceSpecification) el); //but this might be a manual instance that's referenced by higher project?
-                    }
-                }
-            }
-        }
         return res;
-    }
-
-    public boolean isSection(InstanceSpecification is) {
-        return is.getClassifier().contains(sectionC) || is.getClassifier().contains(tsectionC);
-    }
-
-    public boolean isInSomeViewPackage(InstanceSpecification is) {
-        Element owner = is.getOwner();
-        if (owner instanceof Package) {
-            for (Element e : Utils.collectDirectedRelatedElementsByRelationshipStereotype(owner, presentsStereotype, 2, false, 1)) {
-                if (StereotypesHelper.hasStereotypeOrDerived(e, viewClassStereotype)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public Package findViewInstancePackage(Element view) {
-        List<Element> results = Utils.collectDirectedRelatedElementsByRelationshipStereotype(view, presentsStereotype, 1, false, 1);
-        if (!results.isEmpty() && results.get(0) instanceof Package) {
-            return (Package) results.get(0);
-        }
-        return null;
-    }
-
-    public List<Package> findCorrectViewInstancePackageOwners(Element view) {
-        Type viewt = (Type) view;
-        List<Package> parentPack = new ArrayList<Package>();
-        if (StereotypesHelper.hasStereotypeOrDerived(view, productStereotype)) {
-            Element owner = view.getOwner();
-            while (!(owner instanceof Package)) {
-                owner = owner.getOwner();
-            }
-            parentPack.add((Package) owner);
-        }
-        else {
-            for (TypedElement t : viewt.get_typedElementOfType()) {
-                if (t instanceof Property && ((Property) t).getAggregation().equals(AggregationKindEnum.COMPOSITE) &&
-                        StereotypesHelper.hasStereotypeOrDerived(t.getOwner(), viewClassStereotype)) {
-                    Package parent = findViewInstancePackage(t.getOwner());
-                    if (parent != null) {
-                        parentPack.add(parent);
-                    }
-                }
-            }
-            if (parentPack.isEmpty()) {
-                Element owner = view.getOwner();
-                while (!(owner instanceof Package)) {
-                    owner = owner.getOwner();
-                }
-                parentPack.add((Package) owner);
-            }
-        }
-        return parentPack;
-    }
-
-    public Package createViewInstancePackage(Element view, Package owner) {
-        Package viewPackage = ef.createPackageInstance();
-        viewPackage.setName(((NamedElement) view).getName() + " Instances");
-        viewPackage.setOwner(owner);
-        Dependency d = ef.createDependencyInstance();
-        d.setOwner(viewPackage);
-        ModelHelper.setSupplierElement(d, viewPackage);
-        ModelHelper.setClientElement(d, view);
-        StereotypesHelper.addStereotype(d, presentsStereotype);
-        return viewPackage;
-    }
-
-    public boolean needLockForEdit(PresentationElementInstance pe) {
-        InstanceSpecification is = pe.getInstance();
-        if (is == null || (pe.isManual() && !pe.isViewDocHack())) {
-            return false;
-        }
-        if (pe.isViewDocHack()) {
-            return true;
-        }
-        ValueSpecification oldvs = is.getSpecification();
-        //check classifier
-        if (pe.getNewspec() != null && !pe.getNewspec().get("type").equals("Section")) {
-            if (oldvs instanceof LiteralString && ((LiteralString) oldvs).getValue() != null) {
-                try {
-                    JSONObject oldob = (JSONObject) JSONValue.parse(((LiteralString) oldvs).getValue());
-                    if (oldob == null || !oldob.equals(pe.getNewspec())) {
-                        return true;
-                    }
-                } catch (Exception ex) {
-                    return true;
-                }
-            }
-            else {
-                return true;
-            }
-        }
-        else if (pe.getType().equals(PresentationElementEnum.SECTION)) {
-            if (!(is.getSpecification() instanceof Expression)) {
-                return true;
-            }
-            List<InstanceSpecification> list = new ArrayList<InstanceSpecification>();
-            for (PresentationElementInstance cpe : pe.getChildren()) {
-                if (cpe.getInstance() == null) {
-                    return true;
-                }
-                list.add(cpe.getInstance());
-            }
-            List<ValueSpecification> model = ((Expression) is.getSpecification()).getOperand();
-            if (model.size() != list.size()) {
-                return true;
-            }
-            for (int i = 0; i < model.size(); i++) {
-                ValueSpecification modelvs = model.get(i);
-                if (!(modelvs instanceof InstanceValue) || ((InstanceValue) modelvs).getInstance() != list.get(i)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public InstanceSpecification updateOrCreateInstance(PresentationElementInstance pe, Package owner) {
@@ -422,27 +290,29 @@ public class PresentationElementUtils {
 
     public void updateOrCreateConstraintFromInstanceSpecifications(Element view, List<InstanceSpecification> instanceSpecifications) {
         Constraint c = getOrCreateViewConstraint(view);
-        Expression expression = c.getSpecification() instanceof Expression ? (Expression) c.getSpecification() : ef.createExpressionInstance();
+        // It was necessary to delete the old expression and make a new one, because expression.getOperand().addAll(instanceValues) would return false in seemingly random, albeit consistent, views.
+        Expression expression = c.getSpecification() instanceof Expression ? (Expression) c.getSpecification() : null;
+        if (expression != null) {
+            try {
+                Command command = RemoveCommandCreator.getCommand(expression);
+                command.execute();
+                MacroCommand macroCommand = CommandHistory.getCommandForAppend(expression);
+                macroCommand.add(command);
+            } catch (RuntimeException ignored) {
+                System.out.println("Could not clean up " + expression.getLocalID());
+                return;
+            }
+        }
         Application.getInstance().getProject().getCounter().setCanResetIDForObject(true);
+        expression = ef.createExpressionInstance();
         expression.setID(Converters.getElementToIdConverter().apply(view) + "_vc_expression");
         expression.setOwner(c);
-        List<InstanceValue> instanceValues = new ArrayList<>(instanceSpecifications.size());
-        Iterator<ValueSpecification> operandIterator = expression.getOperand().iterator();
-        while (operandIterator.hasNext()) {
-            ValueSpecification valueSpecification = operandIterator.next();
-            if (!(valueSpecification instanceof InstanceValue)) {
-                operandIterator.remove();
-                continue;
-            }
-            instanceValues.add((InstanceValue) valueSpecification);
-        }
         for (int i = 0; i < instanceSpecifications.size(); i++) {
-            InstanceValue instanceValue = i < instanceValues.size() ? instanceValues.get(i) : ef.createInstanceValueInstance();
+            InstanceValue instanceValue = ef.createInstanceValueInstance();
+            instanceValue.setID(expression.getLocalID() + "_" + i);
             instanceValue.setInstance(instanceSpecifications.get(i));
-            instanceValues.add(instanceValue);
+            expression.getOperand().add(instanceValue);
         }
-        expression.getOperand().clear();
-        expression.getOperand().addAll(instanceValues);
     }
 
     public void updateOrCreateConstraintFromPresentationElements(Element view, List<PresentationElementInstance> presentationElementInstances) {

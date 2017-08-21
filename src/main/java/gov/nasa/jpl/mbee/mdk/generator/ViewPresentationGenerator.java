@@ -136,10 +136,19 @@ public class ViewPresentationGenerator implements RunnableWithProgress {
             Document dge = dg.parseDocument(true, recurse, false);
             new PostProcessor().process(dge);
 
+            SessionManager.getInstance().createSession(project, DocBookOutputVisitor.class.getSimpleName());
+            if (!SessionManager.getInstance().isSessionCreated(project)) {
+                Application.getInstance().getGUILog().log("[ERROR] MagicDraw session creation failed. View generation aborted. Please restart MagicDraw and try again.");
+                failure = true;
+                return;
+            }
+
             DocBookOutputVisitor docBookOutputVisitor = new DocBookOutputVisitor(true);
             dge.accept(docBookOutputVisitor);
+
+            SessionManager.getInstance().closeSession(project);
+
             DBBook book = docBookOutputVisitor.getBook();
-            // TODO ??
             if (book == null) {
                 return;
             }
@@ -249,9 +258,9 @@ public class ViewPresentationGenerator implements RunnableWithProgress {
                 try (JsonParser jsonParser = JacksonUtils.getJsonFactory().createParser(responseFile)) {
                     viewResponse = JacksonUtils.parseJsonObject(jsonParser);
                 }
-            } catch (ServerException | IOException | URISyntaxException e) {
+            } catch (IOException | URISyntaxException | ServerException e) {
                 failure = true;
-                Application.getInstance().getGUILog().log("[WARNING] Server error occurred. Please check your network connection or view logs for more information.");
+                Application.getInstance().getGUILog().log("[ERROR] An error occurred. View generation aborted. Please check your network connection or view logs for more information. Reason: " + e.getMessage());
                 e.printStackTrace();
                 return;
             }
@@ -317,9 +326,9 @@ public class ViewPresentationGenerator implements RunnableWithProgress {
                         try (JsonParser jsonParser = JacksonUtils.getJsonFactory().createParser(responseFile)) {
                             instanceAndSlotResponse = JacksonUtils.parseJsonObject(jsonParser);
                         }
-                    } catch (ServerException | IOException | URISyntaxException e) {
+                    } catch (IOException | URISyntaxException | ServerException e) {
                         failure = true;
-                        Application.getInstance().getGUILog().log("[WARNING] Server error occurred. Please check your network connection or view logs for more information.");
+                        Application.getInstance().getGUILog().log("[ERROR] An error occurred. View generation aborted. Please check your network connection or view logs for more information. Reason: " + e.getMessage());
                         e.printStackTrace();
                         SessionManager.getInstance().cancelSession(project);
                         return;
