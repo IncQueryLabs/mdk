@@ -26,7 +26,9 @@ import gov.nasa.jpl.mbee.mdk.mms.sync.status.SyncStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.ocl.OclQueryConfigurator;
 import gov.nasa.jpl.mbee.mdk.options.MDKOptionsGroup;
 import gov.nasa.jpl.mbee.mdk.systems_reasoner.SRConfigurator;
-import gov.nasa.jpl.mbee.mdk.transformation.StereotypeTransformationConfigurator;
+import gov.nasa.jpl.mbee.mdk.transformation.batch.StereotypeBatchTransformationConfigurator;
+import gov.nasa.jpl.mbee.mdk.transformation.eventdriven.DisableEventDrivenTransformationConfigurator;
+import gov.nasa.jpl.mbee.mdk.transformation.eventdriven.EnableEventDrivenTransformationConfigurator;
 import gov.nasa.jpl.mbee.mdk.util.MDUtils;
 
 public class MDKPlugin extends Plugin {
@@ -104,8 +106,12 @@ public class MDKPlugin extends Plugin {
         acm.addMainToolbarConfigurator(new OutputQueueStatusConfigurator());
         acm.addMainToolbarConfigurator(new SyncStatusConfigurator());
         
-        // Creating context menu for VIATRA based transformation
-        acm.addContainmentBrowserContextConfigurator(new StereotypeTransformationConfigurator());
+        // Creating context menu for batch VIATRA based transformation
+        acm.addContainmentBrowserContextConfigurator(new StereotypeBatchTransformationConfigurator());
+        
+        // Creating context menu for event-driven VIATRA based transformation
+        acm.addContainmentBrowserContextConfigurator(new EnableEventDrivenTransformationConfigurator());
+        acm.addContainmentBrowserContextConfigurator(new DisableEventDrivenTransformationConfigurator());
         
         EvaluationConfigurator.getInstance().registerBinaryImplementers(MDKPlugin.class.getClassLoader());
 

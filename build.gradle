@@ -117,9 +117,9 @@ dependencies {
     // VIATRA Query Runtime
     compile group: "org.eclipse.viatra", name: "viatra-query-runtime", version: "1.6.0.RC3"
     
-    // VIATRA Query Runtime
+    // VIATRA Transformation Runtime
     compile group: "org.eclipse.viatra", name: "viatra-transformation-runtime", version: "1.6.0.RC3"
-	
+    	
 	// GUAVA 18.0
     compile group: "com.google.guava", name: "guava", version: "18.0"
 	

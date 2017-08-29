@@ -1,4 +1,4 @@
-package gov.nasa.jpl.mbee.mdk.transformation;
+package gov.nasa.jpl.mbee.mdk.transformation.batch;
 
 import java.util.List;
 
@@ -11,26 +11,20 @@ import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchT
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformationStatements;
 import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.InconsistentEventSemanticsException;
 
-import com.nomagic.magicdraw.copypaste.CopyPasting;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.openapi.uml.SessionManager;
 import com.nomagic.task.ProgressStatus;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.InstanceSpecification;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
 import gov.nasa.jpl.mbee.mdk.queries.GeneralizedTaggedBlockPairsMatch;
 import gov.nasa.jpl.mbee.mdk.queries.GeneralizedTaggedBlockPairsMatcher;
 import gov.nasa.jpl.mbee.mdk.queries.TaggedBlocksMatch;
 import gov.nasa.jpl.mbee.mdk.queries.TaggedBlocksMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.UnreferredStereotypesMatch;
-import gov.nasa.jpl.mbee.mdk.queries.UnreferredStereotypesMatcher;
 import gov.nasa.jpl.mbee.mdk.queries.util.GeneralizedTaggedBlockPairsQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification;
-import gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.transformation.util.StereotypedElementTransformationActions;
 
-public class StereotypedElementTransformation {	
+public class StereotypedElementBatchTransformation {	
 	
 	private AdvancedViatraQueryEngine engine;
 	private BatchTransformation transformation;
@@ -45,13 +39,12 @@ public class StereotypedElementTransformation {
 	private BatchTransformationRule<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher> attributeRedefinition;
 	//Rule responsible for removing stereotype instances from classes
 	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> stereotypeRemoval;
-	//Rule responsible for the deletion of now unused stereotypes
-	private BatchTransformationRule<UnreferredStereotypesMatch, UnreferredStereotypesMatcher> stereotypeDeletion;
+
 	
 	//Required for displaying transformation status
 	private ProgressStatus status;
 	
-	public StereotypedElementTransformation(List<Stereotype> stereotypes, AdvancedViatraQueryEngine engine, ProgressStatus status) throws ViatraQueryException, InconsistentEventSemanticsException {
+	public StereotypedElementBatchTransformation(List<Stereotype> stereotypes, AdvancedViatraQueryEngine engine, ProgressStatus status) throws ViatraQueryException, InconsistentEventSemanticsException {
 		this.engine = engine;
 		this.stereotypes = stereotypes;
 		this.status = status;
@@ -83,11 +76,6 @@ public class StereotypedElementTransformation {
 		} finally {
 			SessionManager.getInstance().closeSession(Application.getInstance().getProject());
 		}
-		
-		
-		
-		
-		
 		
 	}
 	
@@ -123,14 +111,6 @@ public class StereotypedElementTransformation {
 		}
 		status.increase();
 		
-		status.setDescription("Deleting unused profile stereotypes");
-		//Unused stereotype removal activations
-		statements.fireAllCurrent(getStereotypeDeletionRule(), match -> stereotypes.contains(match.getStereotype()));
-		if(status.isCancel()){
-			SessionManager.getInstance().cancelSession(Application.getInstance().getProject());
-			return;
-		}
-		status.increase();
 	}
 
 	/**
@@ -143,24 +123,16 @@ public class StereotypedElementTransformation {
 	 * A slot assigns a value to the property.
 	 * 
 	 */
-	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> getAttributeCreationRule() throws InconsistentEventSemanticsException, ViatraQueryException {
+	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> getAttributeCreationRule()
+			throws InconsistentEventSemanticsException, ViatraQueryException {
 		if (attributeCreation == null) {
-			attributeCreation = ruleFactory.<TaggedBlocksMatch, TaggedBlocksMatcher>createRule().name("AttributesFromTagsRule").precondition(TaggedBlocksQuerySpecification.instance()).action(
-			new IMatchProcessor<TaggedBlocksMatch>() {
-				public void process(TaggedBlocksMatch match) {
-					// The stereotype property to be transformed to attribute
-					Property stereotypeAttribute = match.getProperty();
-					
-					// Copying the property and putting it into the attribute list of the block
-					// CloneNotSupportedException is thrown if BasedElement.clone() is used
-					Property newAttribute = (Property) CopyPasting.copyPasteElement(stereotypeAttribute, match.getBlock());
-					match.getBlock().getOwnedAttribute().add(newAttribute);
-					
-					// Setting the default value
-					LiteralSpecification defaultValue = (LiteralSpecification) CopyPasting.copyPasteElement(match.getValue(), newAttribute);
-					newAttribute.setDefaultValue(defaultValue); // Without this line, the value would set the multiplicity of the attribute
-				}
-			}).build();
+			attributeCreation = ruleFactory.<TaggedBlocksMatch, TaggedBlocksMatcher>createRule()
+					.name("AttributesFromTagsRule").precondition(TaggedBlocksQuerySpecification.instance())
+					.action(new IMatchProcessor<TaggedBlocksMatch>() {
+						public void process(TaggedBlocksMatch match) {
+							StereotypedElementTransformationActions.createBlockAttributes(match);
+						}
+					}).build();
 		}
 		return attributeCreation;
 	}
@@ -176,15 +148,18 @@ public class StereotypedElementTransformation {
 	 * (parentAttribute and childAttribute) that should be in a redefinition relationship according to the desired design pattern.
 	 * 
 	 */
-	private BatchTransformationRule<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher> getAttributeRedefinitionRule() throws InconsistentEventSemanticsException, ViatraQueryException {
+	private BatchTransformationRule<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher> getAttributeRedefinitionRule()
+			throws InconsistentEventSemanticsException, ViatraQueryException {
 		if (attributeRedefinition == null) {
-			attributeRedefinition = ruleFactory.<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher>createRule().name("AttributeRedefinitionRule").precondition(GeneralizedTaggedBlockPairsQuerySpecification.instance()).action(
-			new IMatchProcessor<GeneralizedTaggedBlockPairsMatch>() {
-				public void process(GeneralizedTaggedBlockPairsMatch match) {
-					//Setting redefined relation between attributes that activated the rule.
-					match.getChildAttribute().getRedefinedProperty().add(match.getParentAttribute());
-				}
-			}).build();
+			attributeRedefinition = ruleFactory
+					.<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher>createRule()
+					.name("AttributeRedefinitionRule")
+					.precondition(GeneralizedTaggedBlockPairsQuerySpecification.instance())
+					.action(new IMatchProcessor<GeneralizedTaggedBlockPairsMatch>() {
+						public void process(GeneralizedTaggedBlockPairsMatch match) {
+							StereotypedElementTransformationActions.createAttributeredefinition(match);
+						}
+					}).build();
 		}
 		return attributeRedefinition;
 	}
@@ -194,39 +169,21 @@ public class StereotypedElementTransformation {
 	 * This rule should be fired after the attributeRedefinitionRule.
 	 *  
 	 */
-	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> getStereotypeRemovalRule() throws InconsistentEventSemanticsException, ViatraQueryException {
+	private BatchTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> getStereotypeRemovalRule()
+			throws InconsistentEventSemanticsException, ViatraQueryException {
 		if (stereotypeRemoval == null) {
-			stereotypeRemoval = ruleFactory.<TaggedBlocksMatch, TaggedBlocksMatcher>createRule().name("StereotypeRemovalRule").precondition(TaggedBlocksQuerySpecification.instance()).action(
-			new IMatchProcessor<TaggedBlocksMatch>() {
-				public void process(TaggedBlocksMatch match) {
-					// Removing the tag value from the block
-					InstanceSpecification instanceSpecification = match.getSlot().getOwningInstance();
-					instanceSpecification.getSlot().remove(match.getSlot());
-					// Removing the stereotype from the block
-					instanceSpecification.getClassifier().remove(match.getStereotype());				
-				}
-			}).build();
+			stereotypeRemoval = ruleFactory.<TaggedBlocksMatch, TaggedBlocksMatcher>createRule()
+					.name("StereotypeRemovalRule").precondition(TaggedBlocksQuerySpecification.instance())
+					.action(new IMatchProcessor<TaggedBlocksMatch>() {
+						public void process(TaggedBlocksMatch match) {
+							StereotypedElementTransformationActions.createRemoveStereotypeInstance(match);
+						}
+					})
+					.build();
 		}
 		return stereotypeRemoval;
 	}
-	
-	/**
-	 * The returned rule deletes the selected stereotypes (sterotypes list) if it does not have a property that is referred by a class.
-	 * This rule should be fired after the stereotypeRemovalRule.
-	 */
-	private BatchTransformationRule<UnreferredStereotypesMatch, UnreferredStereotypesMatcher> getStereotypeDeletionRule() throws InconsistentEventSemanticsException, ViatraQueryException {
-		if (stereotypeDeletion == null) {
-			stereotypeDeletion = ruleFactory.<UnreferredStereotypesMatch, UnreferredStereotypesMatcher>createRule().name("StereotypeDeletionRule").precondition(UnreferredStereotypesQuerySpecification.instance()).action(
-			new IMatchProcessor<UnreferredStereotypesMatch>() {
-				public void process(UnreferredStereotypesMatch match) {
-					//Delete unused stereotypes contained in the specified profile (selected by the user)
-					match.getStereotype().refDelete();
-				}
-			}).build();
-		}
-		return stereotypeDeletion;
-	}
-	
+		
 	public void dispose() {
 		status.setDescription("Disposing transformation");
 		//Here the transformation and query engine are disposed

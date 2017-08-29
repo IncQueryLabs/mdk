@@ -1,4 +1,4 @@
-package gov.nasa.jpl.mbee.mdk.transformation;
+package gov.nasa.jpl.mbee.mdk.transformation.batch;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -6,20 +6,11 @@ import java.util.List;
 
 import javax.swing.KeyStroke;
 
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
-import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexFeatureFilter;
-import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-
 import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsManager;
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.actions.BrowserContextAMConfigurator;
 import com.nomagic.magicdraw.actions.MDActionsCategory;
-import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.task.BackgroundTaskRunner;
 import com.nomagic.magicdraw.ui.browser.Node;
 import com.nomagic.magicdraw.ui.browser.Tree;
@@ -28,7 +19,9 @@ import com.nomagic.task.RunnableWithProgress;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Profile;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
-public class StereotypeTransformationConfigurator implements BrowserContextAMConfigurator {
+import gov.nasa.jpl.mbee.mdk.transformation.util.EngineCreationUtil;
+
+public class StereotypeBatchTransformationConfigurator implements BrowserContextAMConfigurator {
 	
 	private final class RunTransformationAction extends NMAction {
 		private static final long serialVersionUID = 1L;
@@ -42,17 +35,17 @@ public class StereotypeTransformationConfigurator implements BrowserContextAMCon
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			//Transforamtion is run in a background task
+			//Transformation is run in a background task
 			BackgroundTaskRunner.runWithProgressStatus(new RunnableWithProgress()
 			{
 				@Override
 				public void run(ProgressStatus progressStatus)
 				{
-					progressStatus.init("Transforming Elements...", 0, 6);
+					progressStatus.init("Transforming Elements...", 0, 5);
 					// Creating a transformer and executing it
 					try {
 						//Transformer is initialized with a VIATRA query engine and a set of stereotypes to be transformed
-						StereotypedElementTransformation transformer = new StereotypedElementTransformation(stereotypes, createEngine(), progressStatus);
+						StereotypedElementBatchTransformation transformer = new StereotypedElementBatchTransformation(stereotypes, EngineCreationUtil.createEngine(), progressStatus);
 						transformer.execute();
 						transformer.dispose();
 					} catch (Exception e) {
@@ -99,25 +92,5 @@ public class StereotypeTransformationConfigurator implements BrowserContextAMCon
 		
 		category.addAction(new RunTransformationAction("Transform Stereotyped Elements", "Transform Stereotyped Elements", null, null, stereotypes));
 		manager.addCategory(category);
-	}
-	
-	/**
-	 * Creates a VIATRA query engine for the currently opened model.
-	 * 
-	 * @return
-	 * @throws ViatraQueryException
-	 */
-	@SuppressWarnings("deprecation")
-	private AdvancedViatraQueryEngine createEngine() throws ViatraQueryException {
-		BaseIndexOptions baseIndexOptions = new BaseIndexOptions().withFeatureFilterConfiguration(new IBaseIndexFeatureFilter() {
-			@Override
-			public boolean isFiltered(EStructuralFeature arg0) {
-				if (arg0 instanceof EReference && ((EReference)arg0).isContainment()) {
-					return arg0.getName().contains("_from_");
-				}
-				return false;
-			}
-		}).withStrictNotificationMode(false);
-		return AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(Application.getInstance().getProject().getModel(), baseIndexOptions));
 	}
 }
