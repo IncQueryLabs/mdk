@@ -65,7 +65,7 @@ repositories {
         }
     }
     maven {
-        url 'https://repo.eclipse.org/content/repositories/viatra-releases/'
+        url 'https://repo.eclipse.org/content/repositories/viatra2-snapshots/'
     }
 }
 
@@ -115,11 +115,14 @@ dependencies {
     compile group: "com.box", name: "json-patch", version: "1.13"
     
     // VIATRA Query Runtime
-    compile group: "org.eclipse.viatra", name: "viatra-query-runtime", version: "1.6.0.RC3"
+    compile group: "org.eclipse.viatra", name: "viatra-query-runtime", version: "1.7.0-SNAPSHOT"
     
     // VIATRA Transformation Runtime
-    compile group: "org.eclipse.viatra", name: "viatra-transformation-runtime", version: "1.6.0.RC3"
-    	
+    compile group: "org.eclipse.viatra", name: "viatra-transformation-runtime", version: "1.7.0-SNAPSHOT"
+    
+     // VIATRA Transformation Debugger Runtime
+    compile group: "org.eclipse.viatra", name: "viatra-transformation-debugger-runtime", version: "0.17.0-SNAPSHOT"
+	
 	// GUAVA 18.0
     compile group: "com.google.guava", name: "guava", version: "18.0"
 	
@@ -424,7 +427,7 @@ task runJava(type: JavaExec) {
     errorOutput = System.err
 
     main = 'com.nomagic.osgi.launcher.ProductionFrameworkLauncher'
-    jvmArgs = ['-Xmx8192M', '-Xss512M', '-DLOCALCONFIG=true', '-DWINCONFIG=true', '-Djsse.enableSNIExtension=false', '-Djava.net.preferIPv4Stack=true', '-Dcom.sun.media.imageio.disableCodecLib=true', '-noverify', '-Dlocal.config.dir.ext=-dev', '-splash:data/splash.png', '-Dmd.class.path=$java.class.path', '-Dcom.nomagic.osgi.config.dir=configuration', '-Desi.system.config=data/application.conf', '-Dlogback.configurationFile=data/logback.xml', '-Dsun.locale.formatasdefault=true']
+    jvmArgs = ['-Xmx8192M', '-Xss512M', '-DLOCALCONFIG=true', '-DWINCONFIG=true', '-Djsse.enableSNIExtension=false', '-Djava.net.preferIPv4Stack=true', '-Dcom.sun.media.imageio.disableCodecLib=true', '-noverify', '-Dlocal.config.dir.ext=-dev', '-splash:data/splash.png', '-Dmd.class.path=$java.class.path', '-Dcom.nomagic.osgi.config.dir=configuration', '-Desi.system.config=data/application.conf', '-Dlogback.configurationFile=data/logback.xml', '-Dsun.locale.formatasdefault=true', '-Dcom.sun.management.jmxremote.port=1099', '-Dcom.sun.management.jmxremote.authenticate=false', '-Dcom.sun.management.jmxremote.ssl=false']
     // arguments to pass to the application
     args 'DEVELOPER'
 }
@@ -441,7 +444,7 @@ task debugJava(type: JavaExec) {
     errorOutput = System.err
 
     main = 'com.nomagic.osgi.launcher.ProductionFrameworkLauncher'
-    jvmArgs = ['-Xmx8192M', '-Xss512M', '-DLOCALCONFIG=true', '-DWINCONFIG=true', '-Djsse.enableSNIExtension=false', '-Djava.net.preferIPv4Stack=true', '-Dcom.sun.media.imageio.disableCodecLib=true', '-noverify', '-Dlocal.config.dir.ext=-dev', '-splash:data/splash.png', '-Dmd.class.path=$java.class.path', '-Dcom.nomagic.osgi.config.dir=configuration', '-Desi.system.config=data/application.conf', '-Dlogback.configurationFile=data/logback.xml', '-Dsun.locale.formatasdefault=true', '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9099']
+    jvmArgs = ['-Xmx8192M', '-Xss512M', '-DLOCALCONFIG=true', '-DWINCONFIG=true', '-Djsse.enableSNIExtension=false', '-Djava.net.preferIPv4Stack=true', '-Dcom.sun.media.imageio.disableCodecLib=true', '-noverify', '-Dlocal.config.dir.ext=-dev', '-splash:data/splash.png', '-Dmd.class.path=$java.class.path', '-Dcom.nomagic.osgi.config.dir=configuration', '-Desi.system.config=data/application.conf', '-Dlogback.configurationFile=data/logback.xml', '-Dsun.locale.formatasdefault=true', '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9099', '-Dcom.sun.management.jmxremote.port=1099', '-Dcom.sun.management.jmxremote.authenticate=false', '-Dcom.sun.management.jmxremote.ssl=false']
     // arguments to pass to the application
     args 'DEVELOPER'
 }
