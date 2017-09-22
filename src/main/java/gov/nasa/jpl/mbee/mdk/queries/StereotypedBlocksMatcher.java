@@ -1,5 +1,5 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/EventDrivenTransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
@@ -7,8 +7,8 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Slot;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
-import gov.nasa.jpl.mbee.mdk.queries.TaggedBlocksMatch;
-import gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.StereotypedBlocksMatch;
+import gov.nasa.jpl.mbee.mdk.queries.util.StereotypedBlocksQuerySpecification;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,35 +22,39 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
- * Generated pattern matcher API of the gov.nasa.jpl.mbee.mdk.queries.taggedBlocks pattern,
+ * Generated pattern matcher API of the gov.nasa.jpl.mbee.mdk.queries.StereotypedBlocks pattern,
  * providing pattern-specific query methods.
  * 
  * <p>Use the pattern matcher on a given model via {@link #on(ViatraQueryEngine)},
  * e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}.
  * 
- * <p>Matches of the pattern will be represented as {@link TaggedBlocksMatch}.
+ * <p>Matches of the pattern will be represented as {@link StereotypedBlocksMatch}.
  * 
  * <p>Original source:
  * <code><pre>
- * Returns blocks with tag values (a slot referring to a property). These properties are owned attributes of a stereotype.
- *   A slot assigns a value to the property.
+ * Event-Driven rule precondition number 1
+ *   
+ *   Queries blocks that have instances of the selected profile's stereotypes, and define tagged values for its properties. 
+ *   during the rule action, for these tagged values new block ValueProperties are introduced. the value of the tag is 
+ *   represented as the default value of the property.
+ *   
  *  
- * pattern taggedBlocks(block : Class, stereotype : Stereotype, slot : Slot, property : Property, value : LiteralSpecification) {
+ * pattern StereotypedBlocks(block : Class, stereotype : Stereotype, slot : Slot, property : Property, value : LiteralSpecification) {
  * 	find block(block);
  * 	Class.appliedStereotypeInstance.slot(block, slot);
- * 	Slot.definingFeature(slot, property); // Property of  Stereotype
- * 	Slot.value(slot, value); // Slot value
+ * 	Slot.definingFeature(slot, property); 
+ * 	Slot.value(slot, value);
  * 	Stereotype.ownedAttribute(stereotype, property);
  * }
  * </pre></code>
  * 
- * @see TaggedBlocksMatch
- *  @see TaggedBlocksProcessor
- * @see TaggedBlocksQuerySpecification
+ * @see StereotypedBlocksMatch
+ *  @see StereotypedBlocksProcessor
+ * @see StereotypedBlocksQuerySpecification
  * 
  */
 @SuppressWarnings("all")
-public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
+public class StereotypedBlocksMatcher extends BaseMatcher<StereotypedBlocksMatch> {
   /**
    * Initializes the pattern matcher within an existing VIATRA Query engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -59,11 +63,11 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @throws ViatraQueryException if an error occurs during pattern matcher creation
    * 
    */
-  public static TaggedBlocksMatcher on(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public static StereotypedBlocksMatcher on(final ViatraQueryEngine engine) throws ViatraQueryException {
     // check if matcher already exists
-    TaggedBlocksMatcher matcher = engine.getExistingMatcher(querySpecification());
+    StereotypedBlocksMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
-        matcher = (TaggedBlocksMatcher)engine.getMatcher(querySpecification());
+        matcher = (StereotypedBlocksMatcher)engine.getMatcher(querySpecification());
     }
     return matcher;
   }
@@ -74,8 +78,8 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @noreference This method is for internal matcher initialization by the framework, do not call it manually.
    * 
    */
-  public static TaggedBlocksMatcher create() throws ViatraQueryException {
-    return new TaggedBlocksMatcher();
+  public static StereotypedBlocksMatcher create() throws ViatraQueryException {
+    return new StereotypedBlocksMatcher();
   }
   
   private final static int POSITION_BLOCK = 0;
@@ -88,7 +92,7 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
   
   private final static int POSITION_VALUE = 4;
   
-  private final static Logger LOGGER = ViatraQueryLoggingUtil.getLogger(TaggedBlocksMatcher.class);
+  private final static Logger LOGGER = ViatraQueryLoggingUtil.getLogger(StereotypedBlocksMatcher.class);
   
   /**
    * Initializes the pattern matcher within an existing VIATRA Query engine.
@@ -98,7 +102,7 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @throws ViatraQueryException if an error occurs during pattern matcher creation
    * 
    */
-  private TaggedBlocksMatcher() throws ViatraQueryException {
+  private StereotypedBlocksMatcher() throws ViatraQueryException {
     super(querySpecification());
   }
   
@@ -109,10 +113,10 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
    * @param pProperty the fixed value of pattern parameter property, or null if not bound.
    * @param pValue the fixed value of pattern parameter value, or null if not bound.
-   * @return matches represented as a TaggedBlocksMatch object.
+   * @return matches represented as a StereotypedBlocksMatch object.
    * 
    */
-  public Collection<TaggedBlocksMatch> getAllMatches(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
+  public Collection<StereotypedBlocksMatch> getAllMatches(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
     return rawGetAllMatches(new Object[]{pBlock, pStereotype, pSlot, pProperty, pValue});
   }
   
@@ -124,10 +128,10 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
    * @param pProperty the fixed value of pattern parameter property, or null if not bound.
    * @param pValue the fixed value of pattern parameter value, or null if not bound.
-   * @return a match represented as a TaggedBlocksMatch object, or null if no match is found.
+   * @return a match represented as a StereotypedBlocksMatch object, or null if no match is found.
    * 
    */
-  public TaggedBlocksMatch getOneArbitraryMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
+  public StereotypedBlocksMatch getOneArbitraryMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
     return rawGetOneArbitraryMatch(new Object[]{pBlock, pStereotype, pSlot, pProperty, pValue});
   }
   
@@ -170,7 +174,7 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue, final IMatchProcessor<? super TaggedBlocksMatch> processor) {
+  public void forEachMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue, final IMatchProcessor<? super StereotypedBlocksMatch> processor) {
     rawForEachMatch(new Object[]{pBlock, pStereotype, pSlot, pProperty, pValue}, processor);
   }
   
@@ -186,7 +190,7 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue, final IMatchProcessor<? super TaggedBlocksMatch> processor) {
+  public boolean forOneArbitraryMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue, final IMatchProcessor<? super StereotypedBlocksMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pBlock, pStereotype, pSlot, pProperty, pValue}, processor);
   }
   
@@ -202,8 +206,8 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @return the (partial) match object.
    * 
    */
-  public TaggedBlocksMatch newMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
-    return TaggedBlocksMatch.newMatch(pBlock, pStereotype, pSlot, pProperty, pValue);
+  public StereotypedBlocksMatch newMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
+    return StereotypedBlocksMatch.newMatch(pBlock, pStereotype, pSlot, pProperty, pValue);
   }
   
   /**
@@ -231,7 +235,7 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @return the Set of all values or empty set if there are no matches
    * 
    */
-  public Set<com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class> getAllValuesOfblock(final TaggedBlocksMatch partialMatch) {
+  public Set<com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class> getAllValuesOfblock(final StereotypedBlocksMatch partialMatch) {
     return rawAccumulateAllValuesOfblock(partialMatch.toArray());
   }
   
@@ -275,7 +279,7 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @return the Set of all values or empty set if there are no matches
    * 
    */
-  public Set<Stereotype> getAllValuesOfstereotype(final TaggedBlocksMatch partialMatch) {
+  public Set<Stereotype> getAllValuesOfstereotype(final StereotypedBlocksMatch partialMatch) {
     return rawAccumulateAllValuesOfstereotype(partialMatch.toArray());
   }
   
@@ -319,7 +323,7 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @return the Set of all values or empty set if there are no matches
    * 
    */
-  public Set<Slot> getAllValuesOfslot(final TaggedBlocksMatch partialMatch) {
+  public Set<Slot> getAllValuesOfslot(final StereotypedBlocksMatch partialMatch) {
     return rawAccumulateAllValuesOfslot(partialMatch.toArray());
   }
   
@@ -363,7 +367,7 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @return the Set of all values or empty set if there are no matches
    * 
    */
-  public Set<Property> getAllValuesOfproperty(final TaggedBlocksMatch partialMatch) {
+  public Set<Property> getAllValuesOfproperty(final StereotypedBlocksMatch partialMatch) {
     return rawAccumulateAllValuesOfproperty(partialMatch.toArray());
   }
   
@@ -407,7 +411,7 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @return the Set of all values or empty set if there are no matches
    * 
    */
-  public Set<LiteralSpecification> getAllValuesOfvalue(final TaggedBlocksMatch partialMatch) {
+  public Set<LiteralSpecification> getAllValuesOfvalue(final StereotypedBlocksMatch partialMatch) {
     return rawAccumulateAllValuesOfvalue(partialMatch.toArray());
   }
   
@@ -427,9 +431,9 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
   }
   
   @Override
-  protected TaggedBlocksMatch tupleToMatch(final Tuple t) {
+  protected StereotypedBlocksMatch tupleToMatch(final Tuple t) {
     try {
-        return TaggedBlocksMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) t.get(POSITION_BLOCK), (Stereotype) t.get(POSITION_STEREOTYPE), (Slot) t.get(POSITION_SLOT), (Property) t.get(POSITION_PROPERTY), (LiteralSpecification) t.get(POSITION_VALUE));
+        return StereotypedBlocksMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) t.get(POSITION_BLOCK), (Stereotype) t.get(POSITION_STEREOTYPE), (Slot) t.get(POSITION_SLOT), (Property) t.get(POSITION_PROPERTY), (LiteralSpecification) t.get(POSITION_VALUE));
     } catch(ClassCastException e) {
         LOGGER.error("Element(s) in tuple not properly typed!",e);
         return null;
@@ -437,9 +441,9 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
   }
   
   @Override
-  protected TaggedBlocksMatch arrayToMatch(final Object[] match) {
+  protected StereotypedBlocksMatch arrayToMatch(final Object[] match) {
     try {
-        return TaggedBlocksMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) match[POSITION_BLOCK], (Stereotype) match[POSITION_STEREOTYPE], (Slot) match[POSITION_SLOT], (Property) match[POSITION_PROPERTY], (LiteralSpecification) match[POSITION_VALUE]);
+        return StereotypedBlocksMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) match[POSITION_BLOCK], (Stereotype) match[POSITION_STEREOTYPE], (Slot) match[POSITION_SLOT], (Property) match[POSITION_PROPERTY], (LiteralSpecification) match[POSITION_VALUE]);
     } catch(ClassCastException e) {
         LOGGER.error("Element(s) in array not properly typed!",e);
         return null;
@@ -447,9 +451,9 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
   }
   
   @Override
-  protected TaggedBlocksMatch arrayToMatchMutable(final Object[] match) {
+  protected StereotypedBlocksMatch arrayToMatchMutable(final Object[] match) {
     try {
-        return TaggedBlocksMatch.newMutableMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) match[POSITION_BLOCK], (Stereotype) match[POSITION_STEREOTYPE], (Slot) match[POSITION_SLOT], (Property) match[POSITION_PROPERTY], (LiteralSpecification) match[POSITION_VALUE]);
+        return StereotypedBlocksMatch.newMutableMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) match[POSITION_BLOCK], (Stereotype) match[POSITION_STEREOTYPE], (Slot) match[POSITION_SLOT], (Property) match[POSITION_PROPERTY], (LiteralSpecification) match[POSITION_VALUE]);
     } catch(ClassCastException e) {
         LOGGER.error("Element(s) in array not properly typed!",e);
         return null;
@@ -461,7 +465,7 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * @throws ViatraQueryException if the pattern definition could not be loaded
    * 
    */
-  public static IQuerySpecification<TaggedBlocksMatcher> querySpecification() throws ViatraQueryException {
-    return TaggedBlocksQuerySpecification.instance();
+  public static IQuerySpecification<StereotypedBlocksMatcher> querySpecification() throws ViatraQueryException {
+    return StereotypedBlocksQuerySpecification.instance();
   }
 }

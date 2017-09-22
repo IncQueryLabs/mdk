@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="gov.nasa.jpl.mbee.mdk.queries.EventDrivenTransformationQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:gov.nasa.jpl.mbee.mdk.queries.EventDrivenTransformationQueries" id="gov.nasa.jpl.mbee.mdk.queries.EventDrivenTransformationQueries">
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.StereotypedBlocks"/>
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.TransformedGeneralizedBlockPairs"/>
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.TransformedStereotypedBlocks"/>
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.FindCommonParentClass"/>
+    </group>
+  </extension>
   <extension id="gov.nasa.jpl.mbee.mdk.queries.TransformationQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:gov.nasa.jpl.mbee.mdk.queries.TransformationQueries" id="gov.nasa.jpl.mbee.mdk.queries.TransformationQueries">
       <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.taggedBlocks"/>
       <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.generalizedTaggedBlockPairs"/>
       <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.unreferredStereotypes"/>
+    </group>
+  </extension>
+  <extension id="gov.nasa.jpl.mbee.mdk.queries.UtilityQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:gov.nasa.jpl.mbee.mdk.queries.UtilityQueries" id="gov.nasa.jpl.mbee.mdk.queries.UtilityQueries">
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.block"/>
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.propertyAttributes"/>
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.generalization"/>
     </group>
   </extension>
 </plugin>

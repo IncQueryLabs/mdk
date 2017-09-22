@@ -1,11 +1,10 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/UtilityQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
-import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
-import gov.nasa.jpl.mbee.mdk.queries.UnreferredStereotypesMatch;
-import gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.BlockMatch;
+import gov.nasa.jpl.mbee.mdk.queries.util.BlockQuerySpecification;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,30 +18,32 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
- * Generated pattern matcher API of the gov.nasa.jpl.mbee.mdk.queries.unreferredStereotypes pattern,
+ * Generated pattern matcher API of the gov.nasa.jpl.mbee.mdk.queries.block pattern,
  * providing pattern-specific query methods.
  * 
  * <p>Use the pattern matcher on a given model via {@link #on(ViatraQueryEngine)},
  * e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}.
  * 
- * <p>Matches of the pattern will be represented as {@link UnreferredStereotypesMatch}.
+ * <p>Matches of the pattern will be represented as {@link BlockMatch}.
  * 
  * <p>Original source:
  * <code><pre>
- * Returns stereotypes that are not assigned to any classes and none of whose attrubutes are referred.
+ * Queries instances of block objects 
  *  
- * pattern unreferredStereotypes(stereotype : Stereotype) {
- * 	neg find usedStereotypes(stereotype);
+ * pattern block(class : Class) {
+ * 	Classifier.name(block, "Block");
+ * 	InstanceSpecification.classifier(instance, block);
+ * 	Class.appliedStereotypeInstance(class, instance);
  * }
  * </pre></code>
  * 
- * @see UnreferredStereotypesMatch
- *  @see UnreferredStereotypesProcessor
- * @see UnreferredStereotypesQuerySpecification
+ * @see BlockMatch
+ *  @see BlockProcessor
+ * @see BlockQuerySpecification
  * 
  */
 @SuppressWarnings("all")
-public class UnreferredStereotypesMatcher extends BaseMatcher<UnreferredStereotypesMatch> {
+public class BlockMatcher extends BaseMatcher<BlockMatch> {
   /**
    * Initializes the pattern matcher within an existing VIATRA Query engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -51,11 +52,11 @@ public class UnreferredStereotypesMatcher extends BaseMatcher<UnreferredStereoty
    * @throws ViatraQueryException if an error occurs during pattern matcher creation
    * 
    */
-  public static UnreferredStereotypesMatcher on(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public static BlockMatcher on(final ViatraQueryEngine engine) throws ViatraQueryException {
     // check if matcher already exists
-    UnreferredStereotypesMatcher matcher = engine.getExistingMatcher(querySpecification());
+    BlockMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
-        matcher = (UnreferredStereotypesMatcher)engine.getMatcher(querySpecification());
+        matcher = (BlockMatcher)engine.getMatcher(querySpecification());
     }
     return matcher;
   }
@@ -66,13 +67,13 @@ public class UnreferredStereotypesMatcher extends BaseMatcher<UnreferredStereoty
    * @noreference This method is for internal matcher initialization by the framework, do not call it manually.
    * 
    */
-  public static UnreferredStereotypesMatcher create() throws ViatraQueryException {
-    return new UnreferredStereotypesMatcher();
+  public static BlockMatcher create() throws ViatraQueryException {
+    return new BlockMatcher();
   }
   
-  private final static int POSITION_STEREOTYPE = 0;
+  private final static int POSITION_CLASS = 0;
   
-  private final static Logger LOGGER = ViatraQueryLoggingUtil.getLogger(UnreferredStereotypesMatcher.class);
+  private final static Logger LOGGER = ViatraQueryLoggingUtil.getLogger(BlockMatcher.class);
   
   /**
    * Initializes the pattern matcher within an existing VIATRA Query engine.
@@ -82,110 +83,110 @@ public class UnreferredStereotypesMatcher extends BaseMatcher<UnreferredStereoty
    * @throws ViatraQueryException if an error occurs during pattern matcher creation
    * 
    */
-  private UnreferredStereotypesMatcher() throws ViatraQueryException {
+  private BlockMatcher() throws ViatraQueryException {
     super(querySpecification());
   }
   
   /**
    * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
-   * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
-   * @return matches represented as a UnreferredStereotypesMatch object.
+   * @param pClass the fixed value of pattern parameter class, or null if not bound.
+   * @return matches represented as a BlockMatch object.
    * 
    */
-  public Collection<UnreferredStereotypesMatch> getAllMatches(final Stereotype pStereotype) {
-    return rawGetAllMatches(new Object[]{pStereotype});
+  public Collection<BlockMatch> getAllMatches(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass) {
+    return rawGetAllMatches(new Object[]{pClass});
   }
   
   /**
    * Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
    * Neither determinism nor randomness of selection is guaranteed.
-   * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
-   * @return a match represented as a UnreferredStereotypesMatch object, or null if no match is found.
+   * @param pClass the fixed value of pattern parameter class, or null if not bound.
+   * @return a match represented as a BlockMatch object, or null if no match is found.
    * 
    */
-  public UnreferredStereotypesMatch getOneArbitraryMatch(final Stereotype pStereotype) {
-    return rawGetOneArbitraryMatch(new Object[]{pStereotype});
+  public BlockMatch getOneArbitraryMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass) {
+    return rawGetOneArbitraryMatch(new Object[]{pClass});
   }
   
   /**
    * Indicates whether the given combination of specified pattern parameters constitute a valid pattern match,
    * under any possible substitution of the unspecified parameters (if any).
-   * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pClass the fixed value of pattern parameter class, or null if not bound.
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final Stereotype pStereotype) {
-    return rawHasMatch(new Object[]{pStereotype});
+  public boolean hasMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass) {
+    return rawHasMatch(new Object[]{pClass});
   }
   
   /**
    * Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.
-   * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pClass the fixed value of pattern parameter class, or null if not bound.
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final Stereotype pStereotype) {
-    return rawCountMatches(new Object[]{pStereotype});
+  public int countMatches(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass) {
+    return rawCountMatches(new Object[]{pClass});
   }
   
   /**
    * Executes the given processor on each match of the pattern that conforms to the given fixed values of some parameters.
-   * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pClass the fixed value of pattern parameter class, or null if not bound.
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final Stereotype pStereotype, final IMatchProcessor<? super UnreferredStereotypesMatch> processor) {
-    rawForEachMatch(new Object[]{pStereotype}, processor);
+  public void forEachMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass, final IMatchProcessor<? super BlockMatch> processor) {
+    rawForEachMatch(new Object[]{pClass}, processor);
   }
   
   /**
    * Executes the given processor on an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
    * Neither determinism nor randomness of selection is guaranteed.
-   * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pClass the fixed value of pattern parameter class, or null if not bound.
    * @param processor the action that will process the selected match.
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final Stereotype pStereotype, final IMatchProcessor<? super UnreferredStereotypesMatch> processor) {
-    return rawForOneArbitraryMatch(new Object[]{pStereotype}, processor);
+  public boolean forOneArbitraryMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass, final IMatchProcessor<? super BlockMatch> processor) {
+    return rawForOneArbitraryMatch(new Object[]{pClass}, processor);
   }
   
   /**
    * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
-   * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pClass the fixed value of pattern parameter class, or null if not bound.
    * @return the (partial) match object.
    * 
    */
-  public UnreferredStereotypesMatch newMatch(final Stereotype pStereotype) {
-    return UnreferredStereotypesMatch.newMatch(pStereotype);
+  public BlockMatch newMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass) {
+    return BlockMatch.newMatch(pClass);
   }
   
   /**
-   * Retrieve the set of values that occur in matches for stereotype.
+   * Retrieve the set of values that occur in matches for class.
    * @return the Set of all values or empty set if there are no matches
    * 
    */
-  protected Set<Stereotype> rawAccumulateAllValuesOfstereotype(final Object[] parameters) {
-    Set<Stereotype> results = new HashSet<Stereotype>();
-    rawAccumulateAllValues(POSITION_STEREOTYPE, parameters, results);
+  protected Set<com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class> rawAccumulateAllValuesOfclass(final Object[] parameters) {
+    Set<com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class> results = new HashSet<com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class>();
+    rawAccumulateAllValues(POSITION_CLASS, parameters, results);
     return results;
   }
   
   /**
-   * Retrieve the set of values that occur in matches for stereotype.
+   * Retrieve the set of values that occur in matches for class.
    * @return the Set of all values or empty set if there are no matches
    * 
    */
-  public Set<Stereotype> getAllValuesOfstereotype() {
-    return rawAccumulateAllValuesOfstereotype(emptyArray());
+  public Set<com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class> getAllValuesOfclass() {
+    return rawAccumulateAllValuesOfclass(emptyArray());
   }
   
   @Override
-  protected UnreferredStereotypesMatch tupleToMatch(final Tuple t) {
+  protected BlockMatch tupleToMatch(final Tuple t) {
     try {
-        return UnreferredStereotypesMatch.newMatch((Stereotype) t.get(POSITION_STEREOTYPE));
+        return BlockMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) t.get(POSITION_CLASS));
     } catch(ClassCastException e) {
         LOGGER.error("Element(s) in tuple not properly typed!",e);
         return null;
@@ -193,9 +194,9 @@ public class UnreferredStereotypesMatcher extends BaseMatcher<UnreferredStereoty
   }
   
   @Override
-  protected UnreferredStereotypesMatch arrayToMatch(final Object[] match) {
+  protected BlockMatch arrayToMatch(final Object[] match) {
     try {
-        return UnreferredStereotypesMatch.newMatch((Stereotype) match[POSITION_STEREOTYPE]);
+        return BlockMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) match[POSITION_CLASS]);
     } catch(ClassCastException e) {
         LOGGER.error("Element(s) in array not properly typed!",e);
         return null;
@@ -203,9 +204,9 @@ public class UnreferredStereotypesMatcher extends BaseMatcher<UnreferredStereoty
   }
   
   @Override
-  protected UnreferredStereotypesMatch arrayToMatchMutable(final Object[] match) {
+  protected BlockMatch arrayToMatchMutable(final Object[] match) {
     try {
-        return UnreferredStereotypesMatch.newMutableMatch((Stereotype) match[POSITION_STEREOTYPE]);
+        return BlockMatch.newMutableMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) match[POSITION_CLASS]);
     } catch(ClassCastException e) {
         LOGGER.error("Element(s) in array not properly typed!",e);
         return null;
@@ -217,7 +218,7 @@ public class UnreferredStereotypesMatcher extends BaseMatcher<UnreferredStereoty
    * @throws ViatraQueryException if the pattern definition could not be loaded
    * 
    */
-  public static IQuerySpecification<UnreferredStereotypesMatcher> querySpecification() throws ViatraQueryException {
-    return UnreferredStereotypesQuerySpecification.instance();
+  public static IQuerySpecification<BlockMatcher> querySpecification() throws ViatraQueryException {
+    return BlockQuerySpecification.instance();
   }
 }

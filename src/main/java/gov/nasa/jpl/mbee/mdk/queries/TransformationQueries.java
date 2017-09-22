@@ -1,5 +1,5 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TestQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
@@ -14,10 +14,10 @@ import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
- * A pattern group formed of all public patterns defined in TestQueries.vql.
+ * A pattern group formed of all public patterns defined in TransformationQueries.vql.
  * 
  * <p>Use the static instance as any {@link org.eclipse.viatra.query.runtime.api.IPatternGroup}, to conveniently prepare
- * a VIATRA Query engine for matching all patterns originally defined in file TestQueries.vql,
+ * a VIATRA Query engine for matching all patterns originally defined in file TransformationQueries.vql,
  * in order to achieve better performance than one-by-one on-demand matcher initialization.
  * 
  * <p> From package gov.nasa.jpl.mbee.mdk.queries, the group contains the definition of the following patterns: <ul>
@@ -30,7 +30,7 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
  * 
  */
 @SuppressWarnings("all")
-public final class TestQueries extends BaseGeneratedPatternGroup {
+public final class TransformationQueries extends BaseGeneratedPatternGroup {
   /**
    * Access the pattern group.
    * 
@@ -38,16 +38,16 @@ public final class TestQueries extends BaseGeneratedPatternGroup {
    * @throws ViatraQueryException if there was an error loading the generated code of pattern specifications
    * 
    */
-  public static TestQueries instance() throws ViatraQueryException {
+  public static TransformationQueries instance() throws ViatraQueryException {
     if (INSTANCE == null) {
-        INSTANCE = new TestQueries();
+        INSTANCE = new TransformationQueries();
     }
     return INSTANCE;
   }
   
-  private static TestQueries INSTANCE;
+  private static TransformationQueries INSTANCE;
   
-  private TestQueries() throws ViatraQueryException {
+  private TransformationQueries() throws ViatraQueryException {
     querySpecifications.add(TaggedBlocksQuerySpecification.instance());
     querySpecifications.add(GeneralizedTaggedBlockPairsQuerySpecification.instance());
     querySpecifications.add(UnreferredStereotypesQuerySpecification.instance());

@@ -1,21 +1,21 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/EventDrivenTransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries.util;
 
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
-import gov.nasa.jpl.mbee.mdk.queries.GeneralizedTaggedBlockPairsMatch;
+import gov.nasa.jpl.mbee.mdk.queries.TransformedGeneralizedBlockPairsMatch;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 
 /**
- * A match processor tailored for the gov.nasa.jpl.mbee.mdk.queries.generalizedTaggedBlockPairs pattern.
+ * A match processor tailored for the gov.nasa.jpl.mbee.mdk.queries.TransformedGeneralizedBlockPairs pattern.
  * 
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
 @SuppressWarnings("all")
-public abstract class GeneralizedTaggedBlockPairsProcessor implements IMatchProcessor<GeneralizedTaggedBlockPairsMatch> {
+public abstract class TransformedGeneralizedBlockPairsProcessor implements IMatchProcessor<TransformedGeneralizedBlockPairsMatch> {
   /**
    * Defines the action that is to be executed on each match.
    * @param pParentBlock the value of pattern parameter parentBlock in the currently processed match
@@ -28,7 +28,7 @@ public abstract class GeneralizedTaggedBlockPairsProcessor implements IMatchProc
   public abstract void process(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pParentBlock, final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pChildBlock, final Stereotype pStereotype, final Property pParentAttribute, final Property pChildAttribute);
   
   @Override
-  public void process(final GeneralizedTaggedBlockPairsMatch match) {
+  public void process(final TransformedGeneralizedBlockPairsMatch match) {
     process(match.getParentBlock(), match.getChildBlock(), match.getStereotype(), match.getParentAttribute(), match.getChildAttribute());
   }
 }

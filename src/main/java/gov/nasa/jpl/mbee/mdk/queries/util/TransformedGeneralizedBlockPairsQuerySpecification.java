@@ -1,12 +1,13 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/EventDrivenTransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries.util;
 
 import com.google.common.collect.Sets;
-import gov.nasa.jpl.mbee.mdk.queries.GeneralizedTaggedBlockPairsMatch;
-import gov.nasa.jpl.mbee.mdk.queries.GeneralizedTaggedBlockPairsMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.internal.GeneralizedTaggedBlocksQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.TransformedGeneralizedBlockPairsMatch;
+import gov.nasa.jpl.mbee.mdk.queries.TransformedGeneralizedBlockPairsMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.util.BlockQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.GeneralizationQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.util.PropertyAttributesQuerySpecification;
 import java.util.Arrays;
 import java.util.List;
@@ -33,15 +34,15 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 /**
- * A pattern-specific query specification that can instantiate GeneralizedTaggedBlockPairsMatcher in a type-safe way.
+ * A pattern-specific query specification that can instantiate TransformedGeneralizedBlockPairsMatcher in a type-safe way.
  * 
- * @see GeneralizedTaggedBlockPairsMatcher
- * @see GeneralizedTaggedBlockPairsMatch
+ * @see TransformedGeneralizedBlockPairsMatcher
+ * @see TransformedGeneralizedBlockPairsMatch
  * 
  */
 @SuppressWarnings("all")
-public final class GeneralizedTaggedBlockPairsQuerySpecification extends BaseGeneratedEMFQuerySpecification<GeneralizedTaggedBlockPairsMatcher> {
-  private GeneralizedTaggedBlockPairsQuerySpecification() {
+public final class TransformedGeneralizedBlockPairsQuerySpecification extends BaseGeneratedEMFQuerySpecification<TransformedGeneralizedBlockPairsMatcher> {
+  private TransformedGeneralizedBlockPairsQuerySpecification() {
     super(GeneratedPQuery.INSTANCE);
   }
   
@@ -50,7 +51,7 @@ public final class GeneralizedTaggedBlockPairsQuerySpecification extends BaseGen
    * @throws ViatraQueryException if the pattern definition could not be loaded
    * 
    */
-  public static GeneralizedTaggedBlockPairsQuerySpecification instance() throws ViatraQueryException {
+  public static TransformedGeneralizedBlockPairsQuerySpecification instance() throws ViatraQueryException {
     try{
         return LazyHolder.INSTANCE;
     } catch (ExceptionInInitializerError err) {
@@ -59,35 +60,35 @@ public final class GeneralizedTaggedBlockPairsQuerySpecification extends BaseGen
   }
   
   @Override
-  protected GeneralizedTaggedBlockPairsMatcher instantiate(final ViatraQueryEngine engine) throws ViatraQueryException {
-    return GeneralizedTaggedBlockPairsMatcher.on(engine);
+  protected TransformedGeneralizedBlockPairsMatcher instantiate(final ViatraQueryEngine engine) throws ViatraQueryException {
+    return TransformedGeneralizedBlockPairsMatcher.on(engine);
   }
   
   @Override
-  public GeneralizedTaggedBlockPairsMatcher instantiate() throws ViatraQueryException {
-    return GeneralizedTaggedBlockPairsMatcher.create();
+  public TransformedGeneralizedBlockPairsMatcher instantiate() throws ViatraQueryException {
+    return TransformedGeneralizedBlockPairsMatcher.create();
   }
   
   @Override
-  public GeneralizedTaggedBlockPairsMatch newEmptyMatch() {
-    return GeneralizedTaggedBlockPairsMatch.newEmptyMatch();
+  public TransformedGeneralizedBlockPairsMatch newEmptyMatch() {
+    return TransformedGeneralizedBlockPairsMatch.newEmptyMatch();
   }
   
   @Override
-  public GeneralizedTaggedBlockPairsMatch newMatch(final Object... parameters) {
-    return GeneralizedTaggedBlockPairsMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) parameters[0], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) parameters[1], (com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype) parameters[2], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property) parameters[3], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property) parameters[4]);
+  public TransformedGeneralizedBlockPairsMatch newMatch(final Object... parameters) {
+    return TransformedGeneralizedBlockPairsMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) parameters[0], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) parameters[1], (com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype) parameters[2], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property) parameters[3], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property) parameters[4]);
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: gov.nasa.jpl.mbee.mdk.queries.util.GeneralizedTaggedBlockPairsQuerySpecification (visibility: PUBLIC, simpleName: GeneralizedTaggedBlockPairsQuerySpecification, identifier: gov.nasa.jpl.mbee.mdk.queries.util.GeneralizedTaggedBlockPairsQuerySpecification, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: gov.nasa.jpl.mbee.mdk.queries.util) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link JvmGenericType: gov.nasa.jpl.mbee.mdk.queries.util.TransformedGeneralizedBlockPairsQuerySpecification (visibility: PUBLIC, simpleName: TransformedGeneralizedBlockPairsQuerySpecification, identifier: gov.nasa.jpl.mbee.mdk.queries.util.TransformedGeneralizedBlockPairsQuerySpecification, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: gov.nasa.jpl.mbee.mdk.queries.util) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: gov.nasa.jpl.mbee.mdk.queries.util.GeneralizedTaggedBlockPairsQuerySpecification (visibility: PUBLIC, simpleName: GeneralizedTaggedBlockPairsQuerySpecification, identifier: gov.nasa.jpl.mbee.mdk.queries.util.GeneralizedTaggedBlockPairsQuerySpecification, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: gov.nasa.jpl.mbee.mdk.queries.util) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link JvmGenericType: gov.nasa.jpl.mbee.mdk.queries.util.TransformedGeneralizedBlockPairsQuerySpecification (visibility: PUBLIC, simpleName: TransformedGeneralizedBlockPairsQuerySpecification, identifier: gov.nasa.jpl.mbee.mdk.queries.util.TransformedGeneralizedBlockPairsQuerySpecification, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: gov.nasa.jpl.mbee.mdk.queries.util) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 
    */
   private static class LazyHolder {
-    private final static GeneralizedTaggedBlockPairsQuerySpecification INSTANCE = new GeneralizedTaggedBlockPairsQuerySpecification();
+    private final static TransformedGeneralizedBlockPairsQuerySpecification INSTANCE = new TransformedGeneralizedBlockPairsQuerySpecification();
     
     /**
      * Statically initializes the query specification <b>after</b> the field {@link #INSTANCE} is assigned.
@@ -105,7 +106,7 @@ public final class GeneralizedTaggedBlockPairsQuerySpecification extends BaseGen
   }
   
   private static class GeneratedPQuery extends BaseGeneratedEMFPQuery {
-    private final static GeneralizedTaggedBlockPairsQuerySpecification.GeneratedPQuery INSTANCE = new GeneratedPQuery();
+    private final static TransformedGeneralizedBlockPairsQuerySpecification.GeneratedPQuery INSTANCE = new GeneratedPQuery();
     
     private final PParameter parameter_pParentBlock = new PParameter("parentBlock", "com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5", "Class")), PParameterDirection.INOUT);
     
@@ -121,7 +122,7 @@ public final class GeneralizedTaggedBlockPairsQuerySpecification extends BaseGen
     
     @Override
     public String getFullyQualifiedName() {
-      return "gov.nasa.jpl.mbee.mdk.queries.generalizedTaggedBlockPairs";
+      return "gov.nasa.jpl.mbee.mdk.queries.TransformedGeneralizedBlockPairs";
     }
     
     @Override
@@ -161,9 +162,13 @@ public final class GeneralizedTaggedBlockPairsQuerySpecification extends BaseGen
                  new ExportedParameter(body, var_parentAttribute, parameter_pParentAttribute),
                  new ExportedParameter(body, var_childAttribute, parameter_pChildAttribute)
               ));
-              // 	find generalizedTaggedBlocks(parentBlock, childBlock, stereotype, property)
-              new PositivePatternCall(body, new FlatTuple(var_parentBlock, var_childBlock, var_stereotype, var_property), GeneralizedTaggedBlocksQuerySpecification.instance().getInternalQueryRepresentation());
-              // 	Class.ownedAttribute(parentBlock, parentAttribute)
+              // 	find block(parentBlock)
+              new PositivePatternCall(body, new FlatTuple(var_parentBlock), BlockQuerySpecification.instance().getInternalQueryRepresentation());
+              // 	find block(childBlock)
+              new PositivePatternCall(body, new FlatTuple(var_childBlock), BlockQuerySpecification.instance().getInternalQueryRepresentation());
+              // 	//there is a generalization relation between blocks	find generalization(parentBlock, childBlock)
+              new PositivePatternCall(body, new FlatTuple(var_parentBlock, var_childBlock), GeneralizationQuerySpecification.instance().getInternalQueryRepresentation());
+              // 	//Attributes of the block and stereotypes	Class.ownedAttribute(parentBlock, parentAttribute)
               new TypeConstraint(body, Tuples.flatTupleOf(var_parentBlock), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Class")));
               PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
               new TypeConstraint(body, Tuples.flatTupleOf(var_parentBlock, var__virtual_0_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "StructuredClassifier", "ownedAttribute")));
@@ -175,7 +180,13 @@ public final class GeneralizedTaggedBlockPairsQuerySpecification extends BaseGen
               new TypeConstraint(body, Tuples.flatTupleOf(var_childBlock, var__virtual_1_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "StructuredClassifier", "ownedAttribute")));
               new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_1_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Property")));
               new Equality(body, var__virtual_1_, var_childAttribute);
-              // 	find propertyAttributes(property, name, type)
+              // 	Stereotype.ownedAttribute(stereotype, property)
+              new TypeConstraint(body, Tuples.flatTupleOf(var_stereotype), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Stereotype")));
+              PVariable var__virtual_2_ = body.getOrCreateVariableByName(".virtual{2}");
+              new TypeConstraint(body, Tuples.flatTupleOf(var_stereotype, var__virtual_2_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "StructuredClassifier", "ownedAttribute")));
+              new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_2_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Property")));
+              new Equality(body, var__virtual_2_, var_property);
+              // 	//Check if they are equal	find propertyAttributes(property, name, type)
               new PositivePatternCall(body, new FlatTuple(var_property, var_name, var_type), PropertyAttributesQuerySpecification.instance().getInternalQueryRepresentation());
               // 	find propertyAttributes(parentAttribute, name, type)
               new PositivePatternCall(body, new FlatTuple(var_parentAttribute, var_name, var_type), PropertyAttributesQuerySpecification.instance().getInternalQueryRepresentation());

@@ -1,5 +1,5 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/EventDrivenTransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries.util;
 
@@ -7,17 +7,17 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Slot;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
-import gov.nasa.jpl.mbee.mdk.queries.TaggedBlocksMatch;
+import gov.nasa.jpl.mbee.mdk.queries.StereotypedBlocksMatch;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 
 /**
- * A match processor tailored for the gov.nasa.jpl.mbee.mdk.queries.taggedBlocks pattern.
+ * A match processor tailored for the gov.nasa.jpl.mbee.mdk.queries.StereotypedBlocks pattern.
  * 
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
 @SuppressWarnings("all")
-public abstract class TaggedBlocksProcessor implements IMatchProcessor<TaggedBlocksMatch> {
+public abstract class StereotypedBlocksProcessor implements IMatchProcessor<StereotypedBlocksMatch> {
   /**
    * Defines the action that is to be executed on each match.
    * @param pBlock the value of pattern parameter block in the currently processed match
@@ -30,7 +30,7 @@ public abstract class TaggedBlocksProcessor implements IMatchProcessor<TaggedBlo
   public abstract void process(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue);
   
   @Override
-  public void process(final TaggedBlocksMatch match) {
+  public void process(final StereotypedBlocksMatch match) {
     process(match.getBlock(), match.getStereotype(), match.getSlot(), match.getProperty(), match.getValue());
   }
 }

@@ -1,12 +1,12 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TestQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries.util;
 
 import com.google.common.collect.Sets;
 import gov.nasa.jpl.mbee.mdk.queries.UnreferredStereotypesMatch;
 import gov.nasa.jpl.mbee.mdk.queries.UnreferredStereotypesMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.internal.ReferredStereotypesQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.UsedStereotypesQuerySpecification;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +27,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 /**
  * A pattern-specific query specification that can instantiate UnreferredStereotypesMatcher in a type-safe way.
@@ -75,9 +76,9 @@ public final class UnreferredStereotypesQuerySpecification extends BaseGenerated
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link UnreferredStereotypesQuerySpecification} to be created 
+   * Inner class allowing the singleton instance of {@link JvmGenericType: gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification (visibility: PUBLIC, simpleName: UnreferredStereotypesQuerySpecification, identifier: gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: gov.nasa.jpl.mbee.mdk.queries.util) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link UnreferredStereotypesQuerySpecification#instance()}.
+   *     but rather at the first call to {@link JvmGenericType: gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification (visibility: PUBLIC, simpleName: UnreferredStereotypesQuerySpecification, identifier: gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: gov.nasa.jpl.mbee.mdk.queries.util) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 
@@ -130,12 +131,12 @@ public final class UnreferredStereotypesQuerySpecification extends BaseGenerated
           {
               PBody body = new PBody(this);
               PVariable var_stereotype = body.getOrCreateVariableByName("stereotype");
-              new TypeConstraint(body, new FlatTuple(var_stereotype), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Stereotype")));
+              new TypeConstraint(body, Tuples.flatTupleOf(var_stereotype), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Stereotype")));
               body.setSymbolicParameters(Arrays.<ExportedParameter>asList(
                  new ExportedParameter(body, var_stereotype, parameter_pStereotype)
               ));
-              // 	neg find referredStereotypes(stereotype)
-              new NegativePatternCall(body, new FlatTuple(var_stereotype), ReferredStereotypesQuerySpecification.instance().getInternalQueryRepresentation());
+              // 	neg find usedStereotypes(stereotype)
+              new NegativePatternCall(body, new FlatTuple(var_stereotype), UsedStereotypesQuerySpecification.instance().getInternalQueryRepresentation());
               bodies.add(body);
           }
           // to silence compiler error

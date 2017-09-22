@@ -1,10 +1,9 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/UtilityQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
-import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
-import gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.BlockQuerySpecification;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -13,83 +12,83 @@ import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
- * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.unreferredStereotypes pattern,
- * to be used in conjunction with {@link UnreferredStereotypesMatcher}.
+ * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.block pattern,
+ * to be used in conjunction with {@link BlockMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
  * Each instance is a (possibly partial) substitution of pattern parameters,
  * usable to represent a match of the pattern in the result of a query,
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
- * @see UnreferredStereotypesMatcher
- *  @see UnreferredStereotypesProcessor
+ * @see BlockMatcher
+ *  @see BlockProcessor
  * 
  */
 @SuppressWarnings("all")
-public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
-  private Stereotype fStereotype;
+public abstract class BlockMatch extends BasePatternMatch {
+  private com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class fClass;
   
-  private static List<String> parameterNames = makeImmutableList("stereotype");
+  private static List<String> parameterNames = makeImmutableList("class");
   
-  private UnreferredStereotypesMatch(final Stereotype pStereotype) {
-    this.fStereotype = pStereotype;
+  private BlockMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass) {
+    this.fClass = pClass;
   }
   
   @Override
   public Object get(final String parameterName) {
-    if ("stereotype".equals(parameterName)) return this.fStereotype;
+    if ("class".equals(parameterName)) return this.fClass;
     return null;
   }
   
-  public Stereotype getStereotype() {
-    return this.fStereotype;
+  public com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class getValueOfClass() {
+    return this.fClass;
   }
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
-    if ("stereotype".equals(parameterName) ) {
-        this.fStereotype = (Stereotype) newValue;
+    if ("class".equals(parameterName) ) {
+        this.fClass = (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) newValue;
         return true;
     }
     return false;
   }
   
-  public void setStereotype(final Stereotype pStereotype) {
+  public void setClass(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
-    this.fStereotype = pStereotype;
+    this.fClass = pClass;
   }
   
   @Override
   public String patternName() {
-    return "gov.nasa.jpl.mbee.mdk.queries.unreferredStereotypes";
+    return "gov.nasa.jpl.mbee.mdk.queries.block";
   }
   
   @Override
   public List<String> parameterNames() {
-    return UnreferredStereotypesMatch.parameterNames;
+    return BlockMatch.parameterNames;
   }
   
   @Override
   public Object[] toArray() {
-    return new Object[]{fStereotype};
+    return new Object[]{fClass};
   }
   
   @Override
-  public UnreferredStereotypesMatch toImmutable() {
-    return isMutable() ? newMatch(fStereotype) : this;
+  public BlockMatch toImmutable() {
+    return isMutable() ? newMatch(fClass) : this;
   }
   
   @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
-    result.append("\"stereotype\"=" + prettyPrintValue(fStereotype));
+    result.append("\"class\"=" + prettyPrintValue(fClass));
     return result.toString();
   }
   
   @Override
   public int hashCode() {
-    return Objects.hash (fStereotype);
+    return Objects.hash (fClass);
   }
   
   @Override
@@ -99,9 +98,9 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
     if (obj == null) {
         return false;
     }
-    if ((obj instanceof UnreferredStereotypesMatch)) {
-        UnreferredStereotypesMatch other = (UnreferredStereotypesMatch) obj;
-        return Objects.equals(fStereotype, other.fStereotype);
+    if ((obj instanceof BlockMatch)) {
+        BlockMatch other = (BlockMatch) obj;
+        return Objects.equals(fClass, other.fClass);
     } else {
         // this should be infrequent
         if (!(obj instanceof IPatternMatch)) {
@@ -113,9 +112,9 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
   }
   
   @Override
-  public UnreferredStereotypesQuerySpecification specification() {
+  public BlockQuerySpecification specification() {
     try {
-        return UnreferredStereotypesQuerySpecification.instance();
+        return BlockQuerySpecification.instance();
     } catch (ViatraQueryException ex) {
          // This cannot happen, as the match object can only be instantiated if the query specification exists
          throw new IllegalStateException (ex);
@@ -129,7 +128,7 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
    * @return the empty match.
    * 
    */
-  public static UnreferredStereotypesMatch newEmptyMatch() {
+  public static BlockMatch newEmptyMatch() {
     return new Mutable(null);
   }
   
@@ -137,29 +136,29 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
    * Returns a mutable (partial) match.
    * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
    * 
-   * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pClass the fixed value of pattern parameter class, or null if not bound.
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static UnreferredStereotypesMatch newMutableMatch(final Stereotype pStereotype) {
-    return new Mutable(pStereotype);
+  public static BlockMatch newMutableMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass) {
+    return new Mutable(pClass);
   }
   
   /**
    * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
-   * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
+   * @param pClass the fixed value of pattern parameter class, or null if not bound.
    * @return the (partial) match object.
    * 
    */
-  public static UnreferredStereotypesMatch newMatch(final Stereotype pStereotype) {
-    return new Immutable(pStereotype);
+  public static BlockMatch newMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass) {
+    return new Immutable(pClass);
   }
   
-  private static final class Mutable extends UnreferredStereotypesMatch {
-    Mutable(final Stereotype pStereotype) {
-      super(pStereotype);
+  private static final class Mutable extends BlockMatch {
+    Mutable(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass) {
+      super(pClass);
     }
     
     @Override
@@ -168,9 +167,9 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
     }
   }
   
-  private static final class Immutable extends UnreferredStereotypesMatch {
-    Immutable(final Stereotype pStereotype) {
-      super(pStereotype);
+  private static final class Immutable extends BlockMatch {
+    Immutable(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pClass) {
+      super(pClass);
     }
     
     @Override

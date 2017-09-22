@@ -1,13 +1,11 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/EventDrivenTransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Slot;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
-import gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.TransformedStereotypedBlocksQuerySpecification;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -16,38 +14,32 @@ import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
- * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.taggedBlocks pattern,
- * to be used in conjunction with {@link TaggedBlocksMatcher}.
+ * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.TransformedStereotypedBlocks pattern,
+ * to be used in conjunction with {@link TransformedStereotypedBlocksMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
  * Each instance is a (possibly partial) substitution of pattern parameters,
  * usable to represent a match of the pattern in the result of a query,
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
- * @see TaggedBlocksMatcher
- *  @see TaggedBlocksProcessor
+ * @see TransformedStereotypedBlocksMatcher
+ *  @see TransformedStereotypedBlocksProcessor
  * 
  */
 @SuppressWarnings("all")
-public abstract class TaggedBlocksMatch extends BasePatternMatch {
+public abstract class TransformedStereotypedBlocksMatch extends BasePatternMatch {
   private com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class fBlock;
   
   private Stereotype fStereotype;
   
   private Slot fSlot;
   
-  private Property fProperty;
+  private static List<String> parameterNames = makeImmutableList("block", "stereotype", "slot");
   
-  private LiteralSpecification fValue;
-  
-  private static List<String> parameterNames = makeImmutableList("block", "stereotype", "slot", "property", "value");
-  
-  private TaggedBlocksMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
+  private TransformedStereotypedBlocksMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot) {
     this.fBlock = pBlock;
     this.fStereotype = pStereotype;
     this.fSlot = pSlot;
-    this.fProperty = pProperty;
-    this.fValue = pValue;
   }
   
   @Override
@@ -55,8 +47,6 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
     if ("block".equals(parameterName)) return this.fBlock;
     if ("stereotype".equals(parameterName)) return this.fStereotype;
     if ("slot".equals(parameterName)) return this.fSlot;
-    if ("property".equals(parameterName)) return this.fProperty;
-    if ("value".equals(parameterName)) return this.fValue;
     return null;
   }
   
@@ -72,14 +62,6 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
     return this.fSlot;
   }
   
-  public Property getProperty() {
-    return this.fProperty;
-  }
-  
-  public LiteralSpecification getValue() {
-    return this.fValue;
-  }
-  
   @Override
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
@@ -93,14 +75,6 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
     }
     if ("slot".equals(parameterName) ) {
         this.fSlot = (Slot) newValue;
-        return true;
-    }
-    if ("property".equals(parameterName) ) {
-        this.fProperty = (Property) newValue;
-        return true;
-    }
-    if ("value".equals(parameterName) ) {
-        this.fValue = (LiteralSpecification) newValue;
         return true;
     }
     return false;
@@ -121,34 +95,24 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
     this.fSlot = pSlot;
   }
   
-  public void setProperty(final Property pProperty) {
-    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
-    this.fProperty = pProperty;
-  }
-  
-  public void setValue(final LiteralSpecification pValue) {
-    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
-    this.fValue = pValue;
-  }
-  
   @Override
   public String patternName() {
-    return "gov.nasa.jpl.mbee.mdk.queries.taggedBlocks";
+    return "gov.nasa.jpl.mbee.mdk.queries.TransformedStereotypedBlocks";
   }
   
   @Override
   public List<String> parameterNames() {
-    return TaggedBlocksMatch.parameterNames;
+    return TransformedStereotypedBlocksMatch.parameterNames;
   }
   
   @Override
   public Object[] toArray() {
-    return new Object[]{fBlock, fStereotype, fSlot, fProperty, fValue};
+    return new Object[]{fBlock, fStereotype, fSlot};
   }
   
   @Override
-  public TaggedBlocksMatch toImmutable() {
-    return isMutable() ? newMatch(fBlock, fStereotype, fSlot, fProperty, fValue) : this;
+  public TransformedStereotypedBlocksMatch toImmutable() {
+    return isMutable() ? newMatch(fBlock, fStereotype, fSlot) : this;
   }
   
   @Override
@@ -156,15 +120,13 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
     StringBuilder result = new StringBuilder();
     result.append("\"block\"=" + prettyPrintValue(fBlock) + ", ");
     result.append("\"stereotype\"=" + prettyPrintValue(fStereotype) + ", ");
-    result.append("\"slot\"=" + prettyPrintValue(fSlot) + ", ");
-    result.append("\"property\"=" + prettyPrintValue(fProperty) + ", ");
-    result.append("\"value\"=" + prettyPrintValue(fValue));
+    result.append("\"slot\"=" + prettyPrintValue(fSlot));
     return result.toString();
   }
   
   @Override
   public int hashCode() {
-    return Objects.hash (fBlock, fStereotype, fSlot, fProperty, fValue);
+    return Objects.hash (fBlock, fStereotype, fSlot);
   }
   
   @Override
@@ -174,9 +136,9 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
     if (obj == null) {
         return false;
     }
-    if ((obj instanceof TaggedBlocksMatch)) {
-        TaggedBlocksMatch other = (TaggedBlocksMatch) obj;
-        return Objects.equals(fBlock, other.fBlock) && Objects.equals(fStereotype, other.fStereotype) && Objects.equals(fSlot, other.fSlot) && Objects.equals(fProperty, other.fProperty) && Objects.equals(fValue, other.fValue);
+    if ((obj instanceof TransformedStereotypedBlocksMatch)) {
+        TransformedStereotypedBlocksMatch other = (TransformedStereotypedBlocksMatch) obj;
+        return Objects.equals(fBlock, other.fBlock) && Objects.equals(fStereotype, other.fStereotype) && Objects.equals(fSlot, other.fSlot);
     } else {
         // this should be infrequent
         if (!(obj instanceof IPatternMatch)) {
@@ -188,9 +150,9 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
   }
   
   @Override
-  public TaggedBlocksQuerySpecification specification() {
+  public TransformedStereotypedBlocksQuerySpecification specification() {
     try {
-        return TaggedBlocksQuerySpecification.instance();
+        return TransformedStereotypedBlocksQuerySpecification.instance();
     } catch (ViatraQueryException ex) {
          // This cannot happen, as the match object can only be instantiated if the query specification exists
          throw new IllegalStateException (ex);
@@ -204,8 +166,8 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
    * @return the empty match.
    * 
    */
-  public static TaggedBlocksMatch newEmptyMatch() {
-    return new Mutable(null, null, null, null, null);
+  public static TransformedStereotypedBlocksMatch newEmptyMatch() {
+    return new Mutable(null, null, null);
   }
   
   /**
@@ -215,13 +177,11 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
    * @param pBlock the fixed value of pattern parameter block, or null if not bound.
    * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
    * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
-   * @param pProperty the fixed value of pattern parameter property, or null if not bound.
-   * @param pValue the fixed value of pattern parameter value, or null if not bound.
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static TaggedBlocksMatch newMutableMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
-    return new Mutable(pBlock, pStereotype, pSlot, pProperty, pValue);
+  public static TransformedStereotypedBlocksMatch newMutableMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot) {
+    return new Mutable(pBlock, pStereotype, pSlot);
   }
   
   /**
@@ -231,18 +191,16 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
    * @param pBlock the fixed value of pattern parameter block, or null if not bound.
    * @param pStereotype the fixed value of pattern parameter stereotype, or null if not bound.
    * @param pSlot the fixed value of pattern parameter slot, or null if not bound.
-   * @param pProperty the fixed value of pattern parameter property, or null if not bound.
-   * @param pValue the fixed value of pattern parameter value, or null if not bound.
    * @return the (partial) match object.
    * 
    */
-  public static TaggedBlocksMatch newMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
-    return new Immutable(pBlock, pStereotype, pSlot, pProperty, pValue);
+  public static TransformedStereotypedBlocksMatch newMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot) {
+    return new Immutable(pBlock, pStereotype, pSlot);
   }
   
-  private static final class Mutable extends TaggedBlocksMatch {
-    Mutable(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
-      super(pBlock, pStereotype, pSlot, pProperty, pValue);
+  private static final class Mutable extends TransformedStereotypedBlocksMatch {
+    Mutable(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot) {
+      super(pBlock, pStereotype, pSlot);
     }
     
     @Override
@@ -251,9 +209,9 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
     }
   }
   
-  private static final class Immutable extends TaggedBlocksMatch {
-    Immutable(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot, final Property pProperty, final LiteralSpecification pValue) {
-      super(pBlock, pStereotype, pSlot, pProperty, pValue);
+  private static final class Immutable extends TransformedStereotypedBlocksMatch {
+    Immutable(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pBlock, final Stereotype pStereotype, final Slot pSlot) {
+      super(pBlock, pStereotype, pSlot);
     }
     
     @Override

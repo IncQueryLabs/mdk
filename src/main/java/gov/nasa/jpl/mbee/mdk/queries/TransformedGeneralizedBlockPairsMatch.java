@@ -1,11 +1,11 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/EventDrivenTransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
-import gov.nasa.jpl.mbee.mdk.queries.util.GeneralizedTaggedBlockPairsQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.TransformedGeneralizedBlockPairsQuerySpecification;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -14,20 +14,20 @@ import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
- * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.generalizedTaggedBlockPairs pattern,
- * to be used in conjunction with {@link GeneralizedTaggedBlockPairsMatcher}.
+ * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.TransformedGeneralizedBlockPairs pattern,
+ * to be used in conjunction with {@link TransformedGeneralizedBlockPairsMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
  * Each instance is a (possibly partial) substitution of pattern parameters,
  * usable to represent a match of the pattern in the result of a query,
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
- * @see GeneralizedTaggedBlockPairsMatcher
- *  @see GeneralizedTaggedBlockPairsProcessor
+ * @see TransformedGeneralizedBlockPairsMatcher
+ *  @see TransformedGeneralizedBlockPairsProcessor
  * 
  */
 @SuppressWarnings("all")
-public abstract class GeneralizedTaggedBlockPairsMatch extends BasePatternMatch {
+public abstract class TransformedGeneralizedBlockPairsMatch extends BasePatternMatch {
   private com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class fParentBlock;
   
   private com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class fChildBlock;
@@ -40,7 +40,7 @@ public abstract class GeneralizedTaggedBlockPairsMatch extends BasePatternMatch 
   
   private static List<String> parameterNames = makeImmutableList("parentBlock", "childBlock", "stereotype", "parentAttribute", "childAttribute");
   
-  private GeneralizedTaggedBlockPairsMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pParentBlock, final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pChildBlock, final Stereotype pStereotype, final Property pParentAttribute, final Property pChildAttribute) {
+  private TransformedGeneralizedBlockPairsMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pParentBlock, final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pChildBlock, final Stereotype pStereotype, final Property pParentAttribute, final Property pChildAttribute) {
     this.fParentBlock = pParentBlock;
     this.fChildBlock = pChildBlock;
     this.fStereotype = pStereotype;
@@ -131,12 +131,12 @@ public abstract class GeneralizedTaggedBlockPairsMatch extends BasePatternMatch 
   
   @Override
   public String patternName() {
-    return "gov.nasa.jpl.mbee.mdk.queries.generalizedTaggedBlockPairs";
+    return "gov.nasa.jpl.mbee.mdk.queries.TransformedGeneralizedBlockPairs";
   }
   
   @Override
   public List<String> parameterNames() {
-    return GeneralizedTaggedBlockPairsMatch.parameterNames;
+    return TransformedGeneralizedBlockPairsMatch.parameterNames;
   }
   
   @Override
@@ -145,7 +145,7 @@ public abstract class GeneralizedTaggedBlockPairsMatch extends BasePatternMatch 
   }
   
   @Override
-  public GeneralizedTaggedBlockPairsMatch toImmutable() {
+  public TransformedGeneralizedBlockPairsMatch toImmutable() {
     return isMutable() ? newMatch(fParentBlock, fChildBlock, fStereotype, fParentAttribute, fChildAttribute) : this;
   }
   
@@ -172,8 +172,8 @@ public abstract class GeneralizedTaggedBlockPairsMatch extends BasePatternMatch 
     if (obj == null) {
         return false;
     }
-    if ((obj instanceof GeneralizedTaggedBlockPairsMatch)) {
-        GeneralizedTaggedBlockPairsMatch other = (GeneralizedTaggedBlockPairsMatch) obj;
+    if ((obj instanceof TransformedGeneralizedBlockPairsMatch)) {
+        TransformedGeneralizedBlockPairsMatch other = (TransformedGeneralizedBlockPairsMatch) obj;
         return Objects.equals(fParentBlock, other.fParentBlock) && Objects.equals(fChildBlock, other.fChildBlock) && Objects.equals(fStereotype, other.fStereotype) && Objects.equals(fParentAttribute, other.fParentAttribute) && Objects.equals(fChildAttribute, other.fChildAttribute);
     } else {
         // this should be infrequent
@@ -186,9 +186,9 @@ public abstract class GeneralizedTaggedBlockPairsMatch extends BasePatternMatch 
   }
   
   @Override
-  public GeneralizedTaggedBlockPairsQuerySpecification specification() {
+  public TransformedGeneralizedBlockPairsQuerySpecification specification() {
     try {
-        return GeneralizedTaggedBlockPairsQuerySpecification.instance();
+        return TransformedGeneralizedBlockPairsQuerySpecification.instance();
     } catch (ViatraQueryException ex) {
          // This cannot happen, as the match object can only be instantiated if the query specification exists
          throw new IllegalStateException (ex);
@@ -202,7 +202,7 @@ public abstract class GeneralizedTaggedBlockPairsMatch extends BasePatternMatch 
    * @return the empty match.
    * 
    */
-  public static GeneralizedTaggedBlockPairsMatch newEmptyMatch() {
+  public static TransformedGeneralizedBlockPairsMatch newEmptyMatch() {
     return new Mutable(null, null, null, null, null);
   }
   
@@ -218,7 +218,7 @@ public abstract class GeneralizedTaggedBlockPairsMatch extends BasePatternMatch 
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static GeneralizedTaggedBlockPairsMatch newMutableMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pParentBlock, final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pChildBlock, final Stereotype pStereotype, final Property pParentAttribute, final Property pChildAttribute) {
+  public static TransformedGeneralizedBlockPairsMatch newMutableMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pParentBlock, final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pChildBlock, final Stereotype pStereotype, final Property pParentAttribute, final Property pChildAttribute) {
     return new Mutable(pParentBlock, pChildBlock, pStereotype, pParentAttribute, pChildAttribute);
   }
   
@@ -234,11 +234,11 @@ public abstract class GeneralizedTaggedBlockPairsMatch extends BasePatternMatch 
    * @return the (partial) match object.
    * 
    */
-  public static GeneralizedTaggedBlockPairsMatch newMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pParentBlock, final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pChildBlock, final Stereotype pStereotype, final Property pParentAttribute, final Property pChildAttribute) {
+  public static TransformedGeneralizedBlockPairsMatch newMatch(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pParentBlock, final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pChildBlock, final Stereotype pStereotype, final Property pParentAttribute, final Property pChildAttribute) {
     return new Immutable(pParentBlock, pChildBlock, pStereotype, pParentAttribute, pChildAttribute);
   }
   
-  private static final class Mutable extends GeneralizedTaggedBlockPairsMatch {
+  private static final class Mutable extends TransformedGeneralizedBlockPairsMatch {
     Mutable(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pParentBlock, final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pChildBlock, final Stereotype pStereotype, final Property pParentAttribute, final Property pChildAttribute) {
       super(pParentBlock, pChildBlock, pStereotype, pParentAttribute, pChildAttribute);
     }
@@ -249,7 +249,7 @@ public abstract class GeneralizedTaggedBlockPairsMatch extends BasePatternMatch 
     }
   }
   
-  private static final class Immutable extends GeneralizedTaggedBlockPairsMatch {
+  private static final class Immutable extends TransformedGeneralizedBlockPairsMatch {
     Immutable(final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pParentBlock, final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class pChildBlock, final Stereotype pStereotype, final Property pParentAttribute, final Property pChildAttribute) {
       super(pParentBlock, pChildBlock, pStereotype, pParentAttribute, pChildAttribute);
     }

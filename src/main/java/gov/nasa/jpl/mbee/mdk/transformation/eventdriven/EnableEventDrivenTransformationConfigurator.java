@@ -2,11 +2,7 @@ package gov.nasa.jpl.mbee.mdk.transformation.eventdriven;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.InconsistentEventSemanticsException;
 
 import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsCategory;
@@ -14,18 +10,18 @@ import com.nomagic.actions.ActionsManager;
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.actions.BrowserContextAMConfigurator;
 import com.nomagic.magicdraw.actions.MDActionsCategory;
+import com.nomagic.magicdraw.task.BackgroundTaskRunner;
 import com.nomagic.magicdraw.ui.browser.Node;
 import com.nomagic.magicdraw.ui.browser.Tree;
-import com.nomagic.magicdraw.ui.dialogs.MDDialogParentProvider;
+import com.nomagic.task.ProgressStatus;
+import com.nomagic.task.RunnableWithProgress;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Profile;
 
 import gov.nasa.jpl.mbee.mdk.transformation.util.ActionStringLiterals;
-import gov.nasa.jpl.mbee.mdk.transformation.util.EngineCreationUtil;
 
 public class EnableEventDrivenTransformationConfigurator implements BrowserContextAMConfigurator {
 	
 	private final class EnableTransformationAction extends NMAction {
-		private static final String ERROR_TITLE = "Error During Transformation Initialization";
 		private static final long serialVersionUID = 1L;
 		private Profile profile;
 		
@@ -36,14 +32,22 @@ public class EnableEventDrivenTransformationConfigurator implements BrowserConte
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			try {
-				StereotypedElementEventDrivenTransformation transformer = new StereotypedElementEventDrivenTransformation(profile.getOwnedStereotype(), EngineCreationUtil.createEngine());
-				profile.eAdapters().add(transformer);
-				transformer.forceExecution();
-			} catch (ViatraQueryException | InconsistentEventSemanticsException e) {
-				JOptionPane.showMessageDialog(MDDialogParentProvider.getProvider().getDialogParent(),ERROR_TITLE , e.getMessage(), JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
+			BackgroundTaskRunner.runWithProgressStatus(new RunnableWithProgress()
+			{
+				@Override
+				public void run(ProgressStatus progressStatus)
+				{
+					progressStatus.init("Transforming Elements...", 0, 5);
+					// Creating a transformer and executing it
+					try {
+						StereotypedElementEventDrivenTransformation transformer = new StereotypedElementEventDrivenTransformation(profile.getOwnedStereotype());
+						profile.eAdapters().add(transformer);
+						transformer.forceExecution();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}, "Stereotyped Element Transformation", true);
 		}
 	}
 

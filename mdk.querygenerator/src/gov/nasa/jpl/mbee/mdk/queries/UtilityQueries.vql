@@ -1,0 +1,40 @@
+package gov.nasa.jpl.mbee.mdk.queries
+
+import "http://www.nomagic.com/magicdraw/UML/2.5.0"
+
+/*
+ * Queries instances of block objects 
+ */
+pattern block(class : Class) {
+	Classifier.name(block, "Block");
+	InstanceSpecification.classifier(instance, block);
+	Class.appliedStereotypeInstance(class, instance);
+}
+
+/*
+ * Queries Properties with a given name and type
+ * 
+ */
+pattern propertyAttributes(property : Property, name : java String, type : Type) {
+	Property.name(property, name);
+	Property.type(property, type);
+}
+
+
+/**
+ * Defines parent-child relation between classes
+ */
+pattern generalization(general : Class, specific : Class) {
+	Generalization.general(generalization, general);
+	Generalization.specific(generalization, specific);
+}
+
+/**
+ * Returns stereotypes that are used as applied instances.
+ */
+pattern usedStereotypes(stereotype : Stereotype) {
+	Class.appliedStereotypeInstance.classifier(_class, stereotype);
+} or {
+	Stereotype.ownedAttribute(stereotype, property);
+	Class.appliedStereotypeInstance.slot.definingFeature(_class, property);
+}

@@ -56,7 +56,9 @@ public class StereotypedElementBatchTransformation {
 		status.setDescription("Initializing Transformation");
 		
 		//Create VIATRA Batch transformation
-		transformation = BatchTransformation.forEngine(engine).build();
+		transformation = BatchTransformation.forEngine(engine)
+//				.addAdapterConfiguration(new TransformationDebuggerConfiguration("MDK_TRAFO"))
+				.build();
 		//Initialize batch transformation statements
 		statements = transformation.getTransformationStatements();
 		status.increase();
@@ -130,7 +132,7 @@ public class StereotypedElementBatchTransformation {
 					.name("AttributesFromTagsRule").precondition(TaggedBlocksQuerySpecification.instance())
 					.action(new IMatchProcessor<TaggedBlocksMatch>() {
 						public void process(TaggedBlocksMatch match) {
-							StereotypedElementTransformationActions.createBlockAttributes(match);
+							StereotypedElementTransformationActions.createBlockAttributes(match.getProperty(), match.getBlock(), match.getValue());
 						}
 					}).build();
 		}
@@ -157,7 +159,7 @@ public class StereotypedElementBatchTransformation {
 					.precondition(GeneralizedTaggedBlockPairsQuerySpecification.instance())
 					.action(new IMatchProcessor<GeneralizedTaggedBlockPairsMatch>() {
 						public void process(GeneralizedTaggedBlockPairsMatch match) {
-							StereotypedElementTransformationActions.createAttributeredefinition(match);
+							StereotypedElementTransformationActions.createAttributeredefinition(match.getChildAttribute(), match.getParentAttribute());
 						}
 					}).build();
 		}
@@ -176,7 +178,7 @@ public class StereotypedElementBatchTransformation {
 					.name("StereotypeRemovalRule").precondition(TaggedBlocksQuerySpecification.instance())
 					.action(new IMatchProcessor<TaggedBlocksMatch>() {
 						public void process(TaggedBlocksMatch match) {
-							StereotypedElementTransformationActions.createRemoveStereotypeInstance(match);
+							StereotypedElementTransformationActions.createRemoveStereotypeInstance(match.getSlot(), match.getStereotype());
 						}
 					})
 					.build();

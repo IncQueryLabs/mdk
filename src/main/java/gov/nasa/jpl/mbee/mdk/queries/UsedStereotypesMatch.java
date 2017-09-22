@@ -1,10 +1,10 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/UtilityQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
-import gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.UsedStereotypesQuerySpecification;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -13,25 +13,25 @@ import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
- * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.unreferredStereotypes pattern,
- * to be used in conjunction with {@link UnreferredStereotypesMatcher}.
+ * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.usedStereotypes pattern,
+ * to be used in conjunction with {@link UsedStereotypesMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
  * Each instance is a (possibly partial) substitution of pattern parameters,
  * usable to represent a match of the pattern in the result of a query,
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
- * @see UnreferredStereotypesMatcher
- *  @see UnreferredStereotypesProcessor
+ * @see UsedStereotypesMatcher
+ *  @see UsedStereotypesProcessor
  * 
  */
 @SuppressWarnings("all")
-public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
+public abstract class UsedStereotypesMatch extends BasePatternMatch {
   private Stereotype fStereotype;
   
   private static List<String> parameterNames = makeImmutableList("stereotype");
   
-  private UnreferredStereotypesMatch(final Stereotype pStereotype) {
+  private UsedStereotypesMatch(final Stereotype pStereotype) {
     this.fStereotype = pStereotype;
   }
   
@@ -62,12 +62,12 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
   
   @Override
   public String patternName() {
-    return "gov.nasa.jpl.mbee.mdk.queries.unreferredStereotypes";
+    return "gov.nasa.jpl.mbee.mdk.queries.usedStereotypes";
   }
   
   @Override
   public List<String> parameterNames() {
-    return UnreferredStereotypesMatch.parameterNames;
+    return UsedStereotypesMatch.parameterNames;
   }
   
   @Override
@@ -76,7 +76,7 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
   }
   
   @Override
-  public UnreferredStereotypesMatch toImmutable() {
+  public UsedStereotypesMatch toImmutable() {
     return isMutable() ? newMatch(fStereotype) : this;
   }
   
@@ -99,8 +99,8 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
     if (obj == null) {
         return false;
     }
-    if ((obj instanceof UnreferredStereotypesMatch)) {
-        UnreferredStereotypesMatch other = (UnreferredStereotypesMatch) obj;
+    if ((obj instanceof UsedStereotypesMatch)) {
+        UsedStereotypesMatch other = (UsedStereotypesMatch) obj;
         return Objects.equals(fStereotype, other.fStereotype);
     } else {
         // this should be infrequent
@@ -113,9 +113,9 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
   }
   
   @Override
-  public UnreferredStereotypesQuerySpecification specification() {
+  public UsedStereotypesQuerySpecification specification() {
     try {
-        return UnreferredStereotypesQuerySpecification.instance();
+        return UsedStereotypesQuerySpecification.instance();
     } catch (ViatraQueryException ex) {
          // This cannot happen, as the match object can only be instantiated if the query specification exists
          throw new IllegalStateException (ex);
@@ -129,7 +129,7 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
    * @return the empty match.
    * 
    */
-  public static UnreferredStereotypesMatch newEmptyMatch() {
+  public static UsedStereotypesMatch newEmptyMatch() {
     return new Mutable(null);
   }
   
@@ -141,7 +141,7 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static UnreferredStereotypesMatch newMutableMatch(final Stereotype pStereotype) {
+  public static UsedStereotypesMatch newMutableMatch(final Stereotype pStereotype) {
     return new Mutable(pStereotype);
   }
   
@@ -153,11 +153,11 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
    * @return the (partial) match object.
    * 
    */
-  public static UnreferredStereotypesMatch newMatch(final Stereotype pStereotype) {
+  public static UsedStereotypesMatch newMatch(final Stereotype pStereotype) {
     return new Immutable(pStereotype);
   }
   
-  private static final class Mutable extends UnreferredStereotypesMatch {
+  private static final class Mutable extends UsedStereotypesMatch {
     Mutable(final Stereotype pStereotype) {
       super(pStereotype);
     }
@@ -168,7 +168,7 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
     }
   }
   
-  private static final class Immutable extends UnreferredStereotypesMatch {
+  private static final class Immutable extends UsedStereotypesMatch {
     Immutable(final Stereotype pStereotype) {
       super(pStereotype);
     }

@@ -1,11 +1,11 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/EventDrivenTransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries.util;
 
 import com.google.common.collect.Sets;
-import gov.nasa.jpl.mbee.mdk.queries.TaggedBlocksMatch;
-import gov.nasa.jpl.mbee.mdk.queries.TaggedBlocksMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.StereotypedBlocksMatch;
+import gov.nasa.jpl.mbee.mdk.queries.StereotypedBlocksMatcher;
 import gov.nasa.jpl.mbee.mdk.queries.util.BlockQuerySpecification;
 import java.util.Arrays;
 import java.util.List;
@@ -32,15 +32,15 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 /**
- * A pattern-specific query specification that can instantiate TaggedBlocksMatcher in a type-safe way.
+ * A pattern-specific query specification that can instantiate StereotypedBlocksMatcher in a type-safe way.
  * 
- * @see TaggedBlocksMatcher
- * @see TaggedBlocksMatch
+ * @see StereotypedBlocksMatcher
+ * @see StereotypedBlocksMatch
  * 
  */
 @SuppressWarnings("all")
-public final class TaggedBlocksQuerySpecification extends BaseGeneratedEMFQuerySpecification<TaggedBlocksMatcher> {
-  private TaggedBlocksQuerySpecification() {
+public final class StereotypedBlocksQuerySpecification extends BaseGeneratedEMFQuerySpecification<StereotypedBlocksMatcher> {
+  private StereotypedBlocksQuerySpecification() {
     super(GeneratedPQuery.INSTANCE);
   }
   
@@ -49,7 +49,7 @@ public final class TaggedBlocksQuerySpecification extends BaseGeneratedEMFQueryS
    * @throws ViatraQueryException if the pattern definition could not be loaded
    * 
    */
-  public static TaggedBlocksQuerySpecification instance() throws ViatraQueryException {
+  public static StereotypedBlocksQuerySpecification instance() throws ViatraQueryException {
     try{
         return LazyHolder.INSTANCE;
     } catch (ExceptionInInitializerError err) {
@@ -58,35 +58,35 @@ public final class TaggedBlocksQuerySpecification extends BaseGeneratedEMFQueryS
   }
   
   @Override
-  protected TaggedBlocksMatcher instantiate(final ViatraQueryEngine engine) throws ViatraQueryException {
-    return TaggedBlocksMatcher.on(engine);
+  protected StereotypedBlocksMatcher instantiate(final ViatraQueryEngine engine) throws ViatraQueryException {
+    return StereotypedBlocksMatcher.on(engine);
   }
   
   @Override
-  public TaggedBlocksMatcher instantiate() throws ViatraQueryException {
-    return TaggedBlocksMatcher.create();
+  public StereotypedBlocksMatcher instantiate() throws ViatraQueryException {
+    return StereotypedBlocksMatcher.create();
   }
   
   @Override
-  public TaggedBlocksMatch newEmptyMatch() {
-    return TaggedBlocksMatch.newEmptyMatch();
+  public StereotypedBlocksMatch newEmptyMatch() {
+    return StereotypedBlocksMatch.newEmptyMatch();
   }
   
   @Override
-  public TaggedBlocksMatch newMatch(final Object... parameters) {
-    return TaggedBlocksMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) parameters[0], (com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype) parameters[1], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Slot) parameters[2], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property) parameters[3], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification) parameters[4]);
+  public StereotypedBlocksMatch newMatch(final Object... parameters) {
+    return StereotypedBlocksMatch.newMatch((com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class) parameters[0], (com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype) parameters[1], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Slot) parameters[2], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property) parameters[3], (com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralSpecification) parameters[4]);
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification (visibility: PUBLIC, simpleName: TaggedBlocksQuerySpecification, identifier: gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: gov.nasa.jpl.mbee.mdk.queries.util) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link JvmGenericType: gov.nasa.jpl.mbee.mdk.queries.util.StereotypedBlocksQuerySpecification (visibility: PUBLIC, simpleName: StereotypedBlocksQuerySpecification, identifier: gov.nasa.jpl.mbee.mdk.queries.util.StereotypedBlocksQuerySpecification, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: gov.nasa.jpl.mbee.mdk.queries.util) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification (visibility: PUBLIC, simpleName: TaggedBlocksQuerySpecification, identifier: gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: gov.nasa.jpl.mbee.mdk.queries.util) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link JvmGenericType: gov.nasa.jpl.mbee.mdk.queries.util.StereotypedBlocksQuerySpecification (visibility: PUBLIC, simpleName: StereotypedBlocksQuerySpecification, identifier: gov.nasa.jpl.mbee.mdk.queries.util.StereotypedBlocksQuerySpecification, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: gov.nasa.jpl.mbee.mdk.queries.util) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 
    */
   private static class LazyHolder {
-    private final static TaggedBlocksQuerySpecification INSTANCE = new TaggedBlocksQuerySpecification();
+    private final static StereotypedBlocksQuerySpecification INSTANCE = new StereotypedBlocksQuerySpecification();
     
     /**
      * Statically initializes the query specification <b>after</b> the field {@link #INSTANCE} is assigned.
@@ -104,7 +104,7 @@ public final class TaggedBlocksQuerySpecification extends BaseGeneratedEMFQueryS
   }
   
   private static class GeneratedPQuery extends BaseGeneratedEMFPQuery {
-    private final static TaggedBlocksQuerySpecification.GeneratedPQuery INSTANCE = new GeneratedPQuery();
+    private final static StereotypedBlocksQuerySpecification.GeneratedPQuery INSTANCE = new GeneratedPQuery();
     
     private final PParameter parameter_pBlock = new PParameter("block", "com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5", "Class")), PParameterDirection.INOUT);
     
@@ -120,7 +120,7 @@ public final class TaggedBlocksQuerySpecification extends BaseGeneratedEMFQueryS
     
     @Override
     public String getFullyQualifiedName() {
-      return "gov.nasa.jpl.mbee.mdk.queries.taggedBlocks";
+      return "gov.nasa.jpl.mbee.mdk.queries.StereotypedBlocks";
     }
     
     @Override
@@ -174,13 +174,13 @@ public final class TaggedBlocksQuerySpecification extends BaseGeneratedEMFQueryS
               new TypeConstraint(body, Tuples.flatTupleOf(var_slot, var__virtual_2_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Slot", "definingFeature")));
               new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_2_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "StructuralFeature")));
               new Equality(body, var__virtual_2_, var_property);
-              //  // Property of  Stereotype	Slot.value(slot, value)
+              //  	Slot.value(slot, value)
               new TypeConstraint(body, Tuples.flatTupleOf(var_slot), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Slot")));
               PVariable var__virtual_3_ = body.getOrCreateVariableByName(".virtual{3}");
               new TypeConstraint(body, Tuples.flatTupleOf(var_slot, var__virtual_3_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Slot", "value")));
               new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_3_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "ValueSpecification")));
               new Equality(body, var__virtual_3_, var_value);
-              //  // Slot value	Stereotype.ownedAttribute(stereotype, property)
+              // 	Stereotype.ownedAttribute(stereotype, property)
               new TypeConstraint(body, Tuples.flatTupleOf(var_stereotype), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Stereotype")));
               PVariable var__virtual_4_ = body.getOrCreateVariableByName(".virtual{4}");
               new TypeConstraint(body, Tuples.flatTupleOf(var_stereotype, var__virtual_4_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "StructuredClassifier", "ownedAttribute")));

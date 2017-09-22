@@ -3,29 +3,41 @@ package gov.nasa.jpl.mbee.mdk.transformation.eventdriven;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.apache.log4j.Level;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.specific.resolver.FixedPriorityConflictResolver;
+import org.eclipse.viatra.transformation.evm.update.QueryEngineUpdateCompleteProvider;
 import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRule;
 import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory;
 import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.EventDrivenTransformation;
 import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.InconsistentEventSemanticsException;
 
 import com.nomagic.magicdraw.core.Application;
+import com.nomagic.magicdraw.openapi.uml.ReadOnlyElementException;
 import com.nomagic.magicdraw.openapi.uml.SessionManager;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Profile;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
-import gov.nasa.jpl.mbee.mdk.queries.GeneralizedTaggedBlockPairsMatch;
-import gov.nasa.jpl.mbee.mdk.queries.GeneralizedTaggedBlockPairsMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.TaggedBlocksMatch;
-import gov.nasa.jpl.mbee.mdk.queries.TaggedBlocksMatcher;
-import gov.nasa.jpl.mbee.mdk.queries.util.GeneralizedTaggedBlockPairsQuerySpecification;
-import gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.EventDrivenTransformationQueries;
+import gov.nasa.jpl.mbee.mdk.queries.FindCommonParentClassMatch;
+import gov.nasa.jpl.mbee.mdk.queries.FindCommonParentClassMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.StereotypedBlocksMatch;
+import gov.nasa.jpl.mbee.mdk.queries.StereotypedBlocksMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.TransformedGeneralizedBlockPairsMatch;
+import gov.nasa.jpl.mbee.mdk.queries.TransformedGeneralizedBlockPairsMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.TransformedStereotypedBlocksMatch;
+import gov.nasa.jpl.mbee.mdk.queries.TransformedStereotypedBlocksMatcher;
+import gov.nasa.jpl.mbee.mdk.queries.util.FindCommonParentClassQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.StereotypedBlocksQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.TransformedGeneralizedBlockPairsQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.queries.util.TransformedStereotypedBlocksQuerySpecification;
+import gov.nasa.jpl.mbee.mdk.transformation.util.EngineCreationUtil;
 import gov.nasa.jpl.mbee.mdk.transformation.util.StereotypedElementTransformationActions;
 
 public class StereotypedElementEventDrivenTransformation extends AdapterImpl{	
@@ -37,26 +49,37 @@ public class StereotypedElementEventDrivenTransformation extends AdapterImpl{
 	private Collection<Stereotype> stereotypes;
 	
 	//Transformation rule responsible for creating attributes in elements in accordance to the stereotype tagged values
-	private EventDrivenTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> attributeCreation;
+	private EventDrivenTransformationRule<StereotypedBlocksMatch, StereotypedBlocksMatcher> attributeCreation;
 	//Transformation rule responsible for setting redefinition relations between parent and child attributes
-	private EventDrivenTransformationRule<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher> attributeRedefinition;
+	private EventDrivenTransformationRule<TransformedGeneralizedBlockPairsMatch, TransformedGeneralizedBlockPairsMatcher> attributeRedefinition;
 	//Rule responsible for removing stereotype instances from classes
-	private EventDrivenTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> stereotypeRemoval;
+	private EventDrivenTransformationRule<TransformedStereotypedBlocksMatch, TransformedStereotypedBlocksMatcher> stereotypeRemoval;
+	
+	private EventDrivenTransformationRule<FindCommonParentClassMatch, FindCommonParentClassMatcher> blockRestructuring;
 
 	
-	public StereotypedElementEventDrivenTransformation(Collection<Stereotype> stereotypes, AdvancedViatraQueryEngine engine) throws ViatraQueryException, InconsistentEventSemanticsException {
-		this.engine = engine;
+	public StereotypedElementEventDrivenTransformation(Collection<Stereotype> stereotypes) throws ViatraQueryException, InconsistentEventSemanticsException {
+		
+		this.engine = EngineCreationUtil.createEngine();
 		this.stereotypes = stereotypes;
 		initTransformation();
 	}
 	
 	private void initTransformation() throws ViatraQueryException, InconsistentEventSemanticsException {
 		//Create VIATRA Batch transformation
+		
+		EventDrivenTransformationQueries.instance().prepare(engine);
+		
 		transformation = EventDrivenTransformation.forEngine(engine)
+//				.addAdapterConfiguration(new TransformationDebuggerConfiguration("MDK_TRAFO"))
 				.addRule(getAttributeCreationRule())
 				.addRule(getAttributeRedefinitionRule())
 				.addRule(getStereotypeRemovalRule())
-				.setConflictResolver(createConflictResolver()).build();
+				.addRule(getBlockRestructuringRule())
+				.setConflictResolver(createConflictResolver())
+				.setSchedulerFactory(getQueryEngineSchedulerFactory(engine))
+				.build();
+		transformation.getExecutionSchema().getLogger().setLevel(Level.DEBUG);
 	}
 	
 	public void forceExecution() throws ViatraQueryException, InconsistentEventSemanticsException {
@@ -73,18 +96,26 @@ public class StereotypedElementEventDrivenTransformation extends AdapterImpl{
 	 * A slot assigns a value to the property.
 	 * 
 	 */
-	private EventDrivenTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> getAttributeCreationRule()
+	private EventDrivenTransformationRule<StereotypedBlocksMatch, StereotypedBlocksMatcher> getAttributeCreationRule()
 			throws InconsistentEventSemanticsException, ViatraQueryException {
 		if (attributeCreation == null) {
-			attributeCreation = ruleFactory.<TaggedBlocksMatch, TaggedBlocksMatcher>createRule()
-					.name("AttributesFromTagsRule").precondition(TaggedBlocksQuerySpecification.instance())
-					.action(new IMatchProcessor<TaggedBlocksMatch>() {
-						public void process(TaggedBlocksMatch match) {
-							SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Creating block attributes"+System.nanoTime());
-							StereotypedElementTransformationActions.createBlockAttributes(match);
-							SessionManager.getInstance().closeSession(Application.getInstance().getProject());
+			attributeCreation = ruleFactory.<StereotypedBlocksMatch, StereotypedBlocksMatcher>createRule()
+					.name("AttributesFromTagsRule").precondition(StereotypedBlocksQuerySpecification.instance())
+					.action(new IMatchProcessor<StereotypedBlocksMatch>() {
+						public void process(StereotypedBlocksMatch match) {
+							//TODO Workaround for VIATRA ED Transformation filtering bug
+							if(stereotypes.contains(match.getStereotype())) {
+								openSession("Creating block attributes");
+								StereotypedElementTransformationActions.createBlockAttributes(match.getProperty(), match.getBlock(), match.getValue());
+								closeSession();
+							}
+							
 						}
-					}).filter(match -> stereotypes.contains(match.getStereotype())).build();
+
+						
+					}).filter(match -> {
+						System.out.println(match.getStereotype() + " : " + stereotypes.contains(match.getStereotype()));
+						return stereotypes.contains(match.getStereotype());}).build();
 		}
 		return attributeCreation;
 	}
@@ -100,18 +131,22 @@ public class StereotypedElementEventDrivenTransformation extends AdapterImpl{
 	 * (parentAttribute and childAttribute) that should be in a redefinition relationship according to the desired design pattern.
 	 * 
 	 */
-	private EventDrivenTransformationRule<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher> getAttributeRedefinitionRule()
+	private EventDrivenTransformationRule<TransformedGeneralizedBlockPairsMatch, TransformedGeneralizedBlockPairsMatcher> getAttributeRedefinitionRule()
 			throws InconsistentEventSemanticsException, ViatraQueryException {
 		if (attributeRedefinition == null) {
 			attributeRedefinition = ruleFactory
-					.<GeneralizedTaggedBlockPairsMatch, GeneralizedTaggedBlockPairsMatcher>createRule()
+					.<TransformedGeneralizedBlockPairsMatch, TransformedGeneralizedBlockPairsMatcher>createRule()
 					.name("AttributeRedefinitionRule")
-					.precondition(GeneralizedTaggedBlockPairsQuerySpecification.instance())
-					.action(new IMatchProcessor<GeneralizedTaggedBlockPairsMatch>() {
-						public void process(GeneralizedTaggedBlockPairsMatch match) {
-							SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Setting redefinition relation"+System.nanoTime());
-							StereotypedElementTransformationActions.createAttributeredefinition(match);
-							SessionManager.getInstance().closeSession(Application.getInstance().getProject());
+					.precondition(TransformedGeneralizedBlockPairsQuerySpecification.instance())
+					.action(new IMatchProcessor<TransformedGeneralizedBlockPairsMatch>() {
+						public void process(TransformedGeneralizedBlockPairsMatch match) {
+							//TODO Workaround for VIATRA ED Transformation filtering bug
+							if(stereotypes.contains(match.getStereotype())) {
+								
+								openSession("Setting redefinition relation");
+								StereotypedElementTransformationActions.createAttributeredefinition(match.getChildAttribute(), match.getParentAttribute());
+								closeSession();
+							}
 							
 						}
 					}).filter(match -> stereotypes.contains(match.getStereotype())).build();
@@ -124,20 +159,58 @@ public class StereotypedElementEventDrivenTransformation extends AdapterImpl{
 	 * This rule should be fired after the attributeRedefinitionRule.
 	 *  
 	 */
-	private EventDrivenTransformationRule<TaggedBlocksMatch, TaggedBlocksMatcher> getStereotypeRemovalRule()
+	private EventDrivenTransformationRule<TransformedStereotypedBlocksMatch, TransformedStereotypedBlocksMatcher> getStereotypeRemovalRule()
 			throws InconsistentEventSemanticsException, ViatraQueryException {
 		if (stereotypeRemoval == null) {
-			stereotypeRemoval = ruleFactory.<TaggedBlocksMatch, TaggedBlocksMatcher>createRule()
-					.name("StereotypeRemovalRule").precondition(TaggedBlocksQuerySpecification.instance())
-					.action(new IMatchProcessor<TaggedBlocksMatch>() {
-						public void process(TaggedBlocksMatch match) {
-							SessionManager.getInstance().createSession(Application.getInstance().getProject(), "Removing stereotype instance"+System.nanoTime());
-							StereotypedElementTransformationActions.createRemoveStereotypeInstance(match);
-							SessionManager.getInstance().closeSession(Application.getInstance().getProject());
+			stereotypeRemoval = ruleFactory.<TransformedStereotypedBlocksMatch, TransformedStereotypedBlocksMatcher>createRule()
+					.name("StereotypeRemovalRule").precondition(TransformedStereotypedBlocksQuerySpecification.instance())
+					.action(new IMatchProcessor<TransformedStereotypedBlocksMatch>() {
+						public void process(TransformedStereotypedBlocksMatch match) {
+							//TODO Workaround for VIATRA ED Transformation filtering bug
+							if(stereotypes.contains(match.getStereotype())) {
+								openSession("Removing stereotype instance");
+								StereotypedElementTransformationActions.createRemoveStereotypeInstance(match.getSlot(), match.getStereotype());
+								closeSession();
+							}
 						}
 					}).filter(match -> stereotypes.contains(match.getStereotype())).build();
 		}
 		return stereotypeRemoval;
+	}
+	
+	private EventDrivenTransformationRule<FindCommonParentClassMatch, FindCommonParentClassMatcher> getBlockRestructuringRule()
+			throws InconsistentEventSemanticsException, ViatraQueryException {
+		if (blockRestructuring == null) {
+			blockRestructuring = ruleFactory.<FindCommonParentClassMatch, FindCommonParentClassMatcher>createRule()
+					.name("BlockRestructuringRule").precondition(FindCommonParentClassQuerySpecification.instance())
+					.action(new IMatchProcessor<FindCommonParentClassMatch>() {
+						public void process(FindCommonParentClassMatch match) {
+							//TODO Workaround for VIATRA ED Transformation filtering bug
+							if(stereotypes.contains(match.getStereotype())) {
+								openSession("Restructuring block hierarchy");
+								try {
+									StereotypedElementTransformationActions.createImpliedParentBlock(match);
+								} catch (ReadOnlyElementException e) {
+									e.printStackTrace();
+								}
+								closeSession();
+							}
+						}
+					}).filter(match -> stereotypes.contains(match.getStereotype())).build();
+		}
+		return blockRestructuring;
+	}
+	
+	private void openSession(String message) {
+		if(!SessionManager.getInstance().isSessionCreated(Application.getInstance().getProject())) {
+			SessionManager.getInstance().createSession(Application.getInstance().getProject(), message+System.nanoTime());
+		}
+	}
+	
+	private void closeSession() {
+		if(SessionManager.getInstance().isSessionCreated(Application.getInstance().getProject())) {
+			SessionManager.getInstance().closeSession(Application.getInstance().getProject());
+		}
 	}
 		
 	public void dispose() {
@@ -145,8 +218,6 @@ public class StereotypedElementEventDrivenTransformation extends AdapterImpl{
 			transformation.dispose();
 		}
 		transformation = null;
-		//temporary
-		//TODO acquire engine from project adapter
 		engine.dispose();
 	}
 	
@@ -155,6 +226,7 @@ public class StereotypedElementEventDrivenTransformation extends AdapterImpl{
         fixedPriorityResolver.setPriority(getAttributeCreationRule().getRuleSpecification(), 1);
         fixedPriorityResolver.setPriority(getAttributeRedefinitionRule().getRuleSpecification(), 2);
         fixedPriorityResolver.setPriority(getStereotypeRemovalRule().getRuleSpecification(), 3);
+        fixedPriorityResolver.setPriority(getBlockRestructuringRule().getRuleSpecification(), 4);
         return fixedPriorityResolver;
 	}
 	
@@ -162,4 +234,10 @@ public class StereotypedElementEventDrivenTransformation extends AdapterImpl{
 		Optional<Adapter> foundAdapter = profile.eAdapters().stream().filter(ad -> ad instanceof StereotypedElementEventDrivenTransformation).findAny();
 		return foundAdapter;
 	}
+	
+	public static StereotypedTransformationSchedulerFactory getQueryEngineSchedulerFactory(final ViatraQueryEngine engine) {
+        QueryEngineUpdateCompleteProvider provider;
+        provider = new QueryEngineUpdateCompleteProvider(engine);
+        return new StereotypedTransformationSchedulerFactory(provider);
+    }
 }
