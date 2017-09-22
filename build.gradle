@@ -119,9 +119,6 @@ dependencies {
     
     // VIATRA Transformation Runtime
     compile group: "org.eclipse.viatra", name: "viatra-transformation-runtime", version: "1.7.0.M2"
-    
-    // VIATRA Transformation Debugger Runtime
-    compile group: "org.eclipse.viatra", name: "viatra-transformation-debugger-runtime", version: "0.17.0.M2"
 	
 	// GUAVA 18.0
     compile group: "com.google.guava", name: "guava", version: "18.0"
