@@ -1,6 +1,7 @@
 package gov.nasa.jpl.mbee.mdk.transformation.eventdriven;
 
 import java.awt.event.ActionEvent;
+import java.util.Set;
 
 import javax.swing.KeyStroke;
 
@@ -10,12 +11,14 @@ import com.nomagic.actions.ActionsManager;
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.actions.BrowserContextAMConfigurator;
 import com.nomagic.magicdraw.actions.MDActionsCategory;
+import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.task.BackgroundTaskRunner;
 import com.nomagic.magicdraw.ui.browser.Node;
 import com.nomagic.magicdraw.ui.browser.Tree;
 import com.nomagic.task.ProgressStatus;
 import com.nomagic.task.RunnableWithProgress;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Profile;
+import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
 import gov.nasa.jpl.mbee.mdk.transformation.util.ActionStringLiterals;
 
@@ -37,15 +40,7 @@ public class EnableEventDrivenTransformationConfigurator implements BrowserConte
 				@Override
 				public void run(ProgressStatus progressStatus)
 				{
-					progressStatus.init("Transforming Elements...", 0, 5);
-					// Creating a transformer and executing it
-					try {
-						StereotypedElementEventDrivenTransformation transformer = new StereotypedElementEventDrivenTransformation(profile.getOwnedStereotype());
-						profile.eAdapters().add(transformer);
-						transformer.forceExecution();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					MDKTransformationRules.getInstance().addStereotypes(profile.getOwnedStereotype(), Application.getInstance().getProject());
 				}
 			}, "Stereotyped Element Transformation", true);
 		}
@@ -63,7 +58,8 @@ public class EnableEventDrivenTransformationConfigurator implements BrowserConte
 		// Collecting the stereotypes selected by the user 
 		for (final Node node : tree.getSelectedNodes()) { 
 			Object selectedProfile = node.getUserObject();
-			if (selectedProfile instanceof Profile && !StereotypedElementEventDrivenTransformation.findAdapter((Profile) selectedProfile).isPresent()) {
+			Set<Stereotype> stereotypes = MDKTransformationRules.getInstance().getStereotypes();
+			if (selectedProfile instanceof Profile && !stereotypes.containsAll(((Profile) selectedProfile).getOwnedStereotype())) {
 				//If a profile is selected transform every stereotype of the profile
 				profile = (Profile) selectedProfile;
 				category.setEnabled(true);

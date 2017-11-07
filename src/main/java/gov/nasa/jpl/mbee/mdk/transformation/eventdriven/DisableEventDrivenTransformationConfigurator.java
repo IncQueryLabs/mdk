@@ -1,11 +1,9 @@
 package gov.nasa.jpl.mbee.mdk.transformation.eventdriven;
 
 import java.awt.event.ActionEvent;
-import java.util.Optional;
+import java.util.Set;
 
 import javax.swing.KeyStroke;
-
-import org.eclipse.emf.common.notify.Adapter;
 
 import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsCategory;
@@ -13,9 +11,11 @@ import com.nomagic.actions.ActionsManager;
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.actions.BrowserContextAMConfigurator;
 import com.nomagic.magicdraw.actions.MDActionsCategory;
+import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.ui.browser.Node;
 import com.nomagic.magicdraw.ui.browser.Tree;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Profile;
+import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
 import gov.nasa.jpl.mbee.mdk.transformation.util.ActionStringLiterals;
 
@@ -33,14 +33,8 @@ public class DisableEventDrivenTransformationConfigurator implements BrowserCont
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			Optional<Adapter> findAdapter = StereotypedElementEventDrivenTransformation.findAdapter(profile);
-			if(findAdapter.isPresent()){
-				Adapter adapter = findAdapter.get();
-				if(adapter instanceof StereotypedElementEventDrivenTransformation){
-					profile.eAdapters().remove(adapter);
-					((StereotypedElementEventDrivenTransformation) adapter).dispose();
-				}
-			}					
+			
+			MDKTransformationRules.getInstance().removeStereotypes(profile.getOwnedStereotype(), Application.getInstance().getProject());
 		}
 	}
 
@@ -56,7 +50,8 @@ public class DisableEventDrivenTransformationConfigurator implements BrowserCont
 		// Collecting the stereotypes selected by the user 
 		for (final Node node : tree.getSelectedNodes()) { 
 			Object selectedProfile = node.getUserObject();
-			if (selectedProfile instanceof Profile && StereotypedElementEventDrivenTransformation.findAdapter((Profile) selectedProfile).isPresent()) {
+			Set<Stereotype> stereotypes = MDKTransformationRules.getInstance().getStereotypes();
+			if (selectedProfile instanceof Profile && stereotypes.containsAll(((Profile) selectedProfile).getOwnedStereotype())) {
 				profile = (Profile) selectedProfile;
 				category.setEnabled(true);
 			}else {
