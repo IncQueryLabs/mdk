@@ -21,20 +21,20 @@ import gov.nasa.jpl.mbee.mdk.queries.util.TransformedGeneralizedBlockPairsQueryS
 import gov.nasa.jpl.mbee.mdk.queries.util.TransformedStereotypedBlocksQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.transformation.util.StereotypedElementTransformationActions;
 
-public class MDKTransformationRules {
+public class StereotypedElementTransformation {
 	private static Set<AutoQuickFixRule> rules;
 	private Set<Stereotype> stereotypes;
 	
-	private static MDKTransformationRules instance;
+	private static StereotypedElementTransformation instance;
 	
-	protected MDKTransformationRules() {
+	protected StereotypedElementTransformation() {
 		rules = Sets.newHashSet();
 		stereotypes = Sets.newHashSet();
 	}
 	
-	public static MDKTransformationRules getInstance() {
+	public static StereotypedElementTransformation getInstance() {
 		if(instance == null) {
-			instance = new MDKTransformationRules();
+			instance = new StereotypedElementTransformation();
 		}
 		return instance;
 	}
@@ -130,7 +130,7 @@ public class MDKTransformationRules {
 		} catch (ViatraQueryException e) {
 			e.printStackTrace();
 		}
-		registry.addRegisteredRules();
+		registry.updateRegisteredRules();
 		
 	}
 	

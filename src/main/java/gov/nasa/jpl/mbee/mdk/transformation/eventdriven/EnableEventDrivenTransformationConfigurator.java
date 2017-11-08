@@ -40,7 +40,7 @@ public class EnableEventDrivenTransformationConfigurator implements BrowserConte
 				@Override
 				public void run(ProgressStatus progressStatus)
 				{
-					MDKTransformationRules.getInstance().addStereotypes(profile.getOwnedStereotype(), Application.getInstance().getProject());
+					StereotypedElementTransformation.getInstance().addStereotypes(profile.getOwnedStereotype(), Application.getInstance().getProject());
 				}
 			}, "Stereotyped Element Transformation", true);
 		}
@@ -58,7 +58,7 @@ public class EnableEventDrivenTransformationConfigurator implements BrowserConte
 		// Collecting the stereotypes selected by the user 
 		for (final Node node : tree.getSelectedNodes()) { 
 			Object selectedProfile = node.getUserObject();
-			Set<Stereotype> stereotypes = MDKTransformationRules.getInstance().getStereotypes();
+			Set<Stereotype> stereotypes = StereotypedElementTransformation.getInstance().getStereotypes();
 			if (selectedProfile instanceof Profile && !stereotypes.containsAll(((Profile) selectedProfile).getOwnedStereotype())) {
 				//If a profile is selected transform every stereotype of the profile
 				profile = (Profile) selectedProfile;

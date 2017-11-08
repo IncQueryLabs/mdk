@@ -34,7 +34,7 @@ public class DisableEventDrivenTransformationConfigurator implements BrowserCont
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			
-			MDKTransformationRules.getInstance().removeStereotypes(profile.getOwnedStereotype(), Application.getInstance().getProject());
+			StereotypedElementTransformation.getInstance().removeStereotypes(profile.getOwnedStereotype(), Application.getInstance().getProject());
 		}
 	}
 
@@ -50,7 +50,7 @@ public class DisableEventDrivenTransformationConfigurator implements BrowserCont
 		// Collecting the stereotypes selected by the user 
 		for (final Node node : tree.getSelectedNodes()) { 
 			Object selectedProfile = node.getUserObject();
-			Set<Stereotype> stereotypes = MDKTransformationRules.getInstance().getStereotypes();
+			Set<Stereotype> stereotypes = StereotypedElementTransformation.getInstance().getStereotypes();
 			if (selectedProfile instanceof Profile && stereotypes.containsAll(((Profile) selectedProfile).getOwnedStereotype())) {
 				profile = (Profile) selectedProfile;
 				category.setEnabled(true);
