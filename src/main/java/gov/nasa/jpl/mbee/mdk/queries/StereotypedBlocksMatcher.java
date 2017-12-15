@@ -17,7 +17,6 @@ import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
@@ -60,10 +59,10 @@ public class StereotypedBlocksMatcher extends BaseMatcher<StereotypedBlocksMatch
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing VIATRA Query engine in which this matcher will be created.
-   * @throws ViatraQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
    * 
    */
-  public static StereotypedBlocksMatcher on(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public static StereotypedBlocksMatcher on(final ViatraQueryEngine engine) {
     // check if matcher already exists
     StereotypedBlocksMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
@@ -73,12 +72,12 @@ public class StereotypedBlocksMatcher extends BaseMatcher<StereotypedBlocksMatch
   }
   
   /**
-   * @throws ViatraQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
    * @return an initialized matcher
    * @noreference This method is for internal matcher initialization by the framework, do not call it manually.
    * 
    */
-  public static StereotypedBlocksMatcher create() throws ViatraQueryException {
+  public static StereotypedBlocksMatcher create() {
     return new StereotypedBlocksMatcher();
   }
   
@@ -99,10 +98,10 @@ public class StereotypedBlocksMatcher extends BaseMatcher<StereotypedBlocksMatch
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing VIATRA Query engine in which this matcher will be created.
-   * @throws ViatraQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
    * 
    */
-  private StereotypedBlocksMatcher() throws ViatraQueryException {
+  private StereotypedBlocksMatcher() {
     super(querySpecification());
   }
   
@@ -462,10 +461,10 @@ public class StereotypedBlocksMatcher extends BaseMatcher<StereotypedBlocksMatch
   
   /**
    * @return the singleton instance of the query specification of this pattern
-   * @throws ViatraQueryException if the pattern definition could not be loaded
+   * @throws ViatraQueryRuntimeException if the pattern definition could not be loaded
    * 
    */
-  public static IQuerySpecification<StereotypedBlocksMatcher> querySpecification() throws ViatraQueryException {
+  public static IQuerySpecification<StereotypedBlocksMatcher> querySpecification() {
     return StereotypedBlocksQuerySpecification.instance();
   }
 }

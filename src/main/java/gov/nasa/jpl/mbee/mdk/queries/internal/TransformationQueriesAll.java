@@ -8,7 +8,6 @@ import gov.nasa.jpl.mbee.mdk.queries.util.GeneralizedTaggedBlockPairsQuerySpecif
 import gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * A pattern group formed of all patterns defined in TransformationQueries.vql.
@@ -31,10 +30,10 @@ public final class TransformationQueriesAll extends BaseGeneratedPatternGroup {
    * Access the pattern group.
    * 
    * @return the singleton instance of the group
-   * @throws ViatraQueryException if there was an error loading the generated code of pattern specifications
+   * @throws ViatraQueryRuntimeException if there was an error loading the generated code of pattern specifications
    * 
    */
-  public static TransformationQueriesAll instance() throws ViatraQueryException {
+  public static TransformationQueriesAll instance() {
     if (INSTANCE == null) {
         INSTANCE = new TransformationQueriesAll();
     }
@@ -43,7 +42,7 @@ public final class TransformationQueriesAll extends BaseGeneratedPatternGroup {
   
   private static TransformationQueriesAll INSTANCE;
   
-  private TransformationQueriesAll() throws ViatraQueryException {
+  private TransformationQueriesAll() {
     querySpecifications.add(TaggedBlocksQuerySpecification.instance());
     querySpecifications.add(GeneralizedTaggedBlockPairsQuerySpecification.instance());
     querySpecifications.add(UnreferredStereotypesQuerySpecification.instance());

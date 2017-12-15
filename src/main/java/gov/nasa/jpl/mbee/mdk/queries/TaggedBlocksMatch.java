@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Objects;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.taggedBlocks pattern,
@@ -189,12 +188,7 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
   
   @Override
   public TaggedBlocksQuerySpecification specification() {
-    try {
-        return TaggedBlocksQuerySpecification.instance();
-    } catch (ViatraQueryException ex) {
-         // This cannot happen, as the match object can only be instantiated if the query specification exists
-         throw new IllegalStateException (ex);
-    }
+    return TaggedBlocksQuerySpecification.instance();
   }
   
   /**

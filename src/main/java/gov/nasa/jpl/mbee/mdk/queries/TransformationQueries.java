@@ -11,7 +11,6 @@ import gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * A pattern group formed of all public patterns defined in TransformationQueries.vql.
@@ -35,10 +34,10 @@ public final class TransformationQueries extends BaseGeneratedPatternGroup {
    * Access the pattern group.
    * 
    * @return the singleton instance of the group
-   * @throws ViatraQueryException if there was an error loading the generated code of pattern specifications
+   * @throws ViatraQueryRuntimeException if there was an error loading the generated code of pattern specifications
    * 
    */
-  public static TransformationQueries instance() throws ViatraQueryException {
+  public static TransformationQueries instance() {
     if (INSTANCE == null) {
         INSTANCE = new TransformationQueries();
     }
@@ -47,33 +46,33 @@ public final class TransformationQueries extends BaseGeneratedPatternGroup {
   
   private static TransformationQueries INSTANCE;
   
-  private TransformationQueries() throws ViatraQueryException {
+  private TransformationQueries() {
     querySpecifications.add(TaggedBlocksQuerySpecification.instance());
     querySpecifications.add(GeneralizedTaggedBlockPairsQuerySpecification.instance());
     querySpecifications.add(UnreferredStereotypesQuerySpecification.instance());
   }
   
-  public TaggedBlocksQuerySpecification getTaggedBlocks() throws ViatraQueryException {
+  public TaggedBlocksQuerySpecification getTaggedBlocks() {
     return TaggedBlocksQuerySpecification.instance();
   }
   
-  public TaggedBlocksMatcher getTaggedBlocks(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public TaggedBlocksMatcher getTaggedBlocks(final ViatraQueryEngine engine) {
     return TaggedBlocksMatcher.on(engine);
   }
   
-  public GeneralizedTaggedBlockPairsQuerySpecification getGeneralizedTaggedBlockPairs() throws ViatraQueryException {
+  public GeneralizedTaggedBlockPairsQuerySpecification getGeneralizedTaggedBlockPairs() {
     return GeneralizedTaggedBlockPairsQuerySpecification.instance();
   }
   
-  public GeneralizedTaggedBlockPairsMatcher getGeneralizedTaggedBlockPairs(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public GeneralizedTaggedBlockPairsMatcher getGeneralizedTaggedBlockPairs(final ViatraQueryEngine engine) {
     return GeneralizedTaggedBlockPairsMatcher.on(engine);
   }
   
-  public UnreferredStereotypesQuerySpecification getUnreferredStereotypes() throws ViatraQueryException {
+  public UnreferredStereotypesQuerySpecification getUnreferredStereotypes() {
     return UnreferredStereotypesQuerySpecification.instance();
   }
   
-  public UnreferredStereotypesMatcher getUnreferredStereotypes(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public UnreferredStereotypesMatcher getUnreferredStereotypes(final ViatraQueryEngine engine) {
     return UnreferredStereotypesMatcher.on(engine);
   }
 }

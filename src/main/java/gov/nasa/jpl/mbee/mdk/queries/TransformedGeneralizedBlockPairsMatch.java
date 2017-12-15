@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Objects;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.TransformedGeneralizedBlockPairs pattern,
@@ -187,12 +186,7 @@ public abstract class TransformedGeneralizedBlockPairsMatch extends BasePatternM
   
   @Override
   public TransformedGeneralizedBlockPairsQuerySpecification specification() {
-    try {
-        return TransformedGeneralizedBlockPairsQuerySpecification.instance();
-    } catch (ViatraQueryException ex) {
-         // This cannot happen, as the match object can only be instantiated if the query specification exists
-         throw new IllegalStateException (ex);
-    }
+    return TransformedGeneralizedBlockPairsQuerySpecification.instance();
   }
   
   /**

@@ -17,7 +17,6 @@ import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
@@ -56,10 +55,10 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing VIATRA Query engine in which this matcher will be created.
-   * @throws ViatraQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
    * 
    */
-  public static TaggedBlocksMatcher on(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public static TaggedBlocksMatcher on(final ViatraQueryEngine engine) {
     // check if matcher already exists
     TaggedBlocksMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
@@ -69,12 +68,12 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
   }
   
   /**
-   * @throws ViatraQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
    * @return an initialized matcher
    * @noreference This method is for internal matcher initialization by the framework, do not call it manually.
    * 
    */
-  public static TaggedBlocksMatcher create() throws ViatraQueryException {
+  public static TaggedBlocksMatcher create() {
     return new TaggedBlocksMatcher();
   }
   
@@ -95,10 +94,10 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing VIATRA Query engine in which this matcher will be created.
-   * @throws ViatraQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
    * 
    */
-  private TaggedBlocksMatcher() throws ViatraQueryException {
+  private TaggedBlocksMatcher() {
     super(querySpecification());
   }
   
@@ -458,10 +457,10 @@ public class TaggedBlocksMatcher extends BaseMatcher<TaggedBlocksMatch> {
   
   /**
    * @return the singleton instance of the query specification of this pattern
-   * @throws ViatraQueryException if the pattern definition could not be loaded
+   * @throws ViatraQueryRuntimeException if the pattern definition could not be loaded
    * 
    */
-  public static IQuerySpecification<TaggedBlocksMatcher> querySpecification() throws ViatraQueryException {
+  public static IQuerySpecification<TaggedBlocksMatcher> querySpecification() {
     return TaggedBlocksQuerySpecification.instance();
   }
 }

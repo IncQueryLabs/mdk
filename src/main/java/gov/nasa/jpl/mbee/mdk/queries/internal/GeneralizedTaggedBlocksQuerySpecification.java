@@ -13,9 +13,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecificationWithGenericMatcher;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
-import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -23,8 +20,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Positi
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
-import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 /**
@@ -42,10 +38,10 @@ public final class GeneralizedTaggedBlocksQuerySpecification extends BaseGenerat
   
   /**
    * @return the singleton instance of the query specification
-   * @throws ViatraQueryException if the pattern definition could not be loaded
+   * @throws ViatraQueryRuntimeException if the pattern definition could not be loaded
    * 
    */
-  public static GeneralizedTaggedBlocksQuerySpecification instance() throws ViatraQueryException {
+  public static GeneralizedTaggedBlocksQuerySpecification instance() {
     try{
         return LazyHolder.INSTANCE;
     } catch (ExceptionInInitializerError err) {
@@ -74,7 +70,7 @@ public final class GeneralizedTaggedBlocksQuerySpecification extends BaseGenerat
     private final static Object STATIC_INITIALIZER = ensureInitialized();
     
     public static Object ensureInitialized() {
-      INSTANCE.ensureInitializedInternalSneaky();
+      INSTANCE.ensureInitializedInternal();
       return null;
     }
   }
@@ -92,6 +88,10 @@ public final class GeneralizedTaggedBlocksQuerySpecification extends BaseGenerat
     
     private final List<PParameter> parameters = Arrays.asList(parameter_pParentBlock, parameter_pChildBlock, parameter_pStereotype, parameter_pProperty);
     
+    private GeneratedPQuery() {
+      super(PVisibility.PRIVATE);
+    }
+    
     @Override
     public String getFullyQualifiedName() {
       return "gov.nasa.jpl.mbee.mdk.queries.generalizedTaggedBlocks";
@@ -108,42 +108,35 @@ public final class GeneralizedTaggedBlocksQuerySpecification extends BaseGenerat
     }
     
     @Override
-    public Set<PBody> doGetContainedBodies() throws QueryInitializationException {
-      setEvaluationHints(new QueryEvaluationHint(null, (IQueryBackendFactory)null));
+    public Set<PBody> doGetContainedBodies() {
       Set<PBody> bodies = Sets.newLinkedHashSet();
-      try {
-          {
-              PBody body = new PBody(this);
-              PVariable var_parentBlock = body.getOrCreateVariableByName("parentBlock");
-              PVariable var_childBlock = body.getOrCreateVariableByName("childBlock");
-              PVariable var_stereotype = body.getOrCreateVariableByName("stereotype");
-              PVariable var_property = body.getOrCreateVariableByName("property");
-              PVariable var___0_ = body.getOrCreateVariableByName("_<0>");
-              PVariable var___1_ = body.getOrCreateVariableByName("_<1>");
-              PVariable var___2_ = body.getOrCreateVariableByName("_<2>");
-              PVariable var___3_ = body.getOrCreateVariableByName("_<3>");
-              new TypeConstraint(body, Tuples.flatTupleOf(var_parentBlock), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Class")));
-              new TypeConstraint(body, Tuples.flatTupleOf(var_childBlock), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Class")));
-              new TypeConstraint(body, Tuples.flatTupleOf(var_stereotype), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Stereotype")));
-              new TypeConstraint(body, Tuples.flatTupleOf(var_property), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Property")));
-              body.setSymbolicParameters(Arrays.<ExportedParameter>asList(
-                 new ExportedParameter(body, var_parentBlock, parameter_pParentBlock),
-                 new ExportedParameter(body, var_childBlock, parameter_pChildBlock),
-                 new ExportedParameter(body, var_stereotype, parameter_pStereotype),
-                 new ExportedParameter(body, var_property, parameter_pProperty)
-              ));
-              // 	find taggedBlocks(parentBlock, stereotype, _, property, _)
-              new PositivePatternCall(body, new FlatTuple(var_parentBlock, var_stereotype, var___0_, var_property, var___1_), TaggedBlocksQuerySpecification.instance().getInternalQueryRepresentation());
-              // 	find generalization(parentBlock, childBlock)
-              new PositivePatternCall(body, new FlatTuple(var_parentBlock, var_childBlock), GeneralizationQuerySpecification.instance().getInternalQueryRepresentation());
-              // 	find taggedBlocks(childBlock, stereotype, _, property, _)
-              new PositivePatternCall(body, new FlatTuple(var_childBlock, var_stereotype, var___2_, var_property, var___3_), TaggedBlocksQuerySpecification.instance().getInternalQueryRepresentation());
-              bodies.add(body);
-          }
-          // to silence compiler error
-          if (false) throw new ViatraQueryException("Never", "happens");
-      } catch (ViatraQueryException ex) {
-          throw processDependencyException(ex);
+      {
+          PBody body = new PBody(this);
+          PVariable var_parentBlock = body.getOrCreateVariableByName("parentBlock");
+          PVariable var_childBlock = body.getOrCreateVariableByName("childBlock");
+          PVariable var_stereotype = body.getOrCreateVariableByName("stereotype");
+          PVariable var_property = body.getOrCreateVariableByName("property");
+          PVariable var___0_ = body.getOrCreateVariableByName("_<0>");
+          PVariable var___1_ = body.getOrCreateVariableByName("_<1>");
+          PVariable var___2_ = body.getOrCreateVariableByName("_<2>");
+          PVariable var___3_ = body.getOrCreateVariableByName("_<3>");
+          new TypeConstraint(body, Tuples.flatTupleOf(var_parentBlock), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Class")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var_childBlock), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Class")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var_stereotype), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Stereotype")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var_property), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5", "Property")));
+          body.setSymbolicParameters(Arrays.<ExportedParameter>asList(
+             new ExportedParameter(body, var_parentBlock, parameter_pParentBlock),
+             new ExportedParameter(body, var_childBlock, parameter_pChildBlock),
+             new ExportedParameter(body, var_stereotype, parameter_pStereotype),
+             new ExportedParameter(body, var_property, parameter_pProperty)
+          ));
+          // 	find taggedBlocks(parentBlock, stereotype, _, property, _)
+          new PositivePatternCall(body, Tuples.flatTupleOf(var_parentBlock, var_stereotype, var___0_, var_property, var___1_), TaggedBlocksQuerySpecification.instance().getInternalQueryRepresentation());
+          // 	find generalization(parentBlock, childBlock)
+          new PositivePatternCall(body, Tuples.flatTupleOf(var_parentBlock, var_childBlock), GeneralizationQuerySpecification.instance().getInternalQueryRepresentation());
+          // 	find taggedBlocks(childBlock, stereotype, _, property, _)
+          new PositivePatternCall(body, Tuples.flatTupleOf(var_childBlock, var_stereotype, var___2_, var_property, var___3_), TaggedBlocksQuerySpecification.instance().getInternalQueryRepresentation());
+          bodies.add(body);
       }
       return bodies;
     }

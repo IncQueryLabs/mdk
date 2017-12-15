@@ -124,10 +124,10 @@ dependencies {
     compile group: "com.box", name: "json-patch", version: "1.13"
     
     // VIATRA Query Runtime
-    compile group: "org.eclipse.viatra", name: "viatra-query-runtime", version: "1.7.0.M2"
+    compile group: "org.eclipse.viatra", name: "viatra-query-runtime", version: "2.0.0.M1"
     
     // VIATRA Transformation Runtime
-    compile group: "org.eclipse.viatra", name: "viatra-transformation-runtime", version: "1.7.0.M2"
+    compile group: "org.eclipse.viatra", name: "viatra-transformation-runtime", version: "2.0.0.M1"
 	
 	// GUAVA 18.0
     compile group: "com.google.guava", name: "guava", version: "18.0"

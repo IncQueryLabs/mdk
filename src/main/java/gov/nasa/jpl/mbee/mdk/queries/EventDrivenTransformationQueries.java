@@ -13,7 +13,6 @@ import gov.nasa.jpl.mbee.mdk.queries.util.TransformedGeneralizedBlockPairsQueryS
 import gov.nasa.jpl.mbee.mdk.queries.util.TransformedStereotypedBlocksQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * A pattern group formed of all public patterns defined in EventDrivenTransformationQueries.vql.
@@ -38,10 +37,10 @@ public final class EventDrivenTransformationQueries extends BaseGeneratedPattern
    * Access the pattern group.
    * 
    * @return the singleton instance of the group
-   * @throws ViatraQueryException if there was an error loading the generated code of pattern specifications
+   * @throws ViatraQueryRuntimeException if there was an error loading the generated code of pattern specifications
    * 
    */
-  public static EventDrivenTransformationQueries instance() throws ViatraQueryException {
+  public static EventDrivenTransformationQueries instance() {
     if (INSTANCE == null) {
         INSTANCE = new EventDrivenTransformationQueries();
     }
@@ -50,42 +49,42 @@ public final class EventDrivenTransformationQueries extends BaseGeneratedPattern
   
   private static EventDrivenTransformationQueries INSTANCE;
   
-  private EventDrivenTransformationQueries() throws ViatraQueryException {
+  private EventDrivenTransformationQueries() {
     querySpecifications.add(StereotypedBlocksQuerySpecification.instance());
     querySpecifications.add(TransformedGeneralizedBlockPairsQuerySpecification.instance());
     querySpecifications.add(TransformedStereotypedBlocksQuerySpecification.instance());
     querySpecifications.add(FindCommonParentClassQuerySpecification.instance());
   }
   
-  public StereotypedBlocksQuerySpecification getStereotypedBlocks() throws ViatraQueryException {
+  public StereotypedBlocksQuerySpecification getStereotypedBlocks() {
     return StereotypedBlocksQuerySpecification.instance();
   }
   
-  public StereotypedBlocksMatcher getStereotypedBlocks(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public StereotypedBlocksMatcher getStereotypedBlocks(final ViatraQueryEngine engine) {
     return StereotypedBlocksMatcher.on(engine);
   }
   
-  public TransformedGeneralizedBlockPairsQuerySpecification getTransformedGeneralizedBlockPairs() throws ViatraQueryException {
+  public TransformedGeneralizedBlockPairsQuerySpecification getTransformedGeneralizedBlockPairs() {
     return TransformedGeneralizedBlockPairsQuerySpecification.instance();
   }
   
-  public TransformedGeneralizedBlockPairsMatcher getTransformedGeneralizedBlockPairs(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public TransformedGeneralizedBlockPairsMatcher getTransformedGeneralizedBlockPairs(final ViatraQueryEngine engine) {
     return TransformedGeneralizedBlockPairsMatcher.on(engine);
   }
   
-  public TransformedStereotypedBlocksQuerySpecification getTransformedStereotypedBlocks() throws ViatraQueryException {
+  public TransformedStereotypedBlocksQuerySpecification getTransformedStereotypedBlocks() {
     return TransformedStereotypedBlocksQuerySpecification.instance();
   }
   
-  public TransformedStereotypedBlocksMatcher getTransformedStereotypedBlocks(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public TransformedStereotypedBlocksMatcher getTransformedStereotypedBlocks(final ViatraQueryEngine engine) {
     return TransformedStereotypedBlocksMatcher.on(engine);
   }
   
-  public FindCommonParentClassQuerySpecification getFindCommonParentClass() throws ViatraQueryException {
+  public FindCommonParentClassQuerySpecification getFindCommonParentClass() {
     return FindCommonParentClassQuerySpecification.instance();
   }
   
-  public FindCommonParentClassMatcher getFindCommonParentClass(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public FindCommonParentClassMatcher getFindCommonParentClass(final ViatraQueryEngine engine) {
     return FindCommonParentClassMatcher.on(engine);
   }
 }

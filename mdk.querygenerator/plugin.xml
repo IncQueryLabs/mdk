@@ -19,6 +19,7 @@
       <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.block"/>
       <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.propertyAttributes"/>
       <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.generalization"/>
+      <query-specification fqn="gov.nasa.jpl.mbee.mdk.queries.usedStereotypes"/>
     </group>
   </extension>
 </plugin>

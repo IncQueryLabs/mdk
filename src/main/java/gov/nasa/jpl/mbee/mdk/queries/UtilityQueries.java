@@ -13,7 +13,6 @@ import gov.nasa.jpl.mbee.mdk.queries.util.PropertyAttributesQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.util.UsedStereotypesQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * A pattern group formed of all public patterns defined in UtilityQueries.vql.
@@ -38,10 +37,10 @@ public final class UtilityQueries extends BaseGeneratedPatternGroup {
    * Access the pattern group.
    * 
    * @return the singleton instance of the group
-   * @throws ViatraQueryException if there was an error loading the generated code of pattern specifications
+   * @throws ViatraQueryRuntimeException if there was an error loading the generated code of pattern specifications
    * 
    */
-  public static UtilityQueries instance() throws ViatraQueryException {
+  public static UtilityQueries instance() {
     if (INSTANCE == null) {
         INSTANCE = new UtilityQueries();
     }
@@ -50,42 +49,42 @@ public final class UtilityQueries extends BaseGeneratedPatternGroup {
   
   private static UtilityQueries INSTANCE;
   
-  private UtilityQueries() throws ViatraQueryException {
+  private UtilityQueries() {
     querySpecifications.add(BlockQuerySpecification.instance());
     querySpecifications.add(PropertyAttributesQuerySpecification.instance());
     querySpecifications.add(GeneralizationQuerySpecification.instance());
     querySpecifications.add(UsedStereotypesQuerySpecification.instance());
   }
   
-  public BlockQuerySpecification getBlock() throws ViatraQueryException {
+  public BlockQuerySpecification getBlock() {
     return BlockQuerySpecification.instance();
   }
   
-  public BlockMatcher getBlock(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public BlockMatcher getBlock(final ViatraQueryEngine engine) {
     return BlockMatcher.on(engine);
   }
   
-  public PropertyAttributesQuerySpecification getPropertyAttributes() throws ViatraQueryException {
+  public PropertyAttributesQuerySpecification getPropertyAttributes() {
     return PropertyAttributesQuerySpecification.instance();
   }
   
-  public PropertyAttributesMatcher getPropertyAttributes(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public PropertyAttributesMatcher getPropertyAttributes(final ViatraQueryEngine engine) {
     return PropertyAttributesMatcher.on(engine);
   }
   
-  public GeneralizationQuerySpecification getGeneralization() throws ViatraQueryException {
+  public GeneralizationQuerySpecification getGeneralization() {
     return GeneralizationQuerySpecification.instance();
   }
   
-  public GeneralizationMatcher getGeneralization(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public GeneralizationMatcher getGeneralization(final ViatraQueryEngine engine) {
     return GeneralizationMatcher.on(engine);
   }
   
-  public UsedStereotypesQuerySpecification getUsedStereotypes() throws ViatraQueryException {
+  public UsedStereotypesQuerySpecification getUsedStereotypes() {
     return UsedStereotypesQuerySpecification.instance();
   }
   
-  public UsedStereotypesMatcher getUsedStereotypes(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public UsedStereotypesMatcher getUsedStereotypes(final ViatraQueryEngine engine) {
     return UsedStereotypesMatcher.on(engine);
   }
 }

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Objects;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.block pattern,
@@ -113,12 +112,7 @@ public abstract class BlockMatch extends BasePatternMatch {
   
   @Override
   public BlockQuerySpecification specification() {
-    try {
-        return BlockQuerySpecification.instance();
-    } catch (ViatraQueryException ex) {
-         // This cannot happen, as the match object can only be instantiated if the query specification exists
-         throw new IllegalStateException (ex);
-    }
+    return BlockQuerySpecification.instance();
   }
   
   /**

@@ -15,7 +15,6 @@ import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
@@ -65,10 +64,10 @@ public class TransformedGeneralizedBlockPairsMatcher extends BaseMatcher<Transfo
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing VIATRA Query engine in which this matcher will be created.
-   * @throws ViatraQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
    * 
    */
-  public static TransformedGeneralizedBlockPairsMatcher on(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public static TransformedGeneralizedBlockPairsMatcher on(final ViatraQueryEngine engine) {
     // check if matcher already exists
     TransformedGeneralizedBlockPairsMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
@@ -78,12 +77,12 @@ public class TransformedGeneralizedBlockPairsMatcher extends BaseMatcher<Transfo
   }
   
   /**
-   * @throws ViatraQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
    * @return an initialized matcher
    * @noreference This method is for internal matcher initialization by the framework, do not call it manually.
    * 
    */
-  public static TransformedGeneralizedBlockPairsMatcher create() throws ViatraQueryException {
+  public static TransformedGeneralizedBlockPairsMatcher create() {
     return new TransformedGeneralizedBlockPairsMatcher();
   }
   
@@ -104,10 +103,10 @@ public class TransformedGeneralizedBlockPairsMatcher extends BaseMatcher<Transfo
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing VIATRA Query engine in which this matcher will be created.
-   * @throws ViatraQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
    * 
    */
-  private TransformedGeneralizedBlockPairsMatcher() throws ViatraQueryException {
+  private TransformedGeneralizedBlockPairsMatcher() {
     super(querySpecification());
   }
   
@@ -467,10 +466,10 @@ public class TransformedGeneralizedBlockPairsMatcher extends BaseMatcher<Transfo
   
   /**
    * @return the singleton instance of the query specification of this pattern
-   * @throws ViatraQueryException if the pattern definition could not be loaded
+   * @throws ViatraQueryRuntimeException if the pattern definition could not be loaded
    * 
    */
-  public static IQuerySpecification<TransformedGeneralizedBlockPairsMatcher> querySpecification() throws ViatraQueryException {
+  public static IQuerySpecification<TransformedGeneralizedBlockPairsMatcher> querySpecification() {
     return TransformedGeneralizedBlockPairsQuerySpecification.instance();
   }
 }

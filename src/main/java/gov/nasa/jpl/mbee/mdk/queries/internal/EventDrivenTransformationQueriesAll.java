@@ -9,7 +9,6 @@ import gov.nasa.jpl.mbee.mdk.queries.util.StereotypedBlocksQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.util.TransformedGeneralizedBlockPairsQuerySpecification;
 import gov.nasa.jpl.mbee.mdk.queries.util.TransformedStereotypedBlocksQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * A pattern group formed of all patterns defined in EventDrivenTransformationQueries.vql.
@@ -33,10 +32,10 @@ public final class EventDrivenTransformationQueriesAll extends BaseGeneratedPatt
    * Access the pattern group.
    * 
    * @return the singleton instance of the group
-   * @throws ViatraQueryException if there was an error loading the generated code of pattern specifications
+   * @throws ViatraQueryRuntimeException if there was an error loading the generated code of pattern specifications
    * 
    */
-  public static EventDrivenTransformationQueriesAll instance() throws ViatraQueryException {
+  public static EventDrivenTransformationQueriesAll instance() {
     if (INSTANCE == null) {
         INSTANCE = new EventDrivenTransformationQueriesAll();
     }
@@ -45,7 +44,7 @@ public final class EventDrivenTransformationQueriesAll extends BaseGeneratedPatt
   
   private static EventDrivenTransformationQueriesAll INSTANCE;
   
-  private EventDrivenTransformationQueriesAll() throws ViatraQueryException {
+  private EventDrivenTransformationQueriesAll() {
     querySpecifications.add(StereotypedBlocksQuerySpecification.instance());
     querySpecifications.add(TransformedGeneralizedBlockPairsQuerySpecification.instance());
     querySpecifications.add(TransformedStereotypedBlocksQuerySpecification.instance());

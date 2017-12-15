@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Objects;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.unreferredStereotypes pattern,
@@ -114,12 +113,7 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
   
   @Override
   public UnreferredStereotypesQuerySpecification specification() {
-    try {
-        return UnreferredStereotypesQuerySpecification.instance();
-    } catch (ViatraQueryException ex) {
-         // This cannot happen, as the match object can only be instantiated if the query specification exists
-         throw new IllegalStateException (ex);
-    }
+    return UnreferredStereotypesQuerySpecification.instance();
   }
   
   /**
