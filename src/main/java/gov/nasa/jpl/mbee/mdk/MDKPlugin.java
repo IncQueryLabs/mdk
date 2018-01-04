@@ -1,16 +1,10 @@
 package gov.nasa.jpl.mbee.mdk;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.nomagic.actions.ActionsCategory;
 import com.nomagic.actions.ActionsManager;
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.actions.ActionsConfiguratorsManager;
+import com.nomagic.magicdraw.commandline.CommandLineActionManager;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.options.EnvironmentOptions;
 import com.nomagic.magicdraw.evaluation.EvaluationConfigurator;
@@ -19,20 +13,24 @@ import com.nomagic.magicdraw.plugins.PluginDescriptor;
 import com.nomagic.magicdraw.plugins.PluginUtils;
 import com.nomagic.magicdraw.properties.Property;
 import com.nomagic.magicdraw.uml.DiagramTypeConstants;
-
-import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputQueueStatusConfigurator;
-import gov.nasa.jpl.mbee.mdk.mms.sync.queue.OutputSyncRunner;
 import gov.nasa.jpl.mbee.mdk.mms.sync.status.SyncStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.ocl.OclQueryConfigurator;
 import gov.nasa.jpl.mbee.mdk.options.MDKOptionsGroup;
 import gov.nasa.jpl.mbee.mdk.systems_reasoner.SRConfigurator;
-import gov.nasa.jpl.mbee.mdk.transformation.batch.StereotypeBatchTransformationConfigurator;
-import gov.nasa.jpl.mbee.mdk.transformation.eventdriven.DisableEventDrivenTransformationConfigurator;
-import gov.nasa.jpl.mbee.mdk.transformation.eventdriven.EnableEventDrivenTransformationConfigurator;
 import gov.nasa.jpl.mbee.mdk.util.MDUtils;
+import gov.nasa.jpl.mbee.pma.cli.AutomatedViewGenerator;
+
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MDKPlugin extends Plugin {
-	public static final String MAIN_TOOLBAR_CATEGORY_NAME = "MDK";
+    public static final String MAIN_TOOLBAR_CATEGORY_NAME = "MDK";
 
     private static String VERSION;
     public static ClassLoader extensionsClassloader;
@@ -79,10 +77,11 @@ public class MDKPlugin extends Plugin {
             System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
             System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
             System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.wire", "INFO");
-        }       
-        
+        }
         // This somehow allows things to be loaded to evaluate opaque expressions or something.
         EvaluationConfigurator.getInstance().registerBinaryImplementers(this.getClass().getClassLoader());
+
+        CommandLineActionManager.getInstance().addAction(new AutomatedViewGenerator());
 
         MDKConfigurator mdkConfigurator = new MDKConfigurator();
         acm.addContainmentBrowserContextConfigurator(mdkConfigurator);
@@ -103,7 +102,6 @@ public class MDKPlugin extends Plugin {
         acm.addContainmentBrowserContextConfigurator(srConfigurator);
         acm.addBaseDiagramContextConfigurator(DiagramTypeConstants.UML_ANY_DIAGRAM, srConfigurator);
 
-        acm.addMainToolbarConfigurator(new OutputQueueStatusConfigurator());
         acm.addMainToolbarConfigurator(new SyncStatusConfigurator());
         
         // Creating context menu for batch VIATRA based transformation
@@ -116,10 +114,10 @@ public class MDKPlugin extends Plugin {
         EvaluationConfigurator.getInstance().registerBinaryImplementers(MDKPlugin.class.getClassLoader());
 
         MMSSyncPlugin.getInstance().init();
-        (new Thread(new OutputSyncRunner())).start();
 
         loadExtensionJars();
         configureEnvironmentOptions();
+        initJavaFX();
     }
 
     @Override
@@ -169,4 +167,22 @@ public class MDKPlugin extends Plugin {
         mdkOptions.addEnvironmentChangeListener(mdkEnvOptionsListener);
     }
 
+    private void initJavaFX() {
+        try {
+            Class.forName("javafx.application.Platform");
+        } catch (ClassNotFoundException e) {
+            System.err.println("[WARNING] JavaFX libraries are unavailable. Please add \"-Dorg.osgi.framework.bundle.parent=ext\" to the \"JAVA_ARGS\" line in your properties file(s) in your MagicDraw bin directory and restart.");
+            return;
+        }
+        new Thread(() -> {
+            try {
+                Class<?> clazz = Class.forName("gov.nasa.jpl.mbee.mdk.MDKApplication");
+                Method method = clazz.getMethod("main", String[].class);
+                method.invoke(null, new Object[]{new String[]{}});
+            } catch (Exception | Error e) {
+                System.err.println("[WARNING] Failed to initialize JavaFX application. JavaFX functionality is disabled.");
+                e.printStackTrace();
+            }
+        }, "JavaFX Init").start();
+    }
 }
