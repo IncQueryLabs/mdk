@@ -67,7 +67,7 @@ repositories {
         ivy {
             url 'http://static.incquerylabs.com/projects'
             layout 'pattern', {
-                artifact '/[module]/[revision]/[classifier]-noinstall.[ext]'
+                artifact '/[module]/[revision]/[classifier]_noinstall.[ext]'
             }
         }
 
@@ -158,7 +158,7 @@ dependencies {
         preCompile group: 'com.nomagic', name: 'magicdraw', version: '185sp2', classifier: 'MagicDraw_185_sp2_no_install', ext: 'zip'
         preCompile group: 'com.nomagic', name: 'sysml', version: '185sp2', classifier: 'SysML_Plugin_185_sp2_bundle', ext: 'zip'
         preCompile group: 'com.nomagic', name: 'cst', version: '185sp2', classifier: 'Cameo_Simulation_Toolkit_185_sp2', ext: 'zip'
-        preCompile name: 'instaschema', version: '1.3', classifier: 'instaschema', ext: 'zip'
+        preCompile name: 'incquery-for-magicdraw/noinstall_plugin_packages', version: '1.4', classifier: 'incquery_for_magicdraw_plugin', ext: 'zip'
     }
 
     // This ensures classpath load order to match the MagicDraw provided order and then includes extras needed for non-OpenAPI stuff.

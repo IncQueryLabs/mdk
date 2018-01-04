@@ -7,8 +7,8 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.collect.Sets;
-import com.incquerylabs.instaschema.autoquickfix.AutoQuickFixRule;
-import com.incquerylabs.instaschema.autoquickfix.AutoQuickFixRuleRegistry;
+import com.incquerylabs.incquery.magicdraw.autoquickfix.AutoQuickFixRule;
+import com.incquerylabs.incquery.magicdraw.autoquickfix.AutoQuickFixRuleRegistry;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.openapi.uml.ReadOnlyElementException;
