@@ -1,5 +1,13 @@
 package gov.nasa.jpl.mbee.mdk;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.nomagic.actions.ActionsCategory;
 import com.nomagic.actions.ActionsManager;
 import com.nomagic.actions.NMAction;
@@ -13,21 +21,16 @@ import com.nomagic.magicdraw.plugins.PluginDescriptor;
 import com.nomagic.magicdraw.plugins.PluginUtils;
 import com.nomagic.magicdraw.properties.Property;
 import com.nomagic.magicdraw.uml.DiagramTypeConstants;
+
 import gov.nasa.jpl.mbee.mdk.mms.sync.status.SyncStatusConfigurator;
 import gov.nasa.jpl.mbee.mdk.ocl.OclQueryConfigurator;
 import gov.nasa.jpl.mbee.mdk.options.MDKOptionsGroup;
 import gov.nasa.jpl.mbee.mdk.systems_reasoner.SRConfigurator;
+import gov.nasa.jpl.mbee.mdk.transformation.batch.StereotypeBatchTransformationConfigurator;
+import gov.nasa.jpl.mbee.mdk.transformation.eventdriven.DisableEventDrivenTransformationConfigurator;
+import gov.nasa.jpl.mbee.mdk.transformation.eventdriven.EnableEventDrivenTransformationConfigurator;
 import gov.nasa.jpl.mbee.mdk.util.MDUtils;
 import gov.nasa.jpl.mbee.pma.cli.AutomatedViewGenerator;
-
-
-import java.io.File;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MDKPlugin extends Plugin {
     public static final String MAIN_TOOLBAR_CATEGORY_NAME = "MDK";
