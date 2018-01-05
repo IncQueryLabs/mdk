@@ -8,6 +8,7 @@
         class="gov.nasa.jpl.mbee.mdk.MDKPlugin">
     <requires>
         <api version="1.0"/>
+        <required-plugin id="com.incquerylabs.incquery.magicdraw" name="IncQuery for MagicDraw" version="1.4"/>
     </requires>
     <runtime>
         <!-- START AUTO-GENERATED -->
