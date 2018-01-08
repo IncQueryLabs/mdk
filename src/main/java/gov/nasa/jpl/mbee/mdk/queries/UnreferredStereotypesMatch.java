@@ -1,5 +1,5 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TestQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
@@ -7,9 +7,9 @@ import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 import gov.nasa.jpl.mbee.mdk.queries.util.UnreferredStereotypesQuerySpecification;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.unreferredStereotypes pattern,
@@ -21,7 +21,7 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
  * @see UnreferredStereotypesMatcher
- * @see UnreferredStereotypesProcessor
+ *  @see UnreferredStereotypesProcessor
  * 
  */
 @SuppressWarnings("all")
@@ -82,49 +82,38 @@ public abstract class UnreferredStereotypesMatch extends BasePatternMatch {
   @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
-    result.append("\"stereotype\"=" + prettyPrintValue(fStereotype)
-    );
+    result.append("\"stereotype\"=" + prettyPrintValue(fStereotype));
     return result.toString();
   }
   
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((fStereotype == null) ? 0 : fStereotype.hashCode());
-    return result;
+    return Objects.hash (fStereotype);
   }
   
   @Override
   public boolean equals(final Object obj) {
     if (this == obj)
         return true;
-    if (!(obj instanceof UnreferredStereotypesMatch)) { // this should be infrequent
-        if (obj == null) {
-            return false;
-        }
+    if (obj == null) {
+        return false;
+    }
+    if ((obj instanceof UnreferredStereotypesMatch)) {
+        UnreferredStereotypesMatch other = (UnreferredStereotypesMatch) obj;
+        return Objects.equals(fStereotype, other.fStereotype);
+    } else {
+        // this should be infrequent
         if (!(obj instanceof IPatternMatch)) {
             return false;
         }
         IPatternMatch otherSig  = (IPatternMatch) obj;
-        if (!specification().equals(otherSig.specification()))
-            return false;
-        return Arrays.deepEquals(toArray(), otherSig.toArray());
+        return Objects.equals(specification(), otherSig.specification()) && Arrays.deepEquals(toArray(), otherSig.toArray());
     }
-    UnreferredStereotypesMatch other = (UnreferredStereotypesMatch) obj;
-    if (fStereotype == null) {if (other.fStereotype != null) return false;}
-    else if (!fStereotype.equals(other.fStereotype)) return false;
-    return true;
   }
   
   @Override
   public UnreferredStereotypesQuerySpecification specification() {
-    try {
-        return UnreferredStereotypesQuerySpecification.instance();
-    } catch (ViatraQueryException ex) {
-         // This cannot happen, as the match object can only be instantiated if the query specification exists
-         throw new IllegalStateException (ex);
-    }
+    return UnreferredStereotypesQuerySpecification.instance();
   }
   
   /**

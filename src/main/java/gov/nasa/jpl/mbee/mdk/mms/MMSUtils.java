@@ -7,9 +7,12 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.nomagic.ci.persistence.IProject;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
+import com.nomagic.magicdraw.core.ProjectUtilities;
 import com.nomagic.task.ProgressStatus;
 import com.nomagic.uml2.ext.jmi.helpers.StereotypesHelper;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
@@ -22,6 +25,7 @@ import gov.nasa.jpl.mbee.mdk.json.JacksonUtils;
 import gov.nasa.jpl.mbee.mdk.mms.actions.MMSLogoutAction;
 import gov.nasa.jpl.mbee.mdk.options.MDKOptionsGroup;
 import gov.nasa.jpl.mbee.mdk.util.MDUtils;
+import gov.nasa.jpl.mbee.mdk.util.TaskRunner;
 import gov.nasa.jpl.mbee.mdk.util.TicketUtils;
 import gov.nasa.jpl.mbee.mdk.util.Utils;
 import org.apache.commons.io.IOUtils;
@@ -46,24 +50,28 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MMSUtils {
 
     private static final int CHECK_CANCEL_DELAY = 100;
-
-    private static String developerUrl = "";
+    private static final AtomicReference<Exception> LAST_EXCEPTION = new AtomicReference<>();
+    private static final Cache<Project, String> PROFILE_SERVER_CACHE = CacheBuilder.newBuilder().weakKeys().maximumSize(100).expireAfterAccess(10, TimeUnit.MINUTES).build();
 
     public enum HttpRequestType {
         GET, POST, PUT, DELETE
     }
 
-    private enum ThreadRequestExceptionType {
-        IO_EXCEPTION, SERVER_EXCEPTION, URI_SYNTAX_EXCEPTION
-    }
-
     public enum JsonBlobType {
         ELEMENT_JSON, ELEMENT_ID, PROJECT, REF, ORG
+    }
+
+    public static AtomicReference<Exception> getLastException() {
+        return LAST_EXCEPTION;
     }
 
     public static ObjectNode getElement(Project project, String elementId, ProgressStatus progressStatus)
@@ -244,7 +252,7 @@ public class MMSUtils {
         // build specified request type
         // assume that any request can have a body, and just build the appropriate one
         URI requestDest = requestUri.build();
-        HttpRequestBase request = null;
+        final HttpRequestBase request;
         // bulk GETs are not supported in MMS, but bulk PUTs are. checking and and throwing error here in case
         if (type == HttpRequestType.GET && sendData != null) {
             throw new IOException("GETs with body are not supported");
@@ -254,7 +262,7 @@ public class MMSUtils {
                 request = new HttpDeleteWithBody(requestDest);
                 break;
             case GET:
-//                request = new HttpGetWithBody(requestDest);
+            default:
                 request = new HttpGet(requestDest);
                 break;
             case POST:
@@ -379,10 +387,8 @@ public class MMSUtils {
             }
         }
         else {
-            final AtomicReference<ThreadRequestExceptionType> threadedExceptionType = new AtomicReference<>();
-            final AtomicReference<String> threadedExceptionMessage = new AtomicReference<>();
-            Thread t = new Thread(() -> {
-                // create client, execute request, parse response, store in thread safe buffer to return to calling method for later closing
+            progressStatus.setIndeterminate(true);
+            Future<?> future = TaskRunner.runWithProgressStatus(() -> {
                 try (CloseableHttpClient httpclient = HttpClients.createDefault();
                      CloseableHttpResponse response = httpclient.execute(request);
                      InputStream inputStream = response.getEntity().getContent()) {
@@ -393,30 +399,30 @@ public class MMSUtils {
                     if (inputStream != null) {
                         responseBody.set(generateMmsOutput(inputStream, responseFile));
                     }
-                    threadedExceptionType.set(null);
-                    threadedExceptionMessage.set("");
-                } catch (IOException e) {
-                    threadedExceptionType.set(ThreadRequestExceptionType.IO_EXCEPTION);
-                    threadedExceptionMessage.set(e.getMessage());
+                } catch (Exception e) {
+                    LAST_EXCEPTION.set(e);
                     e.printStackTrace();
                 }
-            });
-            t.start();
+            }, null, TaskRunner.ThreadExecutionStrategy.NONE, true);
             try {
-                t.join(CHECK_CANCEL_DELAY);
-                while (t.isAlive()) {
-                    if (progressStatus.isCancel()) {
+                while (!future.isDone() && !future.isCancelled()) {
+                    try {
+                        future.get(CHECK_CANCEL_DELAY, TimeUnit.MILLISECONDS);
+                    } catch (ExecutionException | TimeoutException ignored) {
+
+                    } catch (InterruptedException e2) {
+                        Thread.currentThread().interrupt();
+                    }
+                    if (progressStatus.isCancel() && future.cancel(true)) {
                         Application.getInstance().getGUILog().log("[INFO] MMS request was manually cancelled.");
-                        //clean up thread?
                         return null;
                     }
-                    t.join(CHECK_CANCEL_DELAY);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (threadedExceptionType.get() == ThreadRequestExceptionType.IO_EXCEPTION) {
-                throw new IOException(threadedExceptionMessage.get());
+            if (LAST_EXCEPTION.get() instanceof IOException) {
+                throw (IOException) LAST_EXCEPTION.get();
             }
         }
         if (responseFile == null) {
@@ -520,7 +526,7 @@ public class MMSUtils {
      * @throws IllegalStateException
      */
     public static String getServerUrl(Project project) throws IllegalStateException {
-        String urlString = null;
+        String urlString;
         if (project == null) {
             throw new IllegalStateException("Project is null.");
         }
@@ -532,16 +538,19 @@ public class MMSUtils {
         if (StereotypesHelper.hasStereotype(primaryModel, "ModelManagementSystem")) {
             urlString = (String) StereotypesHelper.getStereotypePropertyFirst(primaryModel, "ModelManagementSystem", "MMS URL");
         }
-        else {
-            Utils.showPopupMessage("Your project root element doesn't have ModelManagementSystem Stereotype!");
-            return null;
-        }
-        if ((urlString == null || urlString.isEmpty())) {
-            Utils.showPopupMessage("Your project root element doesn't have ModelManagementSystem MMS URL stereotype property set!");
-            if (MDUtils.isDeveloperMode()) {
-                urlString = JOptionPane.showInputDialog("[DEVELOPER MODE] Enter the server URL:", developerUrl);
-                developerUrl = urlString;
+        else if (ProjectUtilities.isStandardSystemProfile(project.getPrimaryProject())) {
+            urlString = PROFILE_SERVER_CACHE.getIfPresent(project);
+            if (urlString == null) {
+                urlString = JOptionPane.showInputDialog("Specify server URL for standard profile.", null);
             }
+            if (urlString == null || urlString.trim().isEmpty()) {
+                return null;
+            }
+            PROFILE_SERVER_CACHE.put(project, urlString);
+        }
+        else {
+            Utils.showPopupMessage("The root element does not have the ModelManagementSystem stereotype.\nPlease apply it and specify the server information.");
+            return null;
         }
         if (urlString == null || urlString.isEmpty()) {
             return null;

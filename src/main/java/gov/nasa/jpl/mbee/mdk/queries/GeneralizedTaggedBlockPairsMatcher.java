@@ -1,5 +1,5 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TestQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
@@ -15,7 +15,6 @@ import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
@@ -30,18 +29,22 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * 
  * <p>Original source:
  * <code><pre>
+ * Returns a pair of blocks that are in a generalization relationship (parent and child).
+ *   Also, it returns the stereotype that is assigned to the blocks, as well as the attributes
+ *   (parentAttribute and childAttribute) that should be in a redefinition relationship according to the desired design pattern.
+ *  
  * pattern generalizedTaggedBlockPairs(parentBlock : Class, childBlock : Class, stereotype : Stereotype, parentAttribute : Property, childAttribute : Property) {
  * 	find generalizedTaggedBlocks(parentBlock, childBlock, stereotype, property);
  * 	Class.ownedAttribute(parentBlock, parentAttribute);
  * 	Class.ownedAttribute(childBlock, childAttribute);
- * 	find properties(property, name, type);
- * 	find properties(parentAttribute, name, type);
- * 	find properties(childAttribute, name, type);	
+ * 	find propertyAttributes(property, name, type);
+ * 	find propertyAttributes(parentAttribute, name, type);
+ * 	find propertyAttributes(childAttribute, name, type);	
  * }
  * </pre></code>
  * 
  * @see GeneralizedTaggedBlockPairsMatch
- * @see GeneralizedTaggedBlockPairsProcessor
+ *  @see GeneralizedTaggedBlockPairsProcessor
  * @see GeneralizedTaggedBlockPairsQuerySpecification
  * 
  */
@@ -52,10 +55,10 @@ public class GeneralizedTaggedBlockPairsMatcher extends BaseMatcher<GeneralizedT
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing VIATRA Query engine in which this matcher will be created.
-   * @throws ViatraQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
    * 
    */
-  public static GeneralizedTaggedBlockPairsMatcher on(final ViatraQueryEngine engine) throws ViatraQueryException {
+  public static GeneralizedTaggedBlockPairsMatcher on(final ViatraQueryEngine engine) {
     // check if matcher already exists
     GeneralizedTaggedBlockPairsMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
@@ -65,12 +68,12 @@ public class GeneralizedTaggedBlockPairsMatcher extends BaseMatcher<GeneralizedT
   }
   
   /**
-   * @throws ViatraQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
    * @return an initialized matcher
    * @noreference This method is for internal matcher initialization by the framework, do not call it manually.
    * 
    */
-  public static GeneralizedTaggedBlockPairsMatcher create() throws ViatraQueryException {
+  public static GeneralizedTaggedBlockPairsMatcher create() {
     return new GeneralizedTaggedBlockPairsMatcher();
   }
   
@@ -91,10 +94,10 @@ public class GeneralizedTaggedBlockPairsMatcher extends BaseMatcher<GeneralizedT
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing VIATRA Query engine in which this matcher will be created.
-   * @throws ViatraQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
    * 
    */
-  private GeneralizedTaggedBlockPairsMatcher() throws ViatraQueryException {
+  private GeneralizedTaggedBlockPairsMatcher() {
     super(querySpecification());
   }
   
@@ -454,10 +457,10 @@ public class GeneralizedTaggedBlockPairsMatcher extends BaseMatcher<GeneralizedT
   
   /**
    * @return the singleton instance of the query specification of this pattern
-   * @throws ViatraQueryException if the pattern definition could not be loaded
+   * @throws ViatraQueryRuntimeException if the pattern definition could not be loaded
    * 
    */
-  public static IQuerySpecification<GeneralizedTaggedBlockPairsMatcher> querySpecification() throws ViatraQueryException {
+  public static IQuerySpecification<GeneralizedTaggedBlockPairsMatcher> querySpecification() {
     return GeneralizedTaggedBlockPairsQuerySpecification.instance();
   }
 }

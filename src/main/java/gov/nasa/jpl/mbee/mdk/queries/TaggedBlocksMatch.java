@@ -1,5 +1,5 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TestQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
@@ -10,9 +10,9 @@ import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 import gov.nasa.jpl.mbee.mdk.queries.util.TaggedBlocksQuerySpecification;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.taggedBlocks pattern,
@@ -24,7 +24,7 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
  * @see TaggedBlocksMatcher
- * @see TaggedBlocksProcessor
+ *  @see TaggedBlocksProcessor
  * 
  */
 @SuppressWarnings("all")
@@ -154,68 +154,41 @@ public abstract class TaggedBlocksMatch extends BasePatternMatch {
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"block\"=" + prettyPrintValue(fBlock) + ", ");
-    
     result.append("\"stereotype\"=" + prettyPrintValue(fStereotype) + ", ");
-    
     result.append("\"slot\"=" + prettyPrintValue(fSlot) + ", ");
-    
     result.append("\"property\"=" + prettyPrintValue(fProperty) + ", ");
-    
-    result.append("\"value\"=" + prettyPrintValue(fValue)
-    );
+    result.append("\"value\"=" + prettyPrintValue(fValue));
     return result.toString();
   }
   
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((fBlock == null) ? 0 : fBlock.hashCode());
-    result = prime * result + ((fStereotype == null) ? 0 : fStereotype.hashCode());
-    result = prime * result + ((fSlot == null) ? 0 : fSlot.hashCode());
-    result = prime * result + ((fProperty == null) ? 0 : fProperty.hashCode());
-    result = prime * result + ((fValue == null) ? 0 : fValue.hashCode());
-    return result;
+    return Objects.hash (fBlock, fStereotype, fSlot, fProperty, fValue);
   }
   
   @Override
   public boolean equals(final Object obj) {
     if (this == obj)
         return true;
-    if (!(obj instanceof TaggedBlocksMatch)) { // this should be infrequent
-        if (obj == null) {
-            return false;
-        }
+    if (obj == null) {
+        return false;
+    }
+    if ((obj instanceof TaggedBlocksMatch)) {
+        TaggedBlocksMatch other = (TaggedBlocksMatch) obj;
+        return Objects.equals(fBlock, other.fBlock) && Objects.equals(fStereotype, other.fStereotype) && Objects.equals(fSlot, other.fSlot) && Objects.equals(fProperty, other.fProperty) && Objects.equals(fValue, other.fValue);
+    } else {
+        // this should be infrequent
         if (!(obj instanceof IPatternMatch)) {
             return false;
         }
         IPatternMatch otherSig  = (IPatternMatch) obj;
-        if (!specification().equals(otherSig.specification()))
-            return false;
-        return Arrays.deepEquals(toArray(), otherSig.toArray());
+        return Objects.equals(specification(), otherSig.specification()) && Arrays.deepEquals(toArray(), otherSig.toArray());
     }
-    TaggedBlocksMatch other = (TaggedBlocksMatch) obj;
-    if (fBlock == null) {if (other.fBlock != null) return false;}
-    else if (!fBlock.equals(other.fBlock)) return false;
-    if (fStereotype == null) {if (other.fStereotype != null) return false;}
-    else if (!fStereotype.equals(other.fStereotype)) return false;
-    if (fSlot == null) {if (other.fSlot != null) return false;}
-    else if (!fSlot.equals(other.fSlot)) return false;
-    if (fProperty == null) {if (other.fProperty != null) return false;}
-    else if (!fProperty.equals(other.fProperty)) return false;
-    if (fValue == null) {if (other.fValue != null) return false;}
-    else if (!fValue.equals(other.fValue)) return false;
-    return true;
   }
   
   @Override
   public TaggedBlocksQuerySpecification specification() {
-    try {
-        return TaggedBlocksQuerySpecification.instance();
-    } catch (ViatraQueryException ex) {
-         // This cannot happen, as the match object can only be instantiated if the query specification exists
-         throw new IllegalStateException (ex);
-    }
+    return TaggedBlocksQuerySpecification.instance();
   }
   
   /**

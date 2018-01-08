@@ -1,5 +1,5 @@
 /**
- * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TestQueries.vql
+ * Generated from platform:/resource/mdk.querygenerator/src/gov/nasa/jpl/mbee/mdk/queries/TransformationQueries.vql
  */
 package gov.nasa.jpl.mbee.mdk.queries;
 
@@ -8,9 +8,9 @@ import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 import gov.nasa.jpl.mbee.mdk.queries.util.GeneralizedTaggedBlockPairsQuerySpecification;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Pattern-specific match representation of the gov.nasa.jpl.mbee.mdk.queries.generalizedTaggedBlockPairs pattern,
@@ -22,7 +22,7 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
  * @see GeneralizedTaggedBlockPairsMatcher
- * @see GeneralizedTaggedBlockPairsProcessor
+ *  @see GeneralizedTaggedBlockPairsProcessor
  * 
  */
 @SuppressWarnings("all")
@@ -152,68 +152,41 @@ public abstract class GeneralizedTaggedBlockPairsMatch extends BasePatternMatch 
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"parentBlock\"=" + prettyPrintValue(fParentBlock) + ", ");
-    
     result.append("\"childBlock\"=" + prettyPrintValue(fChildBlock) + ", ");
-    
     result.append("\"stereotype\"=" + prettyPrintValue(fStereotype) + ", ");
-    
     result.append("\"parentAttribute\"=" + prettyPrintValue(fParentAttribute) + ", ");
-    
-    result.append("\"childAttribute\"=" + prettyPrintValue(fChildAttribute)
-    );
+    result.append("\"childAttribute\"=" + prettyPrintValue(fChildAttribute));
     return result.toString();
   }
   
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((fParentBlock == null) ? 0 : fParentBlock.hashCode());
-    result = prime * result + ((fChildBlock == null) ? 0 : fChildBlock.hashCode());
-    result = prime * result + ((fStereotype == null) ? 0 : fStereotype.hashCode());
-    result = prime * result + ((fParentAttribute == null) ? 0 : fParentAttribute.hashCode());
-    result = prime * result + ((fChildAttribute == null) ? 0 : fChildAttribute.hashCode());
-    return result;
+    return Objects.hash (fParentBlock, fChildBlock, fStereotype, fParentAttribute, fChildAttribute);
   }
   
   @Override
   public boolean equals(final Object obj) {
     if (this == obj)
         return true;
-    if (!(obj instanceof GeneralizedTaggedBlockPairsMatch)) { // this should be infrequent
-        if (obj == null) {
-            return false;
-        }
+    if (obj == null) {
+        return false;
+    }
+    if ((obj instanceof GeneralizedTaggedBlockPairsMatch)) {
+        GeneralizedTaggedBlockPairsMatch other = (GeneralizedTaggedBlockPairsMatch) obj;
+        return Objects.equals(fParentBlock, other.fParentBlock) && Objects.equals(fChildBlock, other.fChildBlock) && Objects.equals(fStereotype, other.fStereotype) && Objects.equals(fParentAttribute, other.fParentAttribute) && Objects.equals(fChildAttribute, other.fChildAttribute);
+    } else {
+        // this should be infrequent
         if (!(obj instanceof IPatternMatch)) {
             return false;
         }
         IPatternMatch otherSig  = (IPatternMatch) obj;
-        if (!specification().equals(otherSig.specification()))
-            return false;
-        return Arrays.deepEquals(toArray(), otherSig.toArray());
+        return Objects.equals(specification(), otherSig.specification()) && Arrays.deepEquals(toArray(), otherSig.toArray());
     }
-    GeneralizedTaggedBlockPairsMatch other = (GeneralizedTaggedBlockPairsMatch) obj;
-    if (fParentBlock == null) {if (other.fParentBlock != null) return false;}
-    else if (!fParentBlock.equals(other.fParentBlock)) return false;
-    if (fChildBlock == null) {if (other.fChildBlock != null) return false;}
-    else if (!fChildBlock.equals(other.fChildBlock)) return false;
-    if (fStereotype == null) {if (other.fStereotype != null) return false;}
-    else if (!fStereotype.equals(other.fStereotype)) return false;
-    if (fParentAttribute == null) {if (other.fParentAttribute != null) return false;}
-    else if (!fParentAttribute.equals(other.fParentAttribute)) return false;
-    if (fChildAttribute == null) {if (other.fChildAttribute != null) return false;}
-    else if (!fChildAttribute.equals(other.fChildAttribute)) return false;
-    return true;
   }
   
   @Override
   public GeneralizedTaggedBlockPairsQuerySpecification specification() {
-    try {
-        return GeneralizedTaggedBlockPairsQuerySpecification.instance();
-    } catch (ViatraQueryException ex) {
-         // This cannot happen, as the match object can only be instantiated if the query specification exists
-         throw new IllegalStateException (ex);
-    }
+    return GeneralizedTaggedBlockPairsQuerySpecification.instance();
   }
   
   /**

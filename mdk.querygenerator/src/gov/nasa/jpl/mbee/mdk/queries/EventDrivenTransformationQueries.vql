@@ -1,0 +1,105 @@
+package gov.nasa.jpl.mbee.mdk.queries
+
+import "http://www.nomagic.com/magicdraw/UML/2.5.0"
+
+/*
+ * Event-Driven rule precondition number 1
+ * 
+ * Queries blocks that have instances of the selected profile's stereotypes, and define tagged values for its properties. 
+ * during the rule action, for these tagged values new block ValueProperties are introduced. the value of the tag is 
+ * represented as the default value of the property.
+ * 
+ */
+pattern StereotypedBlocks(block : Class, stereotype : Stereotype, slot : Slot, property : Property, value : LiteralSpecification) {
+	find block(block);
+	Class.appliedStereotypeInstance.slot(block, slot);
+	Slot.definingFeature(slot, property); 
+	Slot.value(slot, value);
+	Stereotype.ownedAttribute(stereotype, property);
+}
+
+
+/*
+ * Event-Driven rule precondition number 2
+ * 
+ * Queries block-pairs that have been transformed by rule 1 and have a generalization between them. This way 
+ * each sub-element's properties can redefine its super classes' ones 
+ * 
+ */
+pattern TransformedGeneralizedBlockPairs(parentBlock : Class, childBlock : Class, stereotype : Stereotype, parentAttribute : Property, childAttribute : Property) {
+	find block(parentBlock);
+	find block(childBlock);
+
+	//there is a generalization relation between blocks
+	find generalization(parentBlock, childBlock);
+	//Attributes of the block and stereotypes
+	Class.ownedAttribute(parentBlock, parentAttribute);
+	Class.ownedAttribute(childBlock, childAttribute);
+	Stereotype.ownedAttribute(stereotype, property);
+	//Check if they are equal
+	find propertyAttributes(property, name, type);
+	find propertyAttributes(parentAttribute, name, type);
+	find propertyAttributes(childAttribute, name, type);
+}
+
+/**
+ * Event-Driven rule precondition number 3
+ * 
+ * 
+ * Queries blocks that have been transformed by rule 1, in order to remove now obsolete stereotype instances.
+ * These blocks have a stereotype of the selected profile, and a property that has the same name and is of the same type
+ * 
+ */
+pattern TransformedStereotypedBlocks(block : Class, stereotype : Stereotype, slot : Slot) {
+//variable 'block' is a block
+	find block(block);
+
+	//properties of applied stereotype
+	Class.appliedStereotypeInstance.slot(block, slot);
+	Slot.definingFeature(slot, property); // Property of  Stereotype
+	Stereotype.ownedAttribute(stereotype, property);
+
+	//Query the block's attributes
+	Class.ownedAttribute(block, createdProperty);
+
+	//Check if properties are considered equal
+	Property.name(createdProperty, name);
+	Property.name(property, name);
+
+	Property.type(createdProperty, type);
+	Property.type(property, type);
+}
+
+/*
+ * Event-Driven rule precondition number 4
+ * 
+ * Queries structures that require the introduction of a new, common super-class. These structure involve two or 
+ * more blocks that introduce properties (meaning that they do not redefine an other property), that are considered 
+ * equal (have the same type and name), and are defined by a stereotype of the selected profile.
+ * 
+ */
+pattern FindCommonParentClass(block1 : Class, block2 : Class, attribute1 : Property, attribute2 : Property, stereotype : Stereotype) {
+	find block(block1);
+	find block(block2);
+
+	block1 != block2;
+
+	//Query attributes of blocks 1 and 2 as well as the stereotypes of the profile
+	Class.ownedAttribute(block1, attribute1);
+	Class.ownedAttribute(block2, attribute2);
+	//Attributes of the block do not redefine a property
+	neg find redefiningProperty(attribute1);
+	neg find redefiningProperty(attribute2);
+	Stereotype.ownedAttribute(stereotype, property);
+
+	//Check if they are all equal
+	find propertyAttributes(attribute1, name, type);
+	find propertyAttributes(attribute2, name, type);
+	find propertyAttributes(property, name, type);
+
+}
+
+private pattern redefiningProperty(attribute : Property) {
+	Property.redefinedProperty(attribute, _);
+}
+
