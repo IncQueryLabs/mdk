@@ -9,6 +9,7 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
 import gov.nasa.jpl.mbee.mdk.api.incubating.MDKConstants;
 import gov.nasa.jpl.mbee.mdk.api.incubating.convert.Converters;
+import gov.nasa.jpl.mbee.mdk.emf.BulkExport;
 import gov.nasa.jpl.mbee.mdk.http.ServerException;
 import gov.nasa.jpl.mbee.mdk.mms.MMSUtils;
 import gov.nasa.jpl.mbee.mdk.mms.validation.BranchValidator;
@@ -138,21 +139,7 @@ public class ManualSyncRunner implements RunnableWithProgress {
     }
 
     private static void collectClientElementsRecursively(Project project, Element element, int depth, List<Pair<Element, ObjectNode>> elements) {
-        ObjectNode jsonObject = Converters.getElementToJsonConverter().apply(element, project);
-        if (jsonObject == null) {
-            return;
-        }
-        elements.add(new Pair<>(element, jsonObject));
-        if (depth-- != 0) {
-            for (Element elementChild : element.getOwnedElement()) {
-                collectClientElementsRecursively(project, elementChild, depth, elements);
-            }
-        }
-        if (element.equals(project.getPrimaryModel())) {
-            List<Package> attachedModels = project.getModels();
-            attachedModels.remove(project.getPrimaryModel());
-            attachedModels.forEach(attachedModel -> collectClientElementsRecursively(project, attachedModel, 0, elements));
-        }
+        BulkExport.exportElementsRecursively(project, element, depth, (subElement, node) -> elements.add(new Pair<>(subElement, node)));
     }
 
     private static File collectServerElementsRecursively(Project project, Element element, int depth, ProgressStatus progressStatus)

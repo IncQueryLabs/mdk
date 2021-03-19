@@ -119,6 +119,31 @@ public class MDKConfigurator implements BrowserContextAMConfigurator, DiagramCon
         Stereotype classview = Utils.getViewClassStereotype(project);
         Stereotype elementGroupStereotype = Utils.getElementGroupStereotype(project);
 
+		
+		if (MDUtils.isDeveloperMode()) {
+			ActionsCategory exportCategory = myCategory(manager, "MDK_JSON_Export", "[DEVELOPER] MDK JSON Export");
+
+			if (es != null) {
+				ExportToJsonRecursivelyAction elementOnly = ExportToJsonRecursivelyAction.exportElementOnly(es);
+				if (manager.getActionFor(elementOnly.getID()) == null) {
+					exportCategory.addAction(elementOnly);
+				}
+				ExportToJsonRecursivelyAction exportElementHierarchy = ExportToJsonRecursivelyAction.exportElementHierarchy(es);
+				if (manager.getActionFor(exportElementHierarchy.getID()) == null) {
+					exportCategory.addAction(exportElementHierarchy);
+				}
+			} else if (e != null) {
+				ExportToJsonRecursivelyAction elementOnly = ExportToJsonRecursivelyAction.exportElementOnly(e);
+				if (manager.getActionFor(elementOnly.getID()) == null) {
+					exportCategory.addAction(elementOnly);
+				}
+				ExportToJsonRecursivelyAction exportElementHierarchy = ExportToJsonRecursivelyAction.exportElementHierarchy(e);
+				if (manager.getActionFor(exportElementHierarchy.getID()) == null) {
+					exportCategory.addAction(exportElementHierarchy);
+				}
+			}
+		}
+
         ActionsCategory modelLoad = myCategory(manager, "MMSContext", "MMS");
         if (!TicketUtils.isTicketSet(project)) {
             ActionsCategory login = getCategory(manager, "LoginOption", "LoginOption", modelLoad);
@@ -356,5 +381,13 @@ public class MDKConfigurator implements BrowserContextAMConfigurator, DiagramCon
         migrateCategory.setNested(true);
         category.addAction(migrateCategory);
         migrateCategory.addAction(new GroupsMigrationAction());
+		
+		if (MDUtils.isDeveloperMode()) {
+			MDActionsCategory exportCategory = new MDActionsCategory(MDKConfigurator.class.getSimpleName() + "-Export", "[DEVELOPER] JSON Export");
+			exportCategory.setNested(true);
+			category.addAction(exportCategory);
+			exportCategory.addAction(ExportToJsonRecursivelyAction.exportEntirePrimaryModel());
+		}
+
     }
 }
