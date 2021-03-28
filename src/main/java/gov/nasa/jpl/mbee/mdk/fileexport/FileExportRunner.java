@@ -135,7 +135,7 @@ public class FileExportRunner implements RunnableWithProgress {
 	}
 
 	private SequenceWriter openFile(File outputFile) throws IOException {
-		return jsonWriter.writeValues(outputFile);
+		return jsonWriter.writeValuesAsArray(outputFile);
 	}
 	
 	private void handleIOException(Throwable ioEx) {
