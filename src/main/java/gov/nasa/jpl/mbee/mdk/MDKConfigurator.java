@@ -120,8 +120,8 @@ public class MDKConfigurator implements BrowserContextAMConfigurator, DiagramCon
         Stereotype elementGroupStereotype = Utils.getElementGroupStereotype(project);
 
 		
-		if (MDUtils.isDeveloperMode()) {
-			ActionsCategory exportCategory = myCategory(manager, "MDK_JSON_Export", "[DEVELOPER] MDK JSON Export");
+		{
+			ActionsCategory exportCategory = myCategory(manager, "MDK_JSON_Export", "MDK JSON Export");
 
 			if (es != null) {
 				ExportToJsonRecursivelyAction elementOnly = ExportToJsonRecursivelyAction.exportElementOnly(es);
@@ -382,8 +382,8 @@ public class MDKConfigurator implements BrowserContextAMConfigurator, DiagramCon
         category.addAction(migrateCategory);
         migrateCategory.addAction(new GroupsMigrationAction());
 		
-		if (MDUtils.isDeveloperMode()) {
-			MDActionsCategory exportCategory = new MDActionsCategory(MDKConfigurator.class.getSimpleName() + "-Export", "[DEVELOPER] JSON Export");
+		{
+			MDActionsCategory exportCategory = new MDActionsCategory(MDKConfigurator.class.getSimpleName() + "-Export", "JSON Export");
 			exportCategory.setNested(true);
 			category.addAction(exportCategory);
 			exportCategory.addAction(ExportToJsonRecursivelyAction.exportEntirePrimaryModel());
