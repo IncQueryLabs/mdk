@@ -39,6 +39,11 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SequenceWriter;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Gabor Bergmann
@@ -70,6 +75,8 @@ public class FileExportRunner implements RunnableWithProgress {
 			+ "element" + (rootElements.size() != 1 ? "s " : " ") 
 			+ depthDescriptionText;
         Application.getInstance().getGUILog().log("[INFO] " + exportDescriptionText);
+
+        Instant startInstant = Instant.now();
 		
         progressStatus.setDescription(exportDescriptionText);
         progressStatus.setIndeterminate(false);
@@ -108,8 +115,12 @@ public class FileExportRunner implements RunnableWithProgress {
 			
 				
 			}
-			
-            Application.getInstance().getGUILog().log("[INFO] JSON export finished successfully.");
+
+			Instant endInstant = Instant.now();
+			final Duration elapsed = Duration.between(startInstant, endInstant);
+			Application.getInstance().getGUILog().log(
+					String.format("[INFO] JSON export finished successfully in %d seconds.",
+							elapsed.getSeconds()));
 			
 		} catch (CancelledException cancEx) {
             Application.getInstance().getGUILog().log("[INFO] JSON export cancelled by user.");
