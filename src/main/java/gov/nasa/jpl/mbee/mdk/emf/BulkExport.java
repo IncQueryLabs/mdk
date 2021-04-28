@@ -22,12 +22,14 @@ package gov.nasa.jpl.mbee.mdk.emf;
 
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 import gov.nasa.jpl.mbee.mdk.api.incubating.convert.Converters;
 import com.nomagic.magicdraw.core.Project;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
+import gov.nasa.jpl.mbee.mdk.util.Pair;
 
 /**
  * @author Gabor Bergmann
@@ -40,22 +42,30 @@ public class BulkExport {
     public static final int DEPTH_INFINITE = -1;
     public static final int DEPTH_NO_DESCENT = 0;
 	
-	public static void exportElementsRecursively(Project project, Element element, int depth, BiConsumer<Element, ObjectNode> visitor) {
+	public static Stream<Pair<Element, ObjectNode>> exportElementsRecursively(Project project, Element element, int depth) {
         ObjectNode jsonObject = Converters.getElementToJsonConverter().apply(element, project);
         if (jsonObject == null) {
-            return;
+            return Stream.empty();
         }
-        visitor.accept(element, jsonObject);
-        if (depth-- != DEPTH_NO_DESCENT) {
-            for (Element elementChild : element.getOwnedElement()) {
-            	exportElementsRecursively(project, elementChild, depth, visitor);
-            }
+        Stream<Pair<Element, ObjectNode>> result = Stream.of(
+            new Pair<>(element, jsonObject)
+        );
+        if (depth != DEPTH_NO_DESCENT) {
+            int childDepth = depth - 1;
+            result = Stream.concat(result, element.getOwnedElement().stream()
+                        .flatMap(elementChild -> exportElementsRecursively(project, elementChild, childDepth))
+            );
         }
         if (element.equals(project.getPrimaryModel())) {
-            List<Package> attachedModels = project.getModels();
-            attachedModels.remove(project.getPrimaryModel());
-            attachedModels.forEach(attachedModel -> exportElementsRecursively(project, attachedModel, DEPTH_NO_DESCENT, visitor));
+
+            final Package primaryModel = project.getPrimaryModel();
+
+            result = Stream.concat(result, project.getModels().stream()
+                        .filter(attachedModel -> attachedModel != primaryModel)
+                        .flatMap(attachedModel -> exportElementsRecursively(project, attachedModel, DEPTH_NO_DESCENT))
+            );
         }
+        return result;
     }
 
 }

@@ -139,7 +139,7 @@ public class ManualSyncRunner implements RunnableWithProgress {
     }
 
     private static void collectClientElementsRecursively(Project project, Element element, int depth, List<Pair<Element, ObjectNode>> elements) {
-        BulkExport.exportElementsRecursively(project, element, depth, (subElement, node) -> elements.add(new Pair<>(subElement, node)));
+        BulkExport.exportElementsRecursively(project, element, depth).forEach(elements::add);
     }
 
     private static File collectServerElementsRecursively(Project project, Element element, int depth, ProgressStatus progressStatus)

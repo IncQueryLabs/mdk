@@ -21,29 +21,26 @@
 package gov.nasa.jpl.mbee.mdk.fileexport;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
-import gov.nasa.jpl.mbee.mdk.emf.BulkExport;
-import gov.nasa.jpl.mbee.mdk.json.JacksonUtils;
-
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
-import com.nomagic.magicdraw.core.Application;
-import com.nomagic.magicdraw.core.Project;
-import com.nomagic.task.ProgressStatus;
-import com.nomagic.task.RunnableWithProgress;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SequenceWriter;
-
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SequenceWriter;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.nomagic.magicdraw.core.Application;
+import com.nomagic.magicdraw.core.Project;
+import com.nomagic.task.ProgressStatus;
+import com.nomagic.task.RunnableWithProgress;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
+
+import gov.nasa.jpl.mbee.mdk.emf.BulkExport;
+import gov.nasa.jpl.mbee.mdk.json.JacksonUtils;
+import gov.nasa.jpl.mbee.mdk.util.Pair;
 
 /**
  * @author Gabor Bergmann
@@ -94,25 +91,24 @@ public class FileExportRunner implements RunnableWithProgress {
 				
 				try (SequenceWriter targetFileWriter = openFile(outputFile)) {
 					
-					BulkExport.exportElementsRecursively(project, rootElement, depth, (element, jsonNode) -> {
-						if (progressStatus.isCancel()) {
-							throw new CancelledException();
-						}
+					Iterator<Pair<Element, ObjectNode>> pairsIterator = 
+							BulkExport.exportElementsRecursively(project, rootElement, depth).iterator();
+					
+					while(!progressStatus.isCancel() && pairsIterator.hasNext()) {
+						Pair<Element, ObjectNode> elementNodePair = pairsIterator.next();
 						
-						try {
-							targetFileWriter.write(jsonNode);
-						} catch (IOException ioEx) {
-							throw new WrappedIOException(ioEx);
-						}
-					});
-					
-					progressStatus.increase();
-					if (progressStatus.isCancel()) {
-						return;
+						final ObjectNode jsonNode = elementNodePair.getValue();
+
+						targetFileWriter.write(jsonNode);
 					}
-					
 				}
 			
+				progressStatus.increase();
+				if (progressStatus.isCancel()) {
+					Application.getInstance().getGUILog().log("[INFO] JSON export cancelled by user.");
+					return;
+				}
+					
 				
 			}
 
@@ -122,12 +118,8 @@ public class FileExportRunner implements RunnableWithProgress {
 					String.format("[INFO] JSON export finished successfully in %d seconds.",
 							elapsed.getSeconds()));
 			
-		} catch (CancelledException cancEx) {
-            Application.getInstance().getGUILog().log("[INFO] JSON export cancelled by user.");
 		} catch (IOException ioEx) {
 			handleIOException(ioEx);
-		} catch (WrappedIOException wioEx) {
-			handleIOException(wioEx.getCause());
 		}
         
         
@@ -154,11 +146,4 @@ public class FileExportRunner implements RunnableWithProgress {
 		ioEx.printStackTrace();
 	}
 	
-	static class CancelledException extends RuntimeException {
-		public CancelledException() {}
-	}
-	static class WrappedIOException extends RuntimeException {
-		public WrappedIOException(IOException cause) {super(cause);}
-	}
-
 }
