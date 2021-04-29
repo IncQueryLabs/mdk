@@ -22,15 +22,16 @@ package gov.nasa.jpl.mbee.mdk.fileexport;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
@@ -56,11 +57,19 @@ public class FileExportRunner implements RunnableWithProgress {
     private final File outputFolder;
 	
 	private final ObjectWriter jsonWriter = JacksonUtils.getObjectMapper().writerWithDefaultPrettyPrinter();
+	private final ElementSerializationMode serializationMode;
+	
+	public enum ElementSerializationMode {
+		AS_DISCRETE_JSON_OBJECTS,
+		AS_SINGLE_ARRAY,
+		AS_CHILDREN_OF_ROOT_ELEMENT
+	}
 
-	public FileExportRunner(Collection<Element> rootElements, Project project, int depth, File outputFolder) {
+	public FileExportRunner(Collection<Element> rootElements, Project project, int depth, ElementSerializationMode serializationMode, File outputFolder) {
         this.rootElements = rootElements;
         this.project = project;
         this.depth = depth;
+		this.serializationMode = serializationMode;
         this.outputFolder = outputFolder;
 	}
 
@@ -89,19 +98,13 @@ public class FileExportRunner implements RunnableWithProgress {
 				Application.getInstance().getGUILog().log(String.format("[INFO] Exporting element '%s' %s to file %s", 
 					name, depthDescriptionText, outputFile.getPath().toString()));
 				
-				try (SequenceWriter targetFileWriter = openFile(outputFile)) {
+				try (PrintWriter filePrinter = new PrintWriter(outputFile, "UTF-8")) {
+					int writtenCount = writeElementsToFile(progressStatus, filePrinter, 
+							BulkExport.exportElementsRecursively(project, rootElement, depth));
 					
-					Iterator<Pair<Element, ObjectNode>> pairsIterator = 
-							BulkExport.exportElementsRecursively(project, rootElement, depth).iterator();
-					
-					while(!progressStatus.isCancel() && pairsIterator.hasNext()) {
-						Pair<Element, ObjectNode> elementNodePair = pairsIterator.next();
-						
-						final ObjectNode jsonNode = elementNodePair.getValue();
-
-						targetFileWriter.write(jsonNode);
-					}
+					Application.getInstance().getGUILog().log(String.format("[INFO] Written %d element(s) to file.", writtenCount));
 				}
+				
 			
 				progressStatus.increase();
 				if (progressStatus.isCancel()) {
@@ -124,7 +127,72 @@ public class FileExportRunner implements RunnableWithProgress {
         
         
     }
+
+	private int writeElementsToFile(ProgressStatus progressStatus, PrintWriter targetFileWriter,
+			Stream<Pair<Element, ObjectNode>> exportedElementsStream) throws IOException 
+	{
+		prefixSequence(targetFileWriter);
+					
+		Iterator<Pair<Element, ObjectNode>> exportedElementsIterator = 
+				exportedElementsStream.iterator();
+		
+		int count = 0;
+		while(!progressStatus.isCancel() && exportedElementsIterator.hasNext()) {
+			if (count++ != 0) { midfixSequence(targetFileWriter); }
+			
+			final ObjectNode jsonNode = exportedElementsIterator.next().getValue();
+			String jsonString = jsonWriter.writeValueAsString(jsonNode); 
+			targetFileWriter.print(jsonString);
+		}
+		
+		postfixSequence(targetFileWriter);
+		
+		return count;
+	}
 	
+	private void prefixSequence(PrintWriter filePrinter) {
+		switch (serializationMode) {
+			case AS_DISCRETE_JSON_OBJECTS:
+				return;
+			case AS_CHILDREN_OF_ROOT_ELEMENT:
+				filePrinter.println("{ \"elements\" : [");
+				return;
+			case AS_SINGLE_ARRAY:
+				filePrinter.println("[");
+				return;
+			default:
+				throw new IllegalStateException(serializationMode.toString());
+		}
+	}
+
+	private void postfixSequence(PrintWriter filePrinter) {
+		switch (serializationMode) {
+			case AS_DISCRETE_JSON_OBJECTS:
+				return;
+			case AS_CHILDREN_OF_ROOT_ELEMENT:
+				filePrinter.println("\n]}");
+				return;
+			case AS_SINGLE_ARRAY:
+				filePrinter.println("\n]");
+				return;
+			default:
+				throw new IllegalStateException(serializationMode.toString());
+		}
+	}
+	private void midfixSequence(PrintWriter filePrinter) {
+		switch (serializationMode) {
+			case AS_DISCRETE_JSON_OBJECTS:
+				return;
+			case AS_CHILDREN_OF_ROOT_ELEMENT:
+			case AS_SINGLE_ARRAY:
+				filePrinter.println(",");
+				return;
+			default:
+				throw new IllegalStateException(serializationMode.toString());
+		}
+	}
+
+
 	private File getOutputFile(String originalName, Set<String> usedNames) {
 		String rootName = originalName.replaceAll("[^\\p{IsAlphabetic}\\p{Digit}-_]", "_");
 		if (rootName.isEmpty()) rootName = "export";
@@ -137,9 +205,6 @@ public class FileExportRunner implements RunnableWithProgress {
 		return new File(outputFolder, name + ".json");
 	}
 
-	private SequenceWriter openFile(File outputFile) throws IOException {
-		return jsonWriter.writeValuesAsArray(outputFile);
-	}
 	
 	private void handleIOException(Throwable ioEx) {
 		Application.getInstance().getGUILog().log("[ERROR] An error occurred while exporting model as JSON, aborting. Reason: " + ioEx.getMessage());

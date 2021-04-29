@@ -25,27 +25,21 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
 import java.util.function.Function;
 
 import javax.swing.JFileChooser;
 
 import com.jidesoft.swing.FolderChooser;
-
+import com.nomagic.magicdraw.actions.MDAction;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
-
-import com.nomagic.magicdraw.actions.MDAction;
 import com.nomagic.magicdraw.ui.dialogs.MDDialogParentProvider;
 import com.nomagic.ui.ProgressStatusRunner;
-
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 
-import gov.nasa.jpl.mbee.mdk.fileexport.FileExportRunner;
-import gov.nasa.jpl.mbee.mdk.mms.sync.manual.ManualSyncRunner;
-import gov.nasa.jpl.mbee.mdk.util.Utils;
-
 import gov.nasa.jpl.mbee.mdk.emf.BulkExport;
+import gov.nasa.jpl.mbee.mdk.fileexport.FileExportRunner;
+import gov.nasa.jpl.mbee.mdk.fileexport.FileExportRunner.ElementSerializationMode;
 
 /**
  * @author Gabor Bergmann
@@ -76,11 +70,12 @@ public class ExportToJsonRecursivelyAction extends MDAction {
 	final Function<Project, Collection<Element>> rootsProvider;
 	final int depth;
 	final String title;
+	private ElementSerializationMode serializationMode;
 	
 	/**
 	 * @param selectedRootElements null if entire primary model is to be exported
 	 */
-    public ExportToJsonRecursivelyAction(Function<Project, Collection<Element>> rootsProvider, int depth, String title) {
+    public ExportToJsonRecursivelyAction(Function<Project, Collection<Element>> rootsProvider, int depth, ElementSerializationMode serializationMode, String title) {
         super(
 //			DEFAULT_ID,
 			String.format("%s_depth%d",
@@ -96,6 +91,14 @@ public class ExportToJsonRecursivelyAction extends MDAction {
         this.rootsProvider = rootsProvider;
 		this.depth = depth;
 		this.title = title;
+		this.serializationMode = serializationMode;
+    }
+    
+	/**
+	 * @param selectedRootElements null if entire primary model is to be exported
+	 */
+    public ExportToJsonRecursivelyAction(Function<Project, Collection<Element>> rootsProvider, int depth, String title) {
+    	this(rootsProvider, depth, ElementSerializationMode.AS_CHILDREN_OF_ROOT_ELEMENT, title);
     }
 
 
@@ -114,7 +117,7 @@ public class ExportToJsonRecursivelyAction extends MDAction {
 	 * @param folderSelection
 	 */
 	private void exportIntoFolder(File folderSelection, Project project, Collection<Element> rootElements) {
-    	FileExportRunner exportRunner = new FileExportRunner(rootElements, project, depth, folderSelection);
+    	FileExportRunner exportRunner = new FileExportRunner(rootElements, project, depth, serializationMode, folderSelection);
         ProgressStatusRunner.runWithProgressStatus(exportRunner, title, true, 0);
 	}
 
