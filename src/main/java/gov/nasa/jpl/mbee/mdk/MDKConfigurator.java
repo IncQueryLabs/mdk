@@ -32,6 +32,7 @@ import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 import gov.nasa.jpl.mbee.mdk.actions.ExportToJsonRecursivelyAction;
 import gov.nasa.jpl.mbee.mdk.actions.InstanceViewpointAction;
 import gov.nasa.jpl.mbee.mdk.actions.MMSViewLinkAction;
+import gov.nasa.jpl.mbee.mdk.actions.PatchWithJsonAction;
 import gov.nasa.jpl.mbee.mdk.docgen.DocGenProfile;
 import gov.nasa.jpl.mbee.mdk.docgen.actions.PreviewDocumentAction;
 import gov.nasa.jpl.mbee.mdk.docgen.actions.ValidateAllViewsAction;
@@ -402,10 +403,12 @@ public class MDKConfigurator implements BrowserContextAMConfigurator, DiagramCon
         migrateCategory.addAction(new GroupsMigrationAction());
 		
 		{
-			MDActionsCategory exportCategory = new MDActionsCategory(MDKConfigurator.class.getSimpleName() + "-Serialization", "JSON Export");
+			MDActionsCategory exportCategory = new MDActionsCategory(MDKConfigurator.class.getSimpleName() + "-Serialization", "MDK JSON");
 			exportCategory.setNested(true);
 			category.addAction(exportCategory);
+			
 			exportCategory.addAction(ExportToJsonRecursivelyAction.exportEntirePrimaryModel());
+			exportCategory.addAction(PatchWithJsonAction.patchEntirePrimaryModel());
 		}
 
     }
