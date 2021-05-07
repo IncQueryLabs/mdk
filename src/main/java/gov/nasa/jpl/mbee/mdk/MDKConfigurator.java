@@ -1,10 +1,22 @@
 package gov.nasa.jpl.mbee.mdk;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsCategory;
 import com.nomagic.actions.ActionsManager;
 import com.nomagic.actions.NMAction;
-import com.nomagic.magicdraw.actions.*;
+import com.nomagic.magicdraw.actions.ActionsGroups;
+import com.nomagic.magicdraw.actions.ActionsStateUpdater;
+import com.nomagic.magicdraw.actions.BrowserContextAMConfigurator;
+import com.nomagic.magicdraw.actions.ConfiguratorWithPriority;
+import com.nomagic.magicdraw.actions.DiagramContextAMConfigurator;
+import com.nomagic.magicdraw.actions.MDAction;
+import com.nomagic.magicdraw.actions.MDActionsCategory;
 import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.ui.browser.Node;
 import com.nomagic.magicdraw.ui.browser.Tree;
@@ -15,16 +27,25 @@ import com.nomagic.uml2.ext.magicdraw.auxiliaryconstructs.mdmodels.Model;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.NamedElement;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
-import gov.nasa.jpl.mbee.mdk.actions.*;
+
+import gov.nasa.jpl.mbee.mdk.actions.ExportToJsonRecursivelyAction;
+import gov.nasa.jpl.mbee.mdk.actions.InstanceViewpointAction;
+import gov.nasa.jpl.mbee.mdk.actions.MMSViewLinkAction;
 import gov.nasa.jpl.mbee.mdk.docgen.DocGenProfile;
+import gov.nasa.jpl.mbee.mdk.docgen.actions.PreviewDocumentAction;
 import gov.nasa.jpl.mbee.mdk.docgen.actions.ValidateAllViewsAction;
 import gov.nasa.jpl.mbee.mdk.docgen.actions.ValidateViewAction;
-import gov.nasa.jpl.mbee.mdk.docgen.actions.PreviewDocumentAction;
 import gov.nasa.jpl.mbee.mdk.generator.DocumentGenerator;
 import gov.nasa.jpl.mbee.mdk.migrate.actions.GroupsMigrationAction;
-import gov.nasa.jpl.mbee.mdk.mms.actions.*;
+import gov.nasa.jpl.mbee.mdk.mms.actions.CommitOrgAction;
+import gov.nasa.jpl.mbee.mdk.mms.actions.CommitProjectAction;
+import gov.nasa.jpl.mbee.mdk.mms.actions.GenerateLocalDocument;
+import gov.nasa.jpl.mbee.mdk.mms.actions.GenerateViewPresentationAction;
+import gov.nasa.jpl.mbee.mdk.mms.actions.MMSLoginAction;
+import gov.nasa.jpl.mbee.mdk.mms.actions.ValidateElementAction;
+import gov.nasa.jpl.mbee.mdk.mms.actions.ValidateElementDepthAction;
+import gov.nasa.jpl.mbee.mdk.mms.actions.ValidateElementRecursivelyAction;
 import gov.nasa.jpl.mbee.mdk.model.CollectActionsVisitor;
 import gov.nasa.jpl.mbee.mdk.model.Document;
 import gov.nasa.jpl.mbee.mdk.model.UserScript;
@@ -35,8 +56,6 @@ import gov.nasa.jpl.mbee.mdk.util.MDUtils;
 import gov.nasa.jpl.mbee.mdk.util.TicketUtils;
 import gov.nasa.jpl.mbee.mdk.util.Utils;
 import gov.nasa.jpl.mbee.mdk.util.Utils2;
-
-import java.util.*;
 
 public class MDKConfigurator implements BrowserContextAMConfigurator, DiagramContextAMConfigurator, AMConfigurator {
 
@@ -121,7 +140,7 @@ public class MDKConfigurator implements BrowserContextAMConfigurator, DiagramCon
 
 		
 		{
-			ActionsCategory exportCategory = myCategory(manager, "MDK_JSON_Export", "MDK JSON Export");
+			ActionsCategory exportCategory = myCategory(manager, "MDK_JSON_Serialization", "MDK JSON Export");
 
 			if (es != null) {
 				ExportToJsonRecursivelyAction elementOnly = ExportToJsonRecursivelyAction.exportElementOnly(es);
@@ -383,7 +402,7 @@ public class MDKConfigurator implements BrowserContextAMConfigurator, DiagramCon
         migrateCategory.addAction(new GroupsMigrationAction());
 		
 		{
-			MDActionsCategory exportCategory = new MDActionsCategory(MDKConfigurator.class.getSimpleName() + "-Export", "JSON Export");
+			MDActionsCategory exportCategory = new MDActionsCategory(MDKConfigurator.class.getSimpleName() + "-Serialization", "JSON Export");
 			exportCategory.setNested(true);
 			category.addAction(exportCategory);
 			exportCategory.addAction(ExportToJsonRecursivelyAction.exportEntirePrimaryModel());

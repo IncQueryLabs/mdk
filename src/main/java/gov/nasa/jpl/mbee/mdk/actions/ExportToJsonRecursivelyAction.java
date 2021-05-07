@@ -39,7 +39,7 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 
 import gov.nasa.jpl.mbee.mdk.emf.BulkExport;
 import gov.nasa.jpl.mbee.mdk.fileexport.FileExportRunner;
-import gov.nasa.jpl.mbee.mdk.fileexport.FileExportRunner.ElementSerializationMode;
+import gov.nasa.jpl.mbee.mdk.fileexport.FileExportRunner.FileFormat;
 
 /**
  * @author Gabor Bergmann
@@ -48,21 +48,21 @@ import gov.nasa.jpl.mbee.mdk.fileexport.FileExportRunner.ElementSerializationMod
 public class ExportToJsonRecursivelyAction extends MDAction {
 	
     public static ExportToJsonRecursivelyAction exportEntirePrimaryModel() {
-		return new ExportToJsonRecursivelyAction(p -> Collections.singleton(p.getPrimaryModel()), BulkExport.DEPTH_INFINITE, "Export entire (primary) model to JSON");
+		return new ExportToJsonRecursivelyAction(p -> Collections.singleton(p.getPrimaryModel()), BulkExport.DEPTH_INFINITE, FileFormat.MODEL, "Export entire (primary) model to .mdkmodel file");
 	}
 
     public static ExportToJsonRecursivelyAction exportElementOnly(Element e) {
-		return new ExportToJsonRecursivelyAction(p -> Collections.singleton(e), BulkExport.DEPTH_NO_DESCENT, "Export element (without contained elements) to JSON");
+		return new ExportToJsonRecursivelyAction(p -> Collections.singleton(e), BulkExport.DEPTH_NO_DESCENT, FileFormat.FRAGMENT, "Export element (without contained elements) to .mdkfragment file");
 	}
     public static ExportToJsonRecursivelyAction exportElementHierarchy(Element e) {
-		return new ExportToJsonRecursivelyAction(p -> Collections.singleton(e), BulkExport.DEPTH_INFINITE, "Export containment subtree to JSON");
+		return new ExportToJsonRecursivelyAction(p -> Collections.singleton(e), BulkExport.DEPTH_INFINITE, FileFormat.TREE, "Export containment subtree to .mdktree file");
 	}
 	
     public static ExportToJsonRecursivelyAction exportElementOnly(Collection<Element> es) {
-		return new ExportToJsonRecursivelyAction(p -> es, BulkExport.DEPTH_NO_DESCENT, "Export selected elements (without contained elements) to JSON");
+		return new ExportToJsonRecursivelyAction(p -> es, BulkExport.DEPTH_NO_DESCENT, FileFormat.FRAGMENT, "Export selected elements (without contained elements) to .mdkfragment file");
 	}
     public static ExportToJsonRecursivelyAction exportElementHierarchy(Collection<Element> es) {
-		return new ExportToJsonRecursivelyAction(p -> es, BulkExport.DEPTH_INFINITE, "Export selected containment subtrees to JSON");
+		return new ExportToJsonRecursivelyAction(p -> es, BulkExport.DEPTH_INFINITE, FileFormat.TREE, "Export selected containment subtrees to .mdktree file");
 	}
 	
     public static final String DEFAULT_ID = "ExportToJsonRecursively";
@@ -70,12 +70,14 @@ public class ExportToJsonRecursivelyAction extends MDAction {
 	final Function<Project, Collection<Element>> rootsProvider;
 	final int depth;
 	final String title;
-	private ElementSerializationMode serializationMode;
+	private FileFormat format;
+	
+	
 	
 	/**
 	 * @param selectedRootElements null if entire primary model is to be exported
 	 */
-    public ExportToJsonRecursivelyAction(Function<Project, Collection<Element>> rootsProvider, int depth, ElementSerializationMode serializationMode, String title) {
+    public ExportToJsonRecursivelyAction(Function<Project, Collection<Element>> rootsProvider, int depth, FileFormat format, String title) {
         super(
 //			DEFAULT_ID,
 			String.format("%s_depth%d",
@@ -90,17 +92,10 @@ public class ExportToJsonRecursivelyAction extends MDAction {
 		);
         this.rootsProvider = rootsProvider;
 		this.depth = depth;
+		this.format = format;
 		this.title = title;
-		this.serializationMode = serializationMode;
     }
     
-	/**
-	 * @param selectedRootElements null if entire primary model is to be exported
-	 */
-    public ExportToJsonRecursivelyAction(Function<Project, Collection<Element>> rootsProvider, int depth, String title) {
-    	this(rootsProvider, depth, ElementSerializationMode.AS_CHILDREN_OF_ROOT_ELEMENT, title);
-    }
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -117,7 +112,7 @@ public class ExportToJsonRecursivelyAction extends MDAction {
 	 * @param folderSelection
 	 */
 	private void exportIntoFolder(File folderSelection, Project project, Collection<Element> rootElements) {
-    	FileExportRunner exportRunner = new FileExportRunner(rootElements, project, depth, serializationMode, folderSelection);
+    	FileExportRunner exportRunner = new FileExportRunner(rootElements, project, depth, format, folderSelection);
         ProgressStatusRunner.runWithProgressStatus(exportRunner, title, true, 0);
 	}
 

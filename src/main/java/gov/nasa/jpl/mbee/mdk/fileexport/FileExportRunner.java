@@ -57,6 +57,7 @@ public class FileExportRunner implements RunnableWithProgress {
     private final File outputFolder;
 	
 	private final ObjectWriter jsonWriter = JacksonUtils.getObjectMapper().writerWithDefaultPrettyPrinter();
+	private final FileFormat fileFormat;
 	private final ElementSerializationMode serializationMode;
 	
 	public enum ElementSerializationMode {
@@ -64,12 +65,27 @@ public class FileExportRunner implements RunnableWithProgress {
 		AS_SINGLE_ARRAY,
 		AS_CHILDREN_OF_ROOT_ELEMENT
 	}
+	public enum FileFormat {
+		MODEL,
+		TREE,
+		FRAGMENT;
+		
+		public String getExtension() {
+			return "mdk" + this.name().toLowerCase();
+		}
 
-	public FileExportRunner(Collection<Element> rootElements, Project project, int depth, ElementSerializationMode serializationMode, File outputFolder) {
+		public ElementSerializationMode getSerializationMode() {
+			return ElementSerializationMode.AS_CHILDREN_OF_ROOT_ELEMENT;
+		}
+	}
+
+
+	public FileExportRunner(Collection<Element> rootElements, Project project, int depth, FileFormat fileFormat, File outputFolder) {
         this.rootElements = rootElements;
         this.project = project;
         this.depth = depth;
-		this.serializationMode = serializationMode;
+		this.fileFormat = fileFormat;
+		this.serializationMode = fileFormat.getSerializationMode();
         this.outputFolder = outputFolder;
 	}
 
@@ -202,7 +218,7 @@ public class FileExportRunner implements RunnableWithProgress {
 			name = String.format("%s_%04d", rootName, postFix++);
 		}
 		
-		return new File(outputFolder, name + ".json");
+		return new File(outputFolder, name + "." + fileFormat.getExtension());
 	}
 
 	
