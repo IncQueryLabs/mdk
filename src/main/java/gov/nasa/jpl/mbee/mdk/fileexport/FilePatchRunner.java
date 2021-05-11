@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -34,7 +35,9 @@ import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
 import com.nomagic.task.ProgressStatus;
 import com.nomagic.task.RunnableWithProgress;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 
+import gov.nasa.jpl.mbee.mdk.api.incubating.convert.Converters;
 import gov.nasa.jpl.mbee.mdk.json.JacksonUtils;
 import gov.nasa.jpl.mbee.mdk.mms.actions.UpdateClientElementAction;
 import gov.nasa.jpl.mbee.mdk.util.Changelog;
@@ -98,17 +101,19 @@ public class FilePatchRunner implements RunnableWithProgress {
 	        
 	        
 			
-//			// STEP 2 - check if patch is valid, i.e. all elements to delete are in fact present
-//			
-//        
-//	        for (String elementToDelete : deleteElementIds) {
-//	        	if (null == project.getElementByID(elementToDelete)) {
-//		            Application.getInstance().getGUILog().log("[ERROR] Invalid patch: cannot delete non-existing element " + elementToDelete);
-//	        		return;
-//	        	}
-//	        }
-//	        
-//	        progressStatus.setCurrent(2);
+			// STEP 2 - check if patch is valid, i.e. all elements to delete are in fact present
+			
+        
+	        BiFunction<String, Project, Element> idToElement = Converters.getIdToElementConverter();
+	        for (String elementToDelete : deleteElementIds) {
+				if (null == idToElement.apply(elementToDelete, project)) 
+				{
+		            Application.getInstance().getGUILog().log("[ERROR] Invalid patch: cannot delete non-existing element " + elementToDelete);
+	        		return;
+	        	}
+	        }
+	        
+	        progressStatus.setCurrent(2);
 	        
 			
 			// STEP 3 - apply patch
